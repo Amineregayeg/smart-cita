@@ -1642,12 +1642,21 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
         const urlSlug = urlPath.split('/').filter(p => p)[0];
         const source = urlSlug || 'direct';
 
+        // Split fullName into firstName and lastName
+        const nameParts = bookingState.fullName.trim().split(' ');
+        const firstName = nameParts[0] || '';
+        const lastName = nameParts.slice(1).join(' ') || nameParts[0]; // Use first name as last if no last name
+
         const bookingData = {
-          fullName: bookingState.fullName,
-          email: bookingState.email,
-          phone: bookingState.phone,
+          client: {
+            firstName: firstName,
+            lastName: lastName,
+            email: bookingState.email,
+            phone: bookingState.phone
+          },
           centerId: bookingState.selectedCenter,
           typeId: typeId,
+          resourceId: null, // Let backend handle resource assignment
           startTime: startDateTime,
           endTime: endDateTime,
           source: source // Track where booking came from
