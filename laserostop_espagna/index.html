@@ -1319,8 +1319,7 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
 
     // ========== CALENDAR AND BOOKING LOGIC ==========
 
-    // API Configuration - uses absolute path for Netlify Functions
-    // All API calls will be routed to /.netlify/functions/api via netlify.toml redirects
+    // API Configuration - uses Netlify Functions
     const API_BASE_URL = '/laserostop_espagna/api';
 
     // Booking state
@@ -1351,53 +1350,53 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
      * Availability and booking still use live API
      */
     const APPOINTMENT_TYPES = {
-      '10': [ // Valencia (API ID: 10)
-        { id: '1',  kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '10' },
-        { id: '9',  kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '10' },
-        { id: '18', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '10' },
-        { id: '3',  kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '10' }
+      '1': [ // Valencia
+        { id: '1',  kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '1' },
+        { id: '9',  kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '1' },
+        { id: '18', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '1' },
+        { id: '3',  kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '1' }
       ],
-      '43': [ // Barcelona Sants (API ID: 43)
-        { id: '25', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '43' },
-        { id: '21', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '43' },
-        { id: '23', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '43' },
-        { id: '22', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '43' }
+      '4': [ // Barcelona Sants
+        { id: '25', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '4' },
+        { id: '21', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '4' },
+        { id: '23', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '4' },
+        { id: '22', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '4' }
       ],
-      '44': [ // Sevilla (API ID: 44)
-        { id: '32', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '44' },
-        { id: '34', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '44' },
-        { id: '37', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '44' },
-        { id: '35', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '44' }
+      '5': [ // Sevilla
+        { id: '32', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '5' },
+        { id: '34', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '5' },
+        { id: '37', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '5' },
+        { id: '35', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '5' }
       ],
-      '49': [ // Torrejón (API ID: 49)
-        { id: '53', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '49' },
-        { id: '56', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '49' },
-        { id: '59', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '49' },
-        { id: '57', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '49' }
+      '6': [ // Torrejón
+        { id: '53', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '6' },
+        { id: '56', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '6' },
+        { id: '59', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '6' },
+        { id: '57', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '6' }
       ],
-      '48': [ // Madrid Chamartín (API ID: 48)
-        { id: '44', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '48' },
-        { id: '46', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '48' },
-        { id: '49', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '48' },
-        { id: '47', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '48' }
+      '7': [ // Madrid Chamartín
+        { id: '44', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '7' },
+        { id: '46', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '7' },
+        { id: '49', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '7' },
+        { id: '47', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '7' }
       ],
-      '50': [ // Madrid Atocha (API ID: 50)
-        { id: '63', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '50' },
-        { id: '65', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '50' },
-        { id: '68', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '50' },
-        { id: '66', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '50' }
+      '8': [ // Madrid Atocha
+        { id: '63', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '8' },
+        { id: '65', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '8' },
+        { id: '68', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '8' },
+        { id: '66', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '8' }
       ],
-      '52': [ // San Sebastián (API ID: 52)
-        { id: '81', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '52' },
-        { id: '83', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '52' },
-        { id: '86', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '52' },
-        { id: '84', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '52' }
+      '9': [ // San Sebastián
+        { id: '81', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '9' },
+        { id: '83', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '9' },
+        { id: '86', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '9' },
+        { id: '84', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '9' }
       ],
-      '51': [ // Majadahonda (API ID: 51)
-        { id: '72', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '51' },
-        { id: '74', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '51' },
-        { id: '77', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '51' },
-        { id: '75', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '51' }
+      '10': [ // Majadahonda
+        { id: '72', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '10' },
+        { id: '74', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '10' },
+        { id: '77', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '10' },
+        { id: '75', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '10' }
       ]
     };
 
@@ -1435,25 +1434,10 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const agendas = await response.json();
-
-        // Filter to only include actual centers (affiche_agenda = 'O')
-        // and map to expected format
-        const centers = agendas
-          .filter(agenda => agenda.affiche_agenda === 'O')
-          .map(agenda => ({
-            id: agenda.id,
-            name: agenda.nom_complet || agenda.nom,
-            login: agenda.login,
-            mail: agenda.mail,
-            ordre: agenda.ordre
-          }))
-          .sort((a, b) => parseInt(a.ordre) - parseInt(b.ordre));
-
+        const centers = await response.json();
         bookingState.smartAgendaCenters = centers;
 
         console.log('Loaded', centers.length, 'centers from Smart Agenda');
-        console.log('Centers:', centers.map(c => c.name).join(', '));
 
         // Populate the center dropdown
         populateCenterDropdown(centers);
@@ -1486,40 +1470,13 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
 
     /**
      * Load appointment types for selected center
-     * Fetches from Smart Agenda API and falls back to hardcoded data if needed
+     * NOTE: Using hardcoded data instead of API due to Smart Agenda sync issues
      */
     async function loadAppointmentTypes(centerId) {
       try {
         console.log('Loading appointment types for center:', centerId);
 
-        // Try to fetch from API first
-        try {
-          const response = await fetch(`${API_BASE_URL}/appointment-types?centerId=${centerId}`);
-
-          if (response.ok) {
-            const apiTypes = await response.json();
-            console.log('📋 Appointment types from API:', apiTypes);
-
-            if (apiTypes && apiTypes.length > 0) {
-              // Use API data
-              bookingState.appointmentTypes = apiTypes;
-              console.log(`Loaded ${apiTypes.length} appointment types from API`);
-
-              // Auto-select the first type if available
-              if (apiTypes.length > 0) {
-                bookingState.selectedAppointmentType = apiTypes[0].id;
-              }
-
-              return apiTypes;
-            }
-          } else {
-            console.warn('API returned non-OK status, falling back to hardcoded data');
-          }
-        } catch (apiError) {
-          console.warn('API fetch failed, falling back to hardcoded data:', apiError.message);
-        }
-
-        // Fallback to hardcoded data
+        // Use hardcoded data instead of API
         const types = APPOINTMENT_TYPES[centerId] || [];
         bookingState.appointmentTypes = types;
 
@@ -1669,21 +1626,12 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
         const urlSlug = urlPath.split('/').filter(p => p)[0];
         const source = urlSlug || 'direct';
 
-        // Split fullName into firstName and lastName
-        const nameParts = bookingState.fullName.trim().split(' ');
-        const firstName = nameParts[0] || '';
-        const lastName = nameParts.slice(1).join(' ') || nameParts[0]; // Use first name as last if no last name
-
         const bookingData = {
-          client: {
-            firstName: firstName,
-            lastName: lastName,
-            email: bookingState.email,
-            phone: bookingState.phone
-          },
+          fullName: bookingState.fullName,
+          email: bookingState.email,
+          phone: bookingState.phone,
           centerId: bookingState.selectedCenter,
           typeId: typeId,
-          resourceId: null, // Let backend handle resource assignment
           startTime: startDateTime,
           endTime: endDateTime,
           source: source // Track where booking came from

@@ -1,6 +1,6 @@
 /**
  * Netlify Function for Smart Agenda API Integration
- * Handles all backend API calls for LaserOstop España booking system
+ * Matches original Express backend behavior exactly
  */
 
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
@@ -54,11 +54,11 @@ async function getToken() {
       throw new Error('Token response missing required fields');
     }
 
-    // Cache the token (valid for 1 hour)
+    // Cache the token (valid for 2 hours)
     tokenCache = {
       token: data.token,
       userToken: data.user_token,
-      expiry: Date.now() + (60 * 60 * 1000) // 1 hour
+      expiry: Date.now() + (2 * 60 * 60 * 1000) // 2 hours
     };
 
     console.log('✅ New token obtained and cached');
@@ -69,156 +69,204 @@ async function getToken() {
   }
 }
 
+/**
+ * Make authenticated request to Smart Agenda API
+ */
+async function smartAgendaRequest(endpoint, options = {}) {
+  const token = await getToken();
+
+  const url = `${SMART_AGENDA_BASE_URL}${endpoint}`;
+  const headers = {
+    'X-SMARTAPI-TOKEN': token,
+    'Content-Type': 'application/json',
+    ...options.headers
+  };
+
+  console.log(`Smart Agenda API: ${options.method || 'GET'} ${endpoint}`);
+
+  const response = await fetch(url, {
+    ...options,
+    headers
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error(`Smart Agenda API error: ${response.status}`, errorText);
+    throw new Error(`Smart Agenda API error: ${response.status} ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
 // ========== API HANDLERS ==========
 
 /**
  * GET /api/centers
- * Fetch list of centers/agendas from Smart Agenda
+ * Get all active centers - EXACTLY matches original Express backend
  */
 async function getCenters() {
-  const token = await getToken();
+  const groups = await smartAgendaRequest('/pdo_groupe');
 
-  const response = await fetch(`${SMART_AGENDA_BASE_URL}/pdo_agenda?token=${token}`, {
-    method: 'GET',
-    headers: {
-      'Accept': 'application/json',
-    }
-  });
+  // Filter active centers (etat !== "S") and sort by order
+  const activeCenters = groups
+    .filter(center => center.etat !== 'S')
+    .sort((a, b) => parseInt(a.ordre) - parseInt(b.ordre))
+    .map(center => ({
+      id: center.id,
+      name: center.libelle,
+      order: parseInt(center.ordre),
+      image: center.image,
+      address: center.perso1 ? center.perso1.replace(/<[^>]*>/g, '') : '', // Strip HTML
+      mapLink: center.perso2 ? center.perso2.match(/href="([^"]*)"/)?.[1] : '',
+      bookingLink: center.link_rdv
+    }));
 
-  if (!response.ok) {
-    throw new Error(`Centers API failed: ${response.status}`);
-  }
-
-  const data = await response.json();
-  return data;
+  return activeCenters;
 }
 
 /**
  * GET /api/appointment-types?centerId=X
- * Fetch appointment types for a specific center
+ * Fetch appointment types for a specific center - EXACTLY matches original Express backend
  */
 async function getAppointmentTypes(centerId) {
-  const token = await getToken();
+  const types = await smartAgendaRequest('/pdo_type_rdv');
 
-  const response = await fetch(
-    `${SMART_AGENDA_BASE_URL}/pdo_type_rdv?token=${token}&equipe_id=${centerId}`,
-    {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-      }
-    }
-  );
+  // Filter by center only (no longer filtering by afficher_site or reservable flags)
+  let filteredTypes = types;
 
-  if (!response.ok) {
-    throw new Error(`Appointment types API failed: ${response.status}`);
+  // If centerId provided, filter by center
+  if (centerId) {
+    filteredTypes = filteredTypes.filter(type => type.id_groupe === centerId);
   }
 
-  const data = await response.json();
-  return data;
+  const formattedTypes = filteredTypes.map(type => ({
+    id: type.id,
+    name: type.nom,
+    duration: parseInt(type.duree),
+    price: parseFloat(type.prix_ttc),
+    deposit: type.acompte ? parseFloat(type.acompte) : 0,
+    centerId: type.id_groupe,
+    description: type.description,
+    instructions: type.perso1,
+    stripeLink: type.perso2,
+    bookingLink: type.link_rdv,
+    // Include flags for debugging/frontend filtering
+    afficherSite: type.afficher_site,
+    reservable: type.reservable
+  }));
+
+  return formattedTypes;
 }
 
 /**
- * GET /api/availability?centerId=X&typeId=Y&startDate=Z&endDate=W
- * Fetch availability for appointments (currently disabled - API not available)
+ * GET /api/availability?startDate=X&endDate=Y
+ * Get available time slots - EXACTLY matches original Express backend
  */
 async function getAvailability(params) {
-  // DISABLED: Smart Agenda API doesn't support /getAvailabilities endpoint (returns HTTP 400)
-  console.log('Availability API disabled - Smart Agenda limitation');
-  return {};
+  const { centerId, typeId, startDate, endDate } = params;
+
+  if (!startDate || !endDate) {
+    throw new Error('startDate and endDate are required');
+  }
+
+  // Get resources first (practitioners)
+  const resources = await smartAgendaRequest('/pdo_ressource');
+
+  // Use generic resource (-1) or first available resource
+  const resourceId = resources.find(r => r.id === '-1')?.id || resources[0]?.id || '-1';
+
+  // Build query parameters
+  const queryParams = new URLSearchParams({
+    id_ressource: resourceId,
+    date_debut: startDate,
+    date_fin: endDate
+  });
+
+  if (typeId) {
+    queryParams.append('id_type_rdv', typeId);
+  }
+
+  const availability = await smartAgendaRequest(`/getAvailabilities?${queryParams.toString()}`);
+
+  return availability;
 }
 
 /**
  * POST /api/booking
- * Create a booking in Smart Agenda
+ * Create a booking in Smart Agenda - EXACTLY matches original Express backend
  */
 async function createBooking(bookingData) {
-  const token = await getToken();
-  const { centerId, typeId, resourceId, startTime, endTime, client } = bookingData;
+  const { fullName, email, phone, centerId, typeId, startTime, endTime, source } = bookingData;
 
-  // Step 1: Create or find client
-  let clientId;
+  console.log('📋 Received booking request:', { fullName, email, phone, centerId, typeId, startTime, endTime, source: source || 'direct' });
 
-  // Try to find existing client by email
-  const searchResponse = await fetch(
-    `${SMART_AGENDA_BASE_URL}/pdo_client?token=${token}&email=${encodeURIComponent(client.email)}`,
-    {
-      method: 'GET',
-      headers: { 'Accept': 'application/json' }
-    }
-  );
-
-  if (searchResponse.ok) {
-    const clients = await searchResponse.json();
-    if (clients && clients.length > 0) {
-      clientId = clients[0].id;
-      console.log(`Found existing client: ${clientId}`);
-    }
+  // Validate required fields
+  if (!fullName || !email || !phone || !centerId || !typeId || !startTime || !endTime) {
+    throw new Error('Missing required fields');
   }
 
-  // Create new client if not found
-  if (!clientId) {
+  // Split full name into first and last name (BACKEND handles this, not frontend!)
+  const nameParts = fullName.trim().split(' ');
+  const lastName = nameParts[nameParts.length - 1];
+  const firstName = nameParts.slice(0, -1).join(' ') || lastName;
+
+  // Step 1: Check if client exists
+  console.log('🔍 Checking for existing client with email:', email);
+  const clients = await smartAgendaRequest('/pdo_client');
+  let client = clients.find(c => c.mail === email);
+
+  // Step 2: Create client if doesn't exist
+  if (!client) {
+    console.log('👤 Creating new client...');
     const clientData = {
-      nom: client.lastName,
-      prenom: client.firstName,
-      email: client.email,
-      tel: client.phone,
-      equipe_id: centerId
+      nom: lastName,
+      prenom: firstName,
+      mail: email,
+      telephone: phone,
+      id_groupe: centerId
     };
+    console.log('Client data:', clientData);
 
-    const createClientResponse = await fetch(
-      `${SMART_AGENDA_BASE_URL}/pdo_client?token=${token}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(clientData)
-      }
-    );
-
-    if (!createClientResponse.ok) {
-      throw new Error(`Failed to create client: ${createClientResponse.status}`);
-    }
-
-    const newClient = await createClientResponse.json();
-    clientId = newClient.id;
-    console.log(`Created new client: ${clientId}`);
-  }
-
-  // Step 2: Create appointment/event
-  const appointmentData = {
-    client_id: clientId,
-    presta_id: typeId,          // Appointment TYPE (prestation/service)
-    ressource_id: resourceId,   // Practitioner/resource ID
-    start_date: startTime,
-    end_date: endTime,
-    equipe_id: centerId,
-    statut: 'C',                // Status: C = Confirmed
-    internet: '1',              // Mark as online booking
-    venu: '1'                   // Mark as confirmed
-  };
-
-  const createEventResponse = await fetch(
-    `${SMART_AGENDA_BASE_URL}/pdo_event?token=${token}`,
-    {
+    client = await smartAgendaRequest('/pdo_client', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(appointmentData)
-    }
-  );
-
-  if (!createEventResponse.ok) {
-    const errorText = await createEventResponse.text();
-    throw new Error(`Failed to create event: ${createEventResponse.status} - ${errorText}`);
+      body: JSON.stringify(clientData)
+    });
+    console.log('✅ Client created:', client.id);
+  } else {
+    console.log('✅ Existing client found:', client.id);
   }
 
-  const event = await createEventResponse.json();
-  console.log(`✅ Booking created successfully: Event ID ${event.id}`);
+  // Step 3: Get resource
+  console.log('🔍 Fetching resources...');
+  const resources = await smartAgendaRequest('/pdo_ressource');
+  const resourceId = resources.find(r => r.id === '-1')?.id || resources[0]?.id || '-1';
+  console.log('📌 Using resource ID:', resourceId);
+
+  // Step 4: Create appointment
+  console.log('📅 Creating appointment...');
+  const appointmentData = {
+    client_id: client.id,     // Client ID
+    presta_id: typeId,        // IMPORTANT: presta_id = appointment TYPE (prestation/service), not practitioner!
+    ressource_id: resourceId, // Resource/practitioner ID
+    start_date: startTime,    // Start date/time
+    end_date: endTime,        // End date/time
+    equipe_id: centerId,      // Team/center ID
+    statut: 'C'               // Status: C = Confirmed
+  };
+  console.log('Appointment data:', appointmentData);
+
+  const appointment = await smartAgendaRequest('/pdo_events', {
+    method: 'POST',
+    body: JSON.stringify(appointmentData)
+  });
+
+  console.log('✅ Appointment created successfully:', appointment.id);
 
   return {
     success: true,
-    bookingId: event.id,
-    clientId: clientId,
-    event: event
+    appointmentId: appointment.id,
+    clientId: client.id,
+    message: 'Booking created successfully'
   };
 }
 
@@ -321,9 +369,9 @@ exports.handler = async (event, context) => {
         statusCode: 200,
         headers,
         body: JSON.stringify({
-          status: 'healthy',
+          status: 'ok',
           timestamp: new Date().toISOString(),
-          service: 'smart-agenda-api'
+          tokenCached: !!tokenCache.token
         })
       };
     }
@@ -350,6 +398,7 @@ exports.handler = async (event, context) => {
       headers,
       body: JSON.stringify({
         error: error.message,
+        details: error.toString(),
         timestamp: new Date().toISOString()
       })
     };
