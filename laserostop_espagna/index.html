@@ -1,0 +1,2239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LaserOstop España - Reserve su cita</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<style>
+    .material-icons {
+      vertical-align: middle;
+    }
+
+    /* Map container */
+    #spain-map-container {
+      position: relative;
+      width: 100%;
+      height: 600px;
+      border-radius: 1rem;
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    }
+
+    #spain-map {
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    /* Custom marker styles */
+    .custom-marker {
+      background-color: #22A9AF;
+      width: 30px;
+      height: 30px;
+      border-radius: 50% 50% 50% 0;
+      transform: rotate(-45deg);
+      border: 3px solid white;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    .custom-marker::after {
+      content: '';
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: white;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    /* Leaflet popup customization */
+    .leaflet-popup-content-wrapper {
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .leaflet-popup-content {
+      margin: 16px;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .leaflet-popup-content h3 {
+      color: #22A9AF;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    /* Reviews Carousel Animations */
+    @keyframes scroll-left {
+      0% {
+        transform: translateX(0);
+      }
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+
+    @keyframes scroll-right {
+      0% {
+        transform: translateX(-50%);
+      }
+      100% {
+        transform: translateX(0);
+      }
+    }
+
+    .carousel-track {
+      display: flex;
+      gap: 1.5rem;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+    }
+
+    .carousel-row-1 .carousel-track {
+      animation: scroll-left 40s linear infinite;
+    }
+
+    .carousel-row-2 .carousel-track {
+      animation: scroll-right 40s linear infinite;
+    }
+
+    .carousel-container:hover .carousel-track {
+      animation-play-state: paused;
+    }
+
+    .review-card-carousel {
+      flex: 0 0 350px;
+      min-width: 350px;
+    }
+  </style>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#22A9AF",
+            "background-light": "#FFFFFF",
+            "background-dark": "#121212",
+            "text-light": "#374151",
+            "text-dark": "#E5E7EB",
+            "border-light": "#E5E7EB",
+            "border-dark": "#374151",
+          },
+          fontFamily: {
+            display: ["Poppins", "sans-serif"],
+          },
+          borderRadius: {
+            DEFAULT: "0.5rem",
+          },
+        },
+      },
+    };
+  </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-text-light dark:text-text-dark">
+<div class="min-h-screen flex flex-col">
+
+<!-- Logo Header -->
+<header class="bg-white dark:bg-gray-900 shadow-sm">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
+<div class="flex justify-center">
+<img src="assets/logolaserostop-bleu.svg" alt="LaserOstop España" class="h-16 sm:h-20 w-auto"/>
+</div>
+</div>
+</header>
+
+<main class="flex-grow">
+<section class="relative py-20 sm:py-32 bg-cover bg-center" style="background-image: url('assets/cigarettes.png');">
+<div class="absolute inset-0 bg-black opacity-40"></div>
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 relative text-center">
+<h1 class="text-4xl sm:text-5xl md:text-6xl font-bold text-white leading-tight mb-8">Reserve su cita hoy mismo <br class="hidden sm:block"/> para dejar de fumar suavemente</h1>
+<button id="hero-cta-btn" class="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white font-semibold text-lg px-8 py-4 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
+<span class="material-icons">event_available</span>
+<span>Reservar mi cita</span>
+</button>
+</div>
+</section>
+
+<section class="bg-gray-50 dark:bg-gray-800 py-6">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex flex-wrap justify-center items-center gap-x-8 gap-y-4 text-center">
+<div class="flex items-center text-primary">
+<span class="material-icons mr-2">check_circle</span>
+<span class="font-medium text-text-light dark:text-text-dark">Indoloro y sin peligro</span>
+</div>
+<div class="flex items-center text-primary">
+<span class="material-icons mr-2">check_circle</span>
+<span class="font-medium text-text-light dark:text-text-dark">Sin aumento de peso</span>
+</div>
+<div class="flex items-center text-primary">
+<span class="material-icons mr-2">check_circle</span>
+<span class="font-medium text-text-light dark:text-text-dark">Sin efectos secundarios</span>
+</div>
+</div>
+</div>
+</section>
+
+<section class="py-16 sm:py-24" id="booking">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="max-w-4xl mx-auto bg-background-light dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden">
+<div class="p-8 sm:p-12">
+<div id="booking-form">
+<div class="mb-8" id="step-1">
+<h2 class="text-2xl font-semibold mb-4 text-text-light dark:text-text-dark"><span class="text-primary mr-3">1.</span>Elija su centro</h2>
+<div class="relative">
+<span class="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">place</span>
+<select id="center-select" class="w-full pl-12 pr-4 py-3 border border-border-light dark:border-border-dark rounded-full bg-transparent focus:ring-primary focus:border-primary transition">
+<option value="">Seleccione un centro...</option>
+<!-- Centers are dynamically loaded from Smart Agenda API -->
+<!-- Only 8 centers available: Barcelona Sants, Madrid Atocha, Madrid Chamartín, Majadahonda, San Sebastián, Sevilla, Torrejón, Valencia -->
+</select>
+</div>
+</div>
+<div class="mb-8 hidden" id="step-1b">
+<h2 class="text-2xl font-semibold mb-4 text-text-light dark:text-text-dark"><span class="text-primary mr-3">2.</span>Tipo de sesión</h2>
+<div class="relative">
+<span class="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">healing</span>
+<select id="booking-type-select" class="w-full pl-12 pr-4 py-3 border border-border-light dark:border-border-dark rounded-full bg-transparent focus:ring-primary focus:border-primary transition">
+<option value="">Seleccione el tipo de sesión...</option>
+</select>
+</div>
+<!-- Info box for selected type -->
+<div id="booking-type-info" class="hidden mt-4 p-4 bg-primary/10 border border-primary/30 rounded-lg">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+<div class="flex items-center">
+<span class="material-icons text-primary mr-2 text-lg">schedule</span>
+<div>
+<p class="text-gray-500 dark:text-gray-400 text-xs">Duración</p>
+<p id="type-duration" class="font-semibold text-text-light dark:text-text-dark">-</p>
+</div>
+</div>
+<div class="flex items-center">
+<span class="material-icons text-primary mr-2 text-lg">euro</span>
+<div>
+<p class="text-gray-500 dark:text-gray-400 text-xs">Precio</p>
+<p id="type-price" class="font-semibold text-text-light dark:text-text-dark">-</p>
+</div>
+</div>
+<div class="flex items-center">
+<span class="material-icons text-primary mr-2 text-lg">info</span>
+<div>
+<p class="text-gray-500 dark:text-gray-400 text-xs">Descripción</p>
+<p id="type-description" class="font-semibold text-text-light dark:text-text-dark text-xs">-</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="mb-8 hidden" id="step-2">
+<h2 class="text-2xl font-semibold mb-4 text-text-light dark:text-text-dark"><span class="text-primary mr-3">3.</span>Elija una fecha y una hora</h2>
+<div class="bg-gray-50 dark:bg-gray-700/50 p-6 rounded-lg">
+<div class="flex justify-between items-center mb-4">
+<button id="prev-month" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition"><span class="material-icons">chevron_left</span></button>
+<h3 id="current-month" class="text-lg font-semibold"></h3>
+<button id="next-month" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition"><span class="material-icons">chevron_right</span></button>
+</div>
+<div class="grid grid-cols-7 gap-2 text-center mb-2">
+<div class="text-gray-500 text-sm font-medium">Lu</div>
+<div class="text-gray-500 text-sm font-medium">Ma</div>
+<div class="text-gray-500 text-sm font-medium">Mi</div>
+<div class="text-gray-500 text-sm font-medium">Ju</div>
+<div class="text-gray-500 text-sm font-medium">Vi</div>
+<div class="text-gray-500 text-sm font-medium">Sa</div>
+<div class="text-gray-500 text-sm font-medium">Do</div>
+</div>
+<div id="calendar-grid" class="grid grid-cols-7 gap-2 text-center">
+<!-- Calendar days will be generated here -->
+</div>
+<div class="mt-6" id="time-slots-section">
+<h4 class="font-semibold mb-3 text-text-light dark:text-text-dark">Horarios disponibles</h4>
+<div id="selected-date-info" class="text-sm text-gray-600 dark:text-gray-400 mb-3"></div>
+<div id="time-slots" class="grid grid-cols-3 sm:grid-cols-4 gap-2">
+<!-- Time slots will be generated here -->
+</div>
+</div>
+</div>
+</div>
+<div class="mb-8 hidden" id="step-3">
+<h2 class="text-2xl font-semibold mb-4 text-text-light dark:text-text-dark"><span class="text-primary mr-3">4.</span>Sus datos</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="relative">
+<span class="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">person</span>
+<input id="full-name" class="w-full pl-12 pr-4 py-3 border border-border-light dark:border-border-dark rounded-full bg-transparent focus:ring-primary focus:border-primary transition" placeholder="Nombre completo *" type="text" required/>
+</div>
+<div class="relative">
+<span class="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">email</span>
+<input id="email" class="w-full pl-12 pr-4 py-3 border border-border-light dark:border-border-dark rounded-full bg-transparent focus:ring-primary focus:border-primary transition" placeholder="Correo electrónico *" type="email" required/>
+</div>
+<div class="relative md:col-span-2">
+<span class="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">phone</span>
+<input id="phone" class="w-full pl-12 pr-4 py-3 border border-border-light dark:border-border-dark rounded-full bg-transparent focus:ring-primary focus:border-primary transition" placeholder="Número de teléfono *" type="tel" required/>
+</div>
+</div>
+</div>
+<div id="step-4" class="hidden">
+<button class="w-full bg-primary text-white py-4 px-8 rounded-full font-semibold text-lg hover:bg-opacity-90 transition-all duration-300 transform hover:scale-105 flex items-center justify-center" onclick="showConfirmation(event)">
+<span class="material-icons mr-2">event_available</span> Confirmar la cita
+                  </button>
+</div>
+</div>
+<div class="hidden text-center py-12" id="confirmation-message">
+<div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+<span class="material-icons text-4xl text-green-500">check</span>
+</div>
+<h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-4">¡Cita confirmada!</h2>
+<p class="text-lg text-gray-600 dark:text-gray-300 mb-2">Se ha enviado un correo de confirmación a su dirección.</p>
+<p class="text-gray-500 dark:text-gray-400">Estaremos encantados de recibirle en el centro <strong>LaserOstop Valencia</strong> el <strong>15 de Octubre de 2025 a las 11:30</strong>.</p>
+</div>
+
+<!-- Payment Options Popup (Modal) -->
+<div id="payment-popup" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+<div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+<div class="p-6 sm:p-8">
+<!-- Header -->
+<div class="text-center mb-6">
+<div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+<span class="material-icons text-4xl text-primary">credit_card</span>
+</div>
+<h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">¿Sabías que puedes obtener un descuento?</h3>
+<p class="text-gray-600 dark:text-gray-300">Elige cómo prefieres pagar tu sesión</p>
+</div>
+
+<!-- Payment Options -->
+<div class="space-y-4">
+<!-- Option 1: Pay at Center (Default - Already Selected) -->
+<div class="border-2 border-primary bg-primary/5 rounded-xl p-6 relative">
+<div class="absolute top-4 right-4">
+<span class="bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">SELECCIONADO</span>
+</div>
+<div class="flex items-start">
+<span class="material-icons text-primary text-3xl mr-4">store</span>
+<div class="flex-1">
+<h4 class="font-bold text-lg text-gray-800 dark:text-white mb-1">Pagar en el centro</h4>
+<p class="text-gray-600 dark:text-gray-300 text-sm mb-2">Paga el día de tu cita</p>
+<div class="flex items-baseline">
+<span id="popup-center-price" class="text-3xl font-bold text-primary">€190</span>
+<span class="text-gray-500 ml-2 text-sm">Precio estándar</span>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Option 2: Pay Online Once (Discount) -->
+<div class="border-2 border-gray-200 dark:border-gray-700 hover:border-primary rounded-xl p-6 cursor-pointer transition-all" onclick="selectPaymentOption(2)">
+<div class="flex items-start">
+<span class="material-icons text-purple-600 text-3xl mr-4">flash_on</span>
+<div class="flex-1">
+<div class="flex items-center mb-1">
+<h4 class="font-bold text-lg text-gray-800 dark:text-white">Pagar online ahora</h4>
+<span class="ml-2 bg-purple-100 text-purple-700 text-xs font-bold px-2 py-1 rounded">20€ DESCUENTO</span>
+</div>
+<p class="text-gray-600 dark:text-gray-300 text-sm mb-2">Pago único con descuento inmediato</p>
+<div class="flex items-baseline">
+<span id="popup-online-price" class="text-3xl font-bold text-purple-600">€170</span>
+<span class="text-gray-400 line-through ml-2">€190</span>
+<span class="text-green-600 ml-2 text-sm font-semibold">Ahorras €20</span>
+</div>
+<button class="mt-4 w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center">
+<span class="material-icons mr-2">payment</span>
+Pagar €<span id="popup-online-btn-price">170</span> ahora
+</button>
+</div>
+</div>
+</div>
+
+<!-- Option 3: Pay in 3 Installments -->
+<div class="border-2 border-gray-200 dark:border-gray-700 hover:border-primary rounded-xl p-6 cursor-pointer transition-all" onclick="selectPaymentOption(3)">
+<div class="flex items-start">
+<span class="material-icons text-blue-600 text-3xl mr-4">calendar_today</span>
+<div class="flex-1">
+<h4 class="font-bold text-lg text-gray-800 dark:text-white mb-1">Pagar en 3 cuotas mensuales</h4>
+<p class="text-gray-600 dark:text-gray-300 text-sm mb-2">Facilita el pago dividiéndolo en 3 meses</p>
+<div class="flex items-baseline mb-2">
+<span class="text-2xl font-bold text-blue-600">3 ×</span>
+<span id="popup-monthly-price" class="text-3xl font-bold text-blue-600 ml-2">€65</span>
+<span class="text-gray-500 ml-2 text-sm">/mes</span>
+</div>
+<p class="text-gray-500 text-xs mb-4">Total: €<span id="popup-monthly-total">195</span></p>
+<button class="mt-2 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center">
+<span class="material-icons mr-2">schedule</span>
+Pagar en 3 cuotas
+</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Close Button -->
+<div class="mt-6 text-center">
+<button onclick="closePaymentPopup()" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 font-medium">
+Cerrar y continuar con pago en centro
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<section class="bg-gray-50 dark:bg-gray-900/50 py-16 sm:py-24">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<h2 class="text-3xl font-bold text-center mb-10 text-text-light dark:text-text-dark">Nuestros centros cerca de usted</h2>
+<div id="spain-map-container" class="rounded-lg overflow-hidden shadow-xl">
+<div id="spain-map"></div>
+</div>
+</div>
+</section>
+
+<!-- Google Reviews Section - Infinite Scroll Carousel -->
+<section class="bg-white dark:bg-gray-800 py-16 sm:py-24 overflow-hidden">
+<div class="max-w-7xl mx-auto">
+<!-- Section Header -->
+<div class="text-center mb-12 px-4 sm:px-6 lg:px-8">
+<h2 class="text-3xl sm:text-4xl font-bold text-text-light dark:text-text-dark mb-4">Lo que dicen nuestros clientes</h2>
+<p class="text-lg text-gray-600 dark:text-gray-400 mb-6">Más de 1,000 personas han dejado de fumar con LaserOstop</p>
+
+<!-- Google Rating Aggregate -->
+<div class="flex items-center justify-center gap-3 mb-2">
+<img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png" alt="Google" class="h-6 opacity-80">
+<div class="flex items-baseline gap-2">
+<span class="text-4xl font-bold text-primary">4.8</span>
+<div class="flex text-yellow-400 text-2xl">
+<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+</div>
+</div>
+</div>
+<p class="text-gray-500 dark:text-gray-400 text-sm">(1,234 reseñas verificadas)</p>
+</div>
+
+<!-- Carousel Row 1 - Scrolls Left -->
+<div class="carousel-container carousel-row-1 mb-6">
+<div class="carousel-track">
+<!-- Original 6 reviews -->
+<article class="review-card-carousel bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-shadow">
+<div class="flex items-start gap-4 mb-4">
+<img src="https://ui-avatars.com/api/?name=Mauricio+M&background=22A9AF&color=fff&size=48" alt="Mauricio M." class="w-12 h-12 rounded-full flex-shrink-0">
+<div class="flex-1 min-w-0">
+<h3 class="font-semibold text-text-light dark:text-text-dark">Mauricio M.</h3>
+<div class="flex items-center gap-2 mt-1">
+<div class="flex text-yellow-400 text-sm">
+<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+</div>
+<span class="text-xs text-gray-500 dark:text-gray-400">Hace 6 meses</span>
+</div>
+</div>
+</div>
+<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+Después de 42 años fumando logré dejarlo gracias a Nabila. El tratamiento fue cómodo, sin ansiedad y realmente efectivo.
+</p>
+</article>
+
+<article class="review-card-carousel bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-shadow">
+<div class="flex items-start gap-4 mb-4">
+<img src="https://ui-avatars.com/api/?name=Raul+L&background=843ed4&color=fff&size=48" alt="Raul L." class="w-12 h-12 rounded-full flex-shrink-0">
+<div class="flex-1 min-w-0">
+<h3 class="font-semibold text-text-light dark:text-text-dark">Raul L.</h3>
+<div class="flex items-center gap-2 mt-1">
+<div class="flex text-yellow-400 text-sm">
+<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+</div>
+<span class="text-xs text-gray-500 dark:text-gray-400">Hace 1 semana</span>
+</div>
+</div>
+</div>
+<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+Muy contento con el tratamiento de Nabila. Dejé de fumar de un día para otro y me siento completamente renovado.
+</p>
+</article>
+
+<article class="review-card-carousel bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-shadow">
+<div class="flex items-start gap-4 mb-4">
+<img src="https://ui-avatars.com/api/?name=Alexandre+M&background=f59e0b&color=fff&size=48" alt="Alexandre M." class="w-12 h-12 rounded-full flex-shrink-0">
+<div class="flex-1 min-w-0">
+<h3 class="font-semibold text-text-light dark:text-text-dark">Alexandre M.</h3>
+<div class="flex items-center gap-2 mt-1">
+<div class="flex text-yellow-400 text-sm">
+<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+</div>
+<span class="text-xs text-gray-500 dark:text-gray-400">Hace 2 días</span>
+</div>
+</div>
+</div>
+<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+Tras varios intentos fallidos probé el láser y funcionó de inmediato. Cero ansiedad y sin ganas de fumar. Excelente atención.
+</p>
+</article>
+
+<article class="review-card-carousel bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-shadow">
+<div class="flex items-start gap-4 mb-4">
+<img src="https://ui-avatars.com/api/?name=Victoria+G&background=10b981&color=fff&size=48" alt="Victoria G." class="w-12 h-12 rounded-full flex-shrink-0">
+<div class="flex-1 min-w-0">
+<h3 class="font-semibold text-text-light dark:text-text-dark">Victoria G.</h3>
+<div class="flex items-center gap-2 mt-1">
+<div class="flex text-yellow-400 text-sm">
+<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+</div>
+<span class="text-xs text-gray-500 dark:text-gray-400">Hace 4 meses</span>
+</div>
+</div>
+</div>
+<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+Fui con mi marido para el tratamiento y ha sido un éxito. En dos semanas sin fumar, ambos muy satisfechos con el resultado.
+</p>
+</article>
+
+<article class="review-card-carousel bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-shadow">
+<div class="flex items-start gap-4 mb-4">
+<img src="https://ui-avatars.com/api/?name=Cristina+B&background=ef4444&color=fff&size=48" alt="Cristina B." class="w-12 h-12 rounded-full flex-shrink-0">
+<div class="flex-1 min-w-0">
+<h3 class="font-semibold text-text-light dark:text-text-dark">Cristina B.</h3>
+<div class="flex items-center gap-2 mt-1">
+<div class="flex text-yellow-400 text-sm">
+<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+</div>
+<span class="text-xs text-gray-500 dark:text-gray-400">Hace 2 semanas</span>
+</div>
+</div>
+</div>
+<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+Estoy encantada con el método. Fui sin expectativas y en dos semanas dejé de fumar. Trato profesional y humano.
+</p>
+</article>
+
+<article class="review-card-carousel bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-shadow">
+<div class="flex items-start gap-4 mb-4">
+<img src="https://ui-avatars.com/api/?name=Nuria+M&background=6366f1&color=fff&size=48" alt="Nuria M." class="w-12 h-12 rounded-full flex-shrink-0">
+<div class="flex-1 min-w-0">
+<h3 class="font-semibold text-text-light dark:text-text-dark">Nuria M.</h3>
+<div class="flex items-center gap-2 mt-1">
+<div class="flex text-yellow-400 text-sm">
+<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+</div>
+<span class="text-xs text-gray-500 dark:text-gray-400">Hace 4 meses</span>
+</div>
+</div>
+</div>
+<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+Nabila me explicó todo con claridad. La sesión fue relajante, sin dolor, y desde entonces no he vuelto a tener ganas de fumar.
+</p>
+</article>
+
+<!-- Duplicate for seamless loop -->
+<article class="review-card-carousel bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-shadow">
+<div class="flex items-start gap-4 mb-4">
+<img src="https://ui-avatars.com/api/?name=Mauricio+M&background=22A9AF&color=fff&size=48" alt="Mauricio M." class="w-12 h-12 rounded-full flex-shrink-0">
+<div class="flex-1 min-w-0">
+<h3 class="font-semibold text-text-light dark:text-text-dark">Mauricio M.</h3>
+<div class="flex items-center gap-2 mt-1">
+<div class="flex text-yellow-400 text-sm">
+<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+</div>
+<span class="text-xs text-gray-500 dark:text-gray-400">Hace 6 meses</span>
+</div>
+</div>
+</div>
+<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+Después de 42 años fumando logré dejarlo gracias a Nabila. El tratamiento fue cómodo, sin ansiedad y realmente efectivo.
+</p>
+</article>
+
+<article class="review-card-carousel bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-shadow">
+<div class="flex items-start gap-4 mb-4">
+<img src="https://ui-avatars.com/api/?name=Raul+L&background=843ed4&color=fff&size=48" alt="Raul L." class="w-12 h-12 rounded-full flex-shrink-0">
+<div class="flex-1 min-w-0">
+<h3 class="font-semibold text-text-light dark:text-text-dark">Raul L.</h3>
+<div class="flex items-center gap-2 mt-1">
+<div class="flex text-yellow-400 text-sm">
+<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+</div>
+<span class="text-xs text-gray-500 dark:text-gray-400">Hace 1 semana</span>
+</div>
+</div>
+</div>
+<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+Muy contento con el tratamiento de Nabila. Dejé de fumar de un día para otro y me siento completamente renovado.
+</p>
+</article>
+
+<article class="review-card-carousel bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-shadow">
+<div class="flex items-start gap-4 mb-4">
+<img src="https://ui-avatars.com/api/?name=Alexandre+M&background=f59e0b&color=fff&size=48" alt="Alexandre M." class="w-12 h-12 rounded-full flex-shrink-0">
+<div class="flex-1 min-w-0">
+<h3 class="font-semibold text-text-light dark:text-text-dark">Alexandre M.</h3>
+<div class="flex items-center gap-2 mt-1">
+<div class="flex text-yellow-400 text-sm">
+<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+</div>
+<span class="text-xs text-gray-500 dark:text-gray-400">Hace 2 días</span>
+</div>
+</div>
+</div>
+<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+Tras varios intentos fallidos probé el láser y funcionó de inmediato. Cero ansiedad y sin ganas de fumar. Excelente atención.
+</p>
+</article>
+
+<article class="review-card-carousel bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-shadow">
+<div class="flex items-start gap-4 mb-4">
+<img src="https://ui-avatars.com/api/?name=Victoria+G&background=10b981&color=fff&size=48" alt="Victoria G." class="w-12 h-12 rounded-full flex-shrink-0">
+<div class="flex-1 min-w-0">
+<h3 class="font-semibold text-text-light dark:text-text-dark">Victoria G.</h3>
+<div class="flex items-center gap-2 mt-1">
+<div class="flex text-yellow-400 text-sm">
+<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+</div>
+<span class="text-xs text-gray-500 dark:text-gray-400">Hace 4 meses</span>
+</div>
+</div>
+</div>
+<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+Fui con mi marido para el tratamiento y ha sido un éxito. En dos semanas sin fumar, ambos muy satisfechos con el resultado.
+</p>
+</article>
+
+<article class="review-card-carousel bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-shadow">
+<div class="flex items-start gap-4 mb-4">
+<img src="https://ui-avatars.com/api/?name=Cristina+B&background=ef4444&color=fff&size=48" alt="Cristina B." class="w-12 h-12 rounded-full flex-shrink-0">
+<div class="flex-1 min-w-0">
+<h3 class="font-semibold text-text-light dark:text-text-dark">Cristina B.</h3>
+<div class="flex items-center gap-2 mt-1">
+<div class="flex text-yellow-400 text-sm">
+<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+</div>
+<span class="text-xs text-gray-500 dark:text-gray-400">Hace 2 semanas</span>
+</div>
+</div>
+</div>
+<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+Estoy encantada con el método. Fui sin expectativas y en dos semanas dejé de fumar. Trato profesional y humano.
+</p>
+</article>
+
+<article class="review-card-carousel bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-shadow">
+<div class="flex items-start gap-4 mb-4">
+<img src="https://ui-avatars.com/api/?name=Nuria+M&background=6366f1&color=fff&size=48" alt="Nuria M." class="w-12 h-12 rounded-full flex-shrink-0">
+<div class="flex-1 min-w-0">
+<h3 class="font-semibold text-text-light dark:text-text-dark">Nuria M.</h3>
+<div class="flex items-center gap-2 mt-1">
+<div class="flex text-yellow-400 text-sm">
+<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+</div>
+<span class="text-xs text-gray-500 dark:text-gray-400">Hace 4 meses</span>
+</div>
+</div>
+</div>
+<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+Nabila me explicó todo con claridad. La sesión fue relajante, sin dolor, y desde entonces no he vuelto a tener ganas de fumar.
+</p>
+</article>
+</div>
+</div>
+
+<!-- Carousel Row 2 - Scrolls Right -->
+<div class="carousel-container carousel-row-2">
+<div class="carousel-track">
+<!-- Different 6 reviews -->
+<article class="review-card-carousel bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-shadow">
+<div class="flex items-start gap-4 mb-4">
+<img src="https://ui-avatars.com/api/?name=Maya+Rodriguez&background=8b5cf6&color=fff&size=48" alt="Maya Rodriguez" class="w-12 h-12 rounded-full flex-shrink-0">
+<div class="flex-1 min-w-0">
+<h3 class="font-semibold text-text-light dark:text-text-dark">Maya Rodriguez</h3>
+<div class="flex items-center gap-2 mt-1">
+<div class="flex text-yellow-400 text-sm">
+<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+</div>
+<span class="text-xs text-gray-500 dark:text-gray-400">Hace 8 meses</span>
+</div>
+</div>
+</div>
+<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+Fumé desde los 14 años y con Láser Stop logré dejarlo después de más de 40 años fumando. El método redujo mi ansiedad y Nabila fue muy cercana.
+</p>
+</article>
+
+<article class="review-card-carousel bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-shadow">
+<div class="flex items-start gap-4 mb-4">
+<img src="https://ui-avatars.com/api/?name=Paito+Luque&background=ec4899&color=fff&size=48" alt="Paito Luque" class="w-12 h-12 rounded-full flex-shrink-0">
+<div class="flex-1 min-w-0">
+<h3 class="font-semibold text-text-light dark:text-text-dark">Paito Luque</h3>
+<div class="flex items-center gap-2 mt-1">
+<div class="flex text-yellow-400 text-sm">
+<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+</div>
+<span class="text-xs text-gray-500 dark:text-gray-400">Hace 6 meses</span>
+</div>
+</div>
+</div>
+<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+La sesión fue relajante y sin dolor. Llevo once días sin fumar, duermo mejor y me siento más tranquila. Recomiendo Láser Stop al cien por cien.
+</p>
+</article>
+
+<article class="review-card-carousel bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-shadow">
+<div class="flex items-start gap-4 mb-4">
+<img src="https://ui-avatars.com/api/?name=Alexi+Vela&background=14b8a6&color=fff&size=48" alt="Alexi Vela Pinargote" class="w-12 h-12 rounded-full flex-shrink-0">
+<div class="flex-1 min-w-0">
+<h3 class="font-semibold text-text-light dark:text-text-dark">Alexi Vela Pinargote</h3>
+<div class="flex items-center gap-2 mt-1">
+<div class="flex text-yellow-400 text-sm">
+<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+</div>
+<span class="text-xs text-gray-500 dark:text-gray-400">Hace 7 meses</span>
+</div>
+</div>
+</div>
+<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+Atención impecable y trato muy amable. Ocho días sin fumar y sin ansiedad. El procedimiento fue claro y sin molestias. Lo recomiendo con confianza.
+</p>
+</article>
+
+<article class="review-card-carousel bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-shadow">
+<div class="flex items-start gap-4 mb-4">
+<img src="https://ui-avatars.com/api/?name=Mireia+Gubern&background=f97316&color=fff&size=48" alt="Mireia Gubern" class="w-12 h-12 rounded-full flex-shrink-0">
+<div class="flex-1 min-w-0">
+<h3 class="font-semibold text-text-light dark:text-text-dark">Mireia Gubern</h3>
+<div class="flex items-center gap-2 mt-1">
+<div class="flex text-yellow-400 text-sm">
+<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+</div>
+<span class="text-xs text-gray-500 dark:text-gray-400">Hace 2 meses</span>
+</div>
+</div>
+</div>
+<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+Muy buena experiencia y totalmente recomendable. Seis meses sin fumar después de muchos años. Gracias a Láser Stop Barcelona por su ayuda.
+</p>
+</article>
+
+<article class="review-card-carousel bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-shadow">
+<div class="flex items-start gap-4 mb-4">
+<img src="https://ui-avatars.com/api/?name=Ana+Fuente&background=06b6d4&color=fff&size=48" alt="Ana Fuente" class="w-12 h-12 rounded-full flex-shrink-0">
+<div class="flex-1 min-w-0">
+<h3 class="font-semibold text-text-light dark:text-text-dark">Ana Fuente</h3>
+<div class="flex items-center gap-2 mt-1">
+<div class="flex text-yellow-400 text-sm">
+<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+</div>
+<span class="text-xs text-gray-500 dark:text-gray-400">Hace 7 meses</span>
+</div>
+</div>
+</div>
+<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+Sigo sin fumar y mi ansiedad ha desaparecido. Había probado de todo sin éxito, pero este método realmente funciona. Solo hay que querer hacerlo.
+</p>
+</article>
+
+<article class="review-card-carousel bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-shadow">
+<div class="flex items-start gap-4 mb-4">
+<img src="https://ui-avatars.com/api/?name=Dori+Pascual&background=a855f7&color=fff&size=48" alt="Dori Pascual" class="w-12 h-12 rounded-full flex-shrink-0">
+<div class="flex-1 min-w-0">
+<h3 class="font-semibold text-text-light dark:text-text-dark">Dori Pascual</h3>
+<div class="flex items-center gap-2 mt-1">
+<div class="flex text-yellow-400 text-sm">
+<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+</div>
+<span class="text-xs text-gray-500 dark:text-gray-400">Hace 4 meses</span>
+</div>
+</div>
+</div>
+<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me siento feliz. Gracias Nabila por tu profesionalidad y apoyo.
+</p>
+</article>
+
+<!-- Duplicate for seamless loop -->
+<article class="review-card-carousel bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-shadow">
+<div class="flex items-start gap-4 mb-4">
+<img src="https://ui-avatars.com/api/?name=Maya+Rodriguez&background=8b5cf6&color=fff&size=48" alt="Maya Rodriguez" class="w-12 h-12 rounded-full flex-shrink-0">
+<div class="flex-1 min-w-0">
+<h3 class="font-semibold text-text-light dark:text-text-dark">Maya Rodriguez</h3>
+<div class="flex items-center gap-2 mt-1">
+<div class="flex text-yellow-400 text-sm">
+<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+</div>
+<span class="text-xs text-gray-500 dark:text-gray-400">Hace 8 meses</span>
+</div>
+</div>
+</div>
+<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+Fumé desde los 14 años y con Láser Stop logré dejarlo después de más de 40 años fumando. El método redujo mi ansiedad y Nabila fue muy cercana.
+</p>
+</article>
+
+<article class="review-card-carousel bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-shadow">
+<div class="flex items-start gap-4 mb-4">
+<img src="https://ui-avatars.com/api/?name=Paito+Luque&background=ec4899&color=fff&size=48" alt="Paito Luque" class="w-12 h-12 rounded-full flex-shrink-0">
+<div class="flex-1 min-w-0">
+<h3 class="font-semibold text-text-light dark:text-text-dark">Paito Luque</h3>
+<div class="flex items-center gap-2 mt-1">
+<div class="flex text-yellow-400 text-sm">
+<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+</div>
+<span class="text-xs text-gray-500 dark:text-gray-400">Hace 6 meses</span>
+</div>
+</div>
+</div>
+<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+La sesión fue relajante y sin dolor. Llevo once días sin fumar, duermo mejor y me siento más tranquila. Recomiendo Láser Stop al cien por cien.
+</p>
+</article>
+
+<article class="review-card-carousel bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-shadow">
+<div class="flex items-start gap-4 mb-4">
+<img src="https://ui-avatars.com/api/?name=Alexi+Vela&background=14b8a6&color=fff&size=48" alt="Alexi Vela Pinargote" class="w-12 h-12 rounded-full flex-shrink-0">
+<div class="flex-1 min-w-0">
+<h3 class="font-semibold text-text-light dark:text-text-dark">Alexi Vela Pinargote</h3>
+<div class="flex items-center gap-2 mt-1">
+<div class="flex text-yellow-400 text-sm">
+<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+</div>
+<span class="text-xs text-gray-500 dark:text-gray-400">Hace 7 meses</span>
+</div>
+</div>
+</div>
+<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+Atención impecable y trato muy amable. Ocho días sin fumar y sin ansiedad. El procedimiento fue claro y sin molestias. Lo recomiendo con confianza.
+</p>
+</article>
+
+<article class="review-card-carousel bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-shadow">
+<div class="flex items-start gap-4 mb-4">
+<img src="https://ui-avatars.com/api/?name=Mireia+Gubern&background=f97316&color=fff&size=48" alt="Mireia Gubern" class="w-12 h-12 rounded-full flex-shrink-0">
+<div class="flex-1 min-w-0">
+<h3 class="font-semibold text-text-light dark:text-text-dark">Mireia Gubern</h3>
+<div class="flex items-center gap-2 mt-1">
+<div class="flex text-yellow-400 text-sm">
+<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+</div>
+<span class="text-xs text-gray-500 dark:text-gray-400">Hace 2 meses</span>
+</div>
+</div>
+</div>
+<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+Muy buena experiencia y totalmente recomendable. Seis meses sin fumar después de muchos años. Gracias a Láser Stop Barcelona por su ayuda.
+</p>
+</article>
+
+<article class="review-card-carousel bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-shadow">
+<div class="flex items-start gap-4 mb-4">
+<img src="https://ui-avatars.com/api/?name=Ana+Fuente&background=06b6d4&color=fff&size=48" alt="Ana Fuente" class="w-12 h-12 rounded-full flex-shrink-0">
+<div class="flex-1 min-w-0">
+<h3 class="font-semibold text-text-light dark:text-text-dark">Ana Fuente</h3>
+<div class="flex items-center gap-2 mt-1">
+<div class="flex text-yellow-400 text-sm">
+<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+</div>
+<span class="text-xs text-gray-500 dark:text-gray-400">Hace 7 meses</span>
+</div>
+</div>
+</div>
+<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+Sigo sin fumar y mi ansiedad ha desaparecido. Había probado de todo sin éxito, pero este método realmente funciona. Solo hay que querer hacerlo.
+</p>
+</article>
+
+<article class="review-card-carousel bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-shadow">
+<div class="flex items-start gap-4 mb-4">
+<img src="https://ui-avatars.com/api/?name=Dori+Pascual&background=a855f7&color=fff&size=48" alt="Dori Pascual" class="w-12 h-12 rounded-full flex-shrink-0">
+<div class="flex-1 min-w-0">
+<h3 class="font-semibold text-text-light dark:text-text-dark">Dori Pascual</h3>
+<div class="flex items-center gap-2 mt-1">
+<div class="flex text-yellow-400 text-sm">
+<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+</div>
+<span class="text-xs text-gray-500 dark:text-gray-400">Hace 4 meses</span>
+</div>
+</div>
+</div>
+<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me siento feliz. Gracias Nabila por tu profesionalidad y apoyo.
+</p>
+</article>
+</div>
+</div>
+
+</div>
+</section>
+
+</main>
+
+<!-- WhatsApp Floating Button -->
+<a href="https://wa.me/34689560130" target="_blank" rel="noopener noreferrer" class="fixed bottom-6 right-6 z-50 bg-green-500 hover:bg-green-600 text-white rounded-full p-4 shadow-2xl transition-all duration-300 transform hover:scale-110 flex items-center justify-center group" aria-label="Contactar por WhatsApp">
+  <!-- WhatsApp Icon (SVG) -->
+  <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+  </svg>
+  <!-- Tooltip on hover -->
+  <span class="absolute right-full mr-3 bg-gray-800 text-white text-sm font-medium px-3 py-2 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+    ¿Necesitas ayuda? Chatea con nosotros
+  </span>
+</a>
+
+</div>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+<script>
+    // Centers data with real GPS coordinates
+    // Only 8 centers available in Smart Agenda (removed: Alicante, Barcelona Gràcia, Terrassa)
+    const centers = {
+      'barcelona-sants': {
+        lat: 41.3784, lng: 2.1366,
+        name: 'LaserOstop Barcelona Sants',
+        address: 'Carrer de Galileu, 65, Sants-Montjuïc, 08028, Barcelona',
+        hours: '08:00 - 18:00',
+        phone: '+34 689 560 130'
+      },
+      'madrid-atocha': {
+        lat: 40.3940, lng: -3.6835,
+        name: 'LaserOstop Madrid Atocha',
+        address: 'Calle Canarias 26, Atocha, 28045, Madrid',
+        hours: '10:00 - 19:00',
+        phone: '+34 613 255 948'
+      },
+      'madrid-chamartin': {
+        lat: 40.4640, lng: -3.6783,
+        name: 'LaserOstop Madrid Chamartín',
+        address: 'Calle de Oruro, 9, Chamartín, 28016, Madrid',
+        hours: '09:00 - 16:00',
+        phone: '+34 919 305 313'
+      },
+      'majadahonda': {
+        lat: 40.4732, lng: -3.8714,
+        name: 'LaserOstop Majadahonda',
+        address: 'Calle del Dr Calero, 19, Centro comercial Tutti, 28220, Majadahonda',
+        hours: '09:00 - 16:00',
+        phone: '+34 919 305 313'
+      },
+      'san-sebastian': {
+        lat: 40.5485, lng: -3.6295,
+        name: 'LaserOstop San Sebastián de los Reyes',
+        address: 'Avenida de Murcia, 5, 28702, San Sebastián de los Reyes',
+        hours: '09:00 - 16:00',
+        phone: '+34 919 305 313'
+      },
+      'torrejon': {
+        lat: 40.4578, lng: -3.4763,
+        name: 'LaserOstop Torrejón de Ardoz',
+        address: 'Calle pesquera, 10, 28850, Torrejón de Ardoz',
+        hours: '09:00 - 16:00',
+        phone: '+34 919 305 313'
+      },
+      'valencia': {
+        lat: 39.4699, lng: -0.3763,
+        name: 'LaserOstop Valencia',
+        address: 'Calle San Vicente Mártir 85 planta 7, 46007, Valencia',
+        hours: '09:00 - 18:00',
+        phone: '+34 689 560 130'
+      },
+      'sevilla': {
+        lat: 37.3891, lng: -5.9845,
+        name: 'LaserOstop Sevilla',
+        address: 'Avenida Edouardo Dato 85, 41005, Sevilla',
+        hours: '09:00 - 19:00',
+        phone: '+34 689 560 130'
+      }
+    };
+
+    let map;
+
+    // Initialize Leaflet map
+    function initializeMap() {
+      // Create map centered on Spain
+      map = L.map('spain-map').setView([40.4168, -3.7038], 6);
+
+      // Add OpenStreetMap tiles (free, no API key needed)
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 19,
+        minZoom: 5
+      }).addTo(map);
+
+      // Custom marker icon
+      const customIcon = L.divIcon({
+        className: 'custom-marker',
+        iconSize: [30, 30],
+        iconAnchor: [15, 30],
+        popupAnchor: [0, -30]
+      });
+
+      // Add markers for each center
+      Object.keys(centers).forEach(centerId => {
+        const center = centers[centerId];
+
+        const marker = L.marker([center.lat, center.lng], { icon: customIcon })
+          .addTo(map);
+
+        // Create popup content
+        const popupContent = `
+          <div style="min-width: 200px;">
+            <h3 style="font-size: 16px; margin-bottom: 8px;">${center.name}</h3>
+            <p style="font-size: 13px; color: #666; margin-bottom: 4px;">
+              <span style="display: inline-block; width: 18px;">📍</span> ${center.address}
+            </p>
+            <p style="font-size: 13px; color: #666; margin-bottom: 4px;">
+              <span style="display: inline-block; width: 18px;">⏰</span> ${center.hours}
+            </p>
+            <p style="font-size: 13px; color: #666; margin-bottom: 8px;">
+              <span style="display: inline-block; width: 18px;">📞</span> ${center.phone}
+            </p>
+            <button onclick="selectCenter('${centerId}')"
+                    style="background: #22A9AF; color: white; padding: 8px 16px; border: none; border-radius: 20px; cursor: pointer; font-size: 13px; font-weight: 500; width: 100%;">
+              Seleccionar este centro
+            </button>
+          </div>
+        `;
+
+        marker.bindPopup(popupContent);
+
+        // Open popup on marker click
+        marker.on('click', function() {
+          map.setView([center.lat, center.lng], 12);
+        });
+      });
+    }
+
+    // Select center function
+    function selectCenter(centerId) {
+      const select = document.getElementById('center-select');
+      select.value = centerId;
+      select.dispatchEvent(new Event('change'));
+
+      // Close any open popups
+      map.closePopup();
+
+      // Scroll to booking form
+      document.getElementById('booking').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Validation and confirmation function
+    async function showConfirmation(event) {
+      // Prevent default if called from button
+      if (event) event.preventDefault();
+
+      // Get form inputs
+      const fullName = document.getElementById('full-name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+
+      // Validation errors array
+      const errors = [];
+
+      // Validate center selection
+      if (!bookingState.selectedCenter) {
+        errors.push('Por favor, seleccione un centro');
+      }
+
+      // Validate booking type selection
+      if (!bookingState.selectedAppointmentType) {
+        errors.push('Por favor, seleccione el tipo de sesión');
+      }
+
+      // Validate date selection
+      if (!bookingState.selectedDate) {
+        errors.push('Por favor, seleccione una fecha');
+      }
+
+      // Validate time selection
+      if (!bookingState.selectedTime) {
+        errors.push('Por favor, seleccione una hora');
+      }
+
+      // Validate full name
+      if (!fullName || fullName.length < 3) {
+        errors.push('Por favor, ingrese su nombre completo');
+      }
+
+      // Validate email
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!email || !emailRegex.test(email)) {
+        errors.push('Por favor, ingrese un correo electrónico válido');
+      }
+
+      // Validate phone
+      const phoneRegex = /^[+]?[\d\s()-]{9,}$/;
+      if (!phone || !phoneRegex.test(phone)) {
+        errors.push('Por favor, ingrese un número de teléfono válido');
+      }
+
+      // Show errors or proceed
+      if (errors.length > 0) {
+        alert('Por favor, complete todos los campos requeridos:\n\n' + errors.join('\n'));
+        return;
+      }
+
+      // Store user data in booking state
+      bookingState.fullName = fullName;
+      bookingState.email = email;
+      bookingState.phone = phone;
+
+      console.log('Final booking data:', bookingState);
+
+      // Get button reference
+      const confirmBtn = event?.target || document.querySelector('button[onclick*="showConfirmation"]');
+
+      // Submit booking to Smart Agenda API
+      try {
+        // Show loading state
+        const originalText = confirmBtn.innerHTML;
+        confirmBtn.disabled = true;
+        confirmBtn.innerHTML = '<span class="material-icons animate-spin mr-2">sync</span> Procesando...';
+
+        const result = await submitBooking();
+
+        console.log('Booking created successfully:', result);
+
+        // Update confirmation message with actual data
+        const centerName = bookingState.smartAgendaCenters.find(c => c.id === bookingState.selectedCenter)?.name || 'nuestro centro';
+        const dateStr = `${bookingState.selectedDate.getDate()} de ${monthNames[bookingState.selectedDate.getMonth()]} de ${bookingState.selectedDate.getFullYear()}`;
+
+        document.querySelector('#confirmation-message p:last-child').innerHTML =
+          `Estaremos encantados de recibirle en el centro <strong>${centerName}</strong> el <strong>${dateStr} a las ${bookingState.selectedTime}</strong>.`;
+
+        // Show confirmation
+        document.getElementById('booking-form').classList.add('hidden');
+        document.getElementById('confirmation-message').classList.remove('hidden');
+
+        // Show payment options popup after 2 seconds
+        setTimeout(() => {
+          showPaymentPopup();
+        }, 2000);
+
+      } catch (error) {
+        console.error('Booking error:', error);
+        alert('Error al crear la reserva: ' + error.message + '\n\nPor favor, inténtelo de nuevo o contáctenos directamente.');
+
+        // Restore button
+        if (confirmBtn) {
+          confirmBtn.disabled = false;
+          confirmBtn.innerHTML = '<span class="material-icons mr-2">event_available</span> Confirmar la cita';
+        }
+      }
+    }
+
+    /**
+     * Show payment options popup
+     */
+    function showPaymentPopup() {
+      // Get selected appointment type to determine pricing
+      const selectedType = bookingState.appointmentTypes.find(t => t.id === bookingState.selectedAppointmentType);
+
+      if (!selectedType) {
+        console.warn('No appointment type found for payment popup');
+        return;
+      }
+
+      // Prevent payment popup for free Rechute sessions
+      if (selectedType.kind === 'rechute' || selectedType.price === 0) {
+        console.log('Rechute session (€0) - no payment required, skipping popup');
+        return;
+      }
+
+      // Calculate prices based on appointment type
+      let centerPrice, onlinePrice, monthlyPrice, monthlyTotal;
+
+      // Determine pricing based on type name
+      const typeName = selectedType.name.toLowerCase();
+
+      if (typeName.includes('duo')) {
+        // DUO Cigarettes: 2×€170 center, 2×€160 online, 3×€114 monthly
+        centerPrice = 170; // per person (total €340)
+        onlinePrice = 160; // per person (total €320)
+        monthlyPrice = 114;
+        monthlyTotal = monthlyPrice * 3;
+      } else if (typeName.includes('cannabis')) {
+        // Cannabis: €250 center, €230 online, 3×€84 monthly
+        centerPrice = 250;
+        onlinePrice = 230;
+        monthlyPrice = 84;
+        monthlyTotal = monthlyPrice * 3;
+      } else {
+        // Cigarettes SOLO (default): €190 center, €170 online, 3×€65 monthly
+        centerPrice = 190;
+        onlinePrice = 170;
+        monthlyPrice = 65;
+        monthlyTotal = monthlyPrice * 3;
+      }
+
+      // Update popup prices
+      document.getElementById('popup-center-price').textContent = `€${centerPrice}`;
+      document.getElementById('popup-online-price').textContent = `€${onlinePrice}`;
+      document.getElementById('popup-online-btn-price').textContent = onlinePrice;
+      document.getElementById('popup-monthly-price').textContent = `€${monthlyPrice}`;
+      document.getElementById('popup-monthly-total').textContent = monthlyTotal;
+
+      // Store prices in popup for payment selection
+      window.paymentPopupData = {
+        centerPrice,
+        onlinePrice,
+        monthlyPrice,
+        monthlyTotal,
+        appointmentType: selectedType
+      };
+
+      // Show popup
+      document.getElementById('payment-popup').classList.remove('hidden');
+    }
+
+    /**
+     * Close payment popup
+     */
+    function closePaymentPopup() {
+      document.getElementById('payment-popup').classList.add('hidden');
+    }
+
+    /**
+     * Get Stripe payment links based on center and appointment type
+     * Now uses the 'kind' field for more reliable mapping
+     */
+    function getStripeLinks(centerId, appointmentTypeId) {
+      // Get the appointment type object to access 'kind' field
+      const types = APPOINTMENT_TYPES[String(centerId)] || [];
+      const appointmentType = types.find(t => t.id === String(appointmentTypeId));
+
+      if (!appointmentType) {
+        console.error('Appointment type not found:', appointmentTypeId);
+        return { onetime: '#', monthly: '#' };
+      }
+
+      // Rechute has no payment - return null
+      if (appointmentType.kind === 'rechute') {
+        return null;
+      }
+
+      // Get company
+      const company = getCompany(centerId);
+
+      // Stripe Payment Links Configuration
+      const stripeLinks = {
+        company1: {
+          // Company 1: Madrid Chamartín, Torrejón, Majadahonda, San Sebastián
+          solo_cig: {
+            onetime: 'https://buy.stripe.com/9B628q23B9si9Pv7mtawo00',  // €170
+            monthly: 'https://buy.stripe.com/bJe00i5fN47Y1iZfSZawo03'   // 3×€65
+          },
+          duo_cig: {
+            onetime: 'https://buy.stripe.com/28E9AS0ZxfQGd1H4ahawo01',   // €320
+            monthly: 'https://buy.stripe.com/6oUbJ0cIfgUKaTzgX3awo04'    // 3×€114
+          },
+          solo_drugs: {
+            onetime: 'https://buy.stripe.com/00w8wOgYvbAq6Dj36dawo02', // €230
+            monthly: 'https://buy.stripe.com/6oU3cu0Zx47Y5zfgX3awo05'  // 3×€84
+          }
+        },
+        company2: {
+          // Company 2: Valencia, Barcelona Sants, Sevilla, Madrid Atocha
+          solo_cig: {
+            onetime: 'https://buy.stripe.com/8x25kD2JTcsdgsPdZ6dby08',  // €170
+            monthly: 'https://buy.stripe.com/9B65kDesB3VH7Wjg7edby0b'   // 3×€65
+          },
+          duo_cig: {
+            onetime: 'https://buy.stripe.com/8x2fZh3NX4ZL2BZ6wEdby09',   // €320
+            monthly: 'https://buy.stripe.com/aFa00j0BLfEpfoL2godby0c'    // 3×€114
+          },
+          solo_drugs: {
+            onetime: 'https://buy.stripe.com/cNi14nesB2RD4K78EMdby0a', // €230
+            monthly: 'https://buy.stripe.com/cNi7sLesB2RD4K7dZ6dby0d'  // 3×€84
+          }
+        }
+      };
+
+      // Get links for this company and kind
+      const companyLinks = stripeLinks[company];
+      return companyLinks[appointmentType.kind] || { onetime: '#', monthly: '#' };
+    }
+
+    /**
+     * Select payment option
+     */
+    function selectPaymentOption(option) {
+      const data = window.paymentPopupData;
+
+      if (!data) {
+        console.error('Payment popup data not available');
+        return;
+      }
+
+      // Get appointment type details
+      const types = APPOINTMENT_TYPES[String(bookingState.selectedCenter)] || [];
+      const appointmentType = types.find(t => t.id === String(data.appointmentType.id));
+
+      if (!appointmentType) {
+        console.error('Appointment type not found');
+        return;
+      }
+
+      if (option === 1) {
+        // Pay at center
+        closePaymentPopup();
+      } else if (option === 2) {
+        // Pay online once - redirect to Stripe
+        const stripeLinks = getStripeLinks(bookingState.selectedCenter, data.appointmentType.id);
+
+        if (!stripeLinks) {
+          // Rechute - no payment needed
+          alert('Reservas de recaída no requieren pago. Continúe con la reserva.');
+          closePaymentPopup();
+          return;
+        }
+
+        console.log('Opening Stripe one-time payment:', stripeLinks.onetime);
+        console.log('Center:', bookingState.selectedCenter, 'Type:', appointmentType.kind);
+
+        // Open Stripe payment link in new tab
+        window.open(stripeLinks.onetime, '_blank');
+
+        // Close popup
+        closePaymentPopup();
+      } else if (option === 3) {
+        // Pay in 3 installments - redirect to Stripe subscription
+        const stripeLinks = getStripeLinks(bookingState.selectedCenter, data.appointmentType.id);
+
+        if (!stripeLinks) {
+          // Rechute - no payment needed
+          alert('Reservas de recaída no requieren pago. Continúe con la reserva.');
+          closePaymentPopup();
+          return;
+        }
+
+        console.log('Opening Stripe monthly payment:', stripeLinks.monthly);
+        console.log('Center:', bookingState.selectedCenter, 'Type:', appointmentType.kind);
+
+        // Open Stripe subscription link in new tab
+        window.open(stripeLinks.monthly, '_blank');
+
+        // Close popup
+        closePaymentPopup();
+      }
+    }
+
+    // ========== CALENDAR AND BOOKING LOGIC ==========
+
+    // API Configuration - uses relative path for Netlify Functions
+    // All API calls will be routed to /.netlify/functions/api via netlify.toml redirects
+    const API_BASE_URL = '/api';
+
+    // Booking state
+    let bookingState = {
+      selectedCenter: null,
+      selectedDate: null,
+      selectedTime: null,
+      currentMonth: new Date(),
+      availableSlots: {}, // Will be populated from Smart Agenda API
+      smartAgendaCenters: [], // Centers from Smart Agenda
+      appointmentTypes: [] // Appointment types for selected center
+    };
+
+    // Month names in Spanish
+    const monthNames = [
+      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    ];
+
+    // Day names in Spanish
+    const dayNames = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+
+    // ========== HARDCODED APPOINTMENT TYPES (Bypass Smart Agenda API sync issue) ==========
+
+    /**
+     * Static appointment types - Source of truth for UI
+     * Note: This bypasses the Smart Agenda API /pdo_type_rdv endpoint which has sync issues
+     * Availability and booking still use live API
+     */
+    const APPOINTMENT_TYPES = {
+      '1': [ // Valencia
+        { id: '1',  kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '1' },
+        { id: '9',  kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '1' },
+        { id: '18', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '1' },
+        { id: '3',  kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '1' }
+      ],
+      '4': [ // Barcelona Sants
+        { id: '25', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '4' },
+        { id: '21', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '4' },
+        { id: '23', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '4' },
+        { id: '22', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '4' }
+      ],
+      '5': [ // Sevilla
+        { id: '32', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '5' },
+        { id: '34', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '5' },
+        { id: '37', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '5' },
+        { id: '35', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '5' }
+      ],
+      '6': [ // Torrejón
+        { id: '53', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '6' },
+        { id: '56', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '6' },
+        { id: '59', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '6' },
+        { id: '57', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '6' }
+      ],
+      '7': [ // Madrid Chamartín
+        { id: '44', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '7' },
+        { id: '46', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '7' },
+        { id: '49', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '7' },
+        { id: '47', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '7' }
+      ],
+      '8': [ // Madrid Atocha
+        { id: '63', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '8' },
+        { id: '65', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '8' },
+        { id: '68', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '8' },
+        { id: '66', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '8' }
+      ],
+      '9': [ // San Sebastián
+        { id: '81', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '9' },
+        { id: '83', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '9' },
+        { id: '86', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '9' },
+        { id: '84', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '9' }
+      ],
+      '10': [ // Majadahonda
+        { id: '72', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '10' },
+        { id: '74', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '10' },
+        { id: '77', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '10' },
+        { id: '75', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '10' }
+      ]
+    };
+
+    /**
+     * Price table - Single source of truth for payment UI
+     */
+    const PRICE_TABLE = {
+      solo_cig:   { center: 190, online: 170, plan: [65, 65, 65] },
+      duo_cig:    { center: 340, online: 320, plan: [114, 114, 114] },
+      solo_drugs: { center: 250, online: 230, plan: [84, 84, 84] },
+      rechute:    { center: 0 }
+    };
+
+    /**
+     * Company routing - determines which Stripe account to use
+     */
+    const COMPANY1_CENTERS = new Set(['7', '6', '10', '9']); // Madrid Chamartín, Torrejón, Majadahonda, San Sebastián
+    const COMPANY2_CENTERS = new Set(['1', '4', '5', '8']);  // Valencia, Barcelona Sants, Sevilla, Madrid Atocha
+
+    function getCompany(centerId) {
+      return COMPANY1_CENTERS.has(String(centerId)) ? 'company1' : 'company2';
+    }
+
+    // ========== API FUNCTIONS ==========
+
+    /**
+     * Load centers from Smart Agenda API
+     */
+    async function loadCentersFromAPI() {
+      try {
+        console.log('Loading centers from Smart Agenda...');
+        const response = await fetch(`${API_BASE_URL}/centers`);
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const centers = await response.json();
+        bookingState.smartAgendaCenters = centers;
+
+        console.log('Loaded', centers.length, 'centers from Smart Agenda');
+
+        // Populate the center dropdown
+        populateCenterDropdown(centers);
+
+        return centers;
+      } catch (error) {
+        console.error('Error loading centers:', error);
+        alert('Error al cargar los centros. Por favor, recargue la página.');
+        return [];
+      }
+    }
+
+    /**
+     * Populate center dropdown with API data
+     */
+    function populateCenterDropdown(centers) {
+      const select = document.getElementById('center-select');
+
+      // Clear existing options except the first one
+      select.innerHTML = '<option value="">Seleccione un centro...</option>';
+
+      // Add centers from API
+      centers.forEach(center => {
+        const option = document.createElement('option');
+        option.value = center.id;
+        option.textContent = center.name;
+        select.appendChild(option);
+      });
+    }
+
+    /**
+     * Load appointment types for selected center
+     * NOTE: Using hardcoded data instead of API due to Smart Agenda sync issues
+     */
+    async function loadAppointmentTypes(centerId) {
+      try {
+        console.log('Loading appointment types for center:', centerId);
+
+        // Use hardcoded data instead of API
+        const types = APPOINTMENT_TYPES[centerId] || [];
+        bookingState.appointmentTypes = types;
+
+        console.log('Loaded', types.length, 'appointment types (from static data)');
+
+        // Warn if no appointment types available
+        if (types.length === 0) {
+          console.warn('⚠️ No appointment types available for this center');
+          const centerName = bookingState.smartAgendaCenters.find(c => c.id === centerId)?.name;
+          alert(`⚠️ Atención:\n\nEl centro "${centerName}" no tiene citas disponibles a través de este formulario.\n\nPor favor:\n- Seleccione otro centro\n- O contacte directamente con el centro.`);
+        }
+
+        // Auto-select the first type if available
+        if (types.length > 0) {
+          bookingState.selectedAppointmentType = types[0].id;
+        }
+
+        return types;
+      } catch (error) {
+        console.error('Error loading appointment types:', error);
+        return [];
+      }
+    }
+
+    /**
+     * Load availability for selected date range
+     */
+    async function loadAvailability(startDate, endDate) {
+      // DISABLED: Smart Agenda API doesn't support /getAvailabilities endpoint (returns HTTP 400)
+      // For now, we allow users to manually select any date/time
+      // Real availability checking would need to be done through Smart Agenda dashboard
+      console.log('Availability loading disabled (Smart Agenda API limitation)');
+      return {};
+
+      /* COMMENTED OUT - API not available
+      if (!bookingState.selectedCenter || !bookingState.selectedAppointmentType) {
+        console.log('Center or appointment type not selected');
+        return {};
+      }
+
+      try {
+        console.log('Loading availability from', startDate, 'to', endDate);
+
+        const params = new URLSearchParams({
+          centerId: bookingState.selectedCenter,
+          startDate: formatDateForAPI(startDate),
+          endDate: formatDateForAPI(endDate)
+        });
+
+        const response = await fetch(`${API_BASE_URL}/availability?${params.toString()}`);
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const availability = await response.json();
+        console.log('Availability data:', availability);
+
+        bookingState.availableSlots = processAvailabilityData(availability);
+
+        return bookingState.availableSlots;
+      } catch (error) {
+        console.error('Error loading availability:', error);
+        return {};
+      }
+      */
+    }
+
+    /**
+     * Process availability data from API into time slots format
+     */
+    function processAvailabilityData(apiData) {
+      // TODO: Parse Smart Agenda availability format
+      // For now, return sample data structure
+      // This will be updated once we test the actual API response format
+
+      const slots = {};
+
+      // Example: if apiData has array of available times
+      // apiData.forEach(slot => {
+      //   const dateKey = slot.date;
+      //   if (!slots[dateKey]) slots[dateKey] = {};
+      //   slots[dateKey][slot.time] = true;
+      // });
+
+      return slots;
+    }
+
+    /**
+     * Format date for API (YYYY-MM-DD)
+     */
+    function formatDateForAPI(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+
+    /**
+     * Format datetime for API (YYYY-MM-DD HH:MM:SS)
+     */
+    function formatDateTimeForAPI(date, time) {
+      return `${formatDateForAPI(date)} ${time}:00`;
+    }
+
+    /**
+     * Submit booking to Smart Agenda
+     */
+    async function submitBooking() {
+      try {
+        console.log('Submitting booking to Smart Agenda...');
+
+        // Calculate end time (assuming 30 min appointment)
+        const startDateTime = formatDateTimeForAPI(bookingState.selectedDate, bookingState.selectedTime);
+        const endTime = bookingState.selectedTime.split(':');
+        const endHour = parseInt(endTime[0]);
+        let endMin = parseInt(endTime[1]) + 30;
+        let finalEndHour = endHour;
+
+        // Handle minute overflow
+        if (endMin >= 60) {
+          finalEndHour = endHour + 1;
+          endMin = endMin - 60;
+        }
+
+        const endDateTime = formatDateTimeForAPI(
+          bookingState.selectedDate,
+          `${String(finalEndHour).padStart(2, '0')}:${String(endMin).padStart(2, '0')}`
+        );
+
+        // Use appointment type from loaded types
+        let typeId = bookingState.selectedAppointmentType;
+
+        // If no appointment type is selected, try to use the first available one
+        if (!typeId && bookingState.appointmentTypes && bookingState.appointmentTypes.length > 0) {
+          typeId = bookingState.appointmentTypes[0].id;
+          console.log('Auto-selected first appointment type:', typeId);
+        }
+
+        // If still no appointment type, this center doesn't have any configured
+        if (!typeId) {
+          throw new Error('Este centro no tiene tipos de cita configurados. Por favor, seleccione otro centro o use el enlace de reserva directo del centro.');
+        }
+
+        // Detect URL source for tracking
+        const urlPath = window.location.pathname;
+        const urlSlug = urlPath.split('/').filter(p => p)[0];
+        const source = urlSlug || 'direct';
+
+        const bookingData = {
+          fullName: bookingState.fullName,
+          email: bookingState.email,
+          phone: bookingState.phone,
+          centerId: bookingState.selectedCenter,
+          typeId: typeId,
+          startTime: startDateTime,
+          endTime: endDateTime,
+          source: source // Track where booking came from
+        };
+
+        console.log('Booking data:', bookingData);
+
+        const response = await fetch(`${API_BASE_URL}/booking`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(bookingData)
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error('Backend error response:', errorData);
+          throw new Error(errorData.details || errorData.message || errorData.error || 'Booking failed');
+        }
+
+        const result = await response.json();
+        console.log('✅ Booking successful:', result);
+
+        return result;
+      } catch (error) {
+        console.error('❌ Error submitting booking:', error);
+        throw error;
+      }
+    }
+
+    // Sample time slots (fallback for when API doesn't return data)
+    const sampleTimeSlots = {
+      '09:00': true,
+      '09:30': true,
+      '10:00': true,
+      '10:30': false, // unavailable
+      '11:00': true,
+      '11:30': true,
+      '12:00': false, // unavailable
+      '14:00': true,
+      '14:30': true,
+      '15:00': true,
+      '15:30': true,
+      '16:00': true,
+      '16:30': false, // unavailable
+      '17:00': true,
+      '17:30': true,
+      '18:00': true
+    };
+
+    // Generate calendar for current month
+    function generateCalendar() {
+      const year = bookingState.currentMonth.getFullYear();
+      const month = bookingState.currentMonth.getMonth();
+
+      // Update month display
+      document.getElementById('current-month').textContent =
+        `${monthNames[month]} ${year}`;
+
+      // Get first day of month and number of days
+      const firstDay = new Date(year, month, 1);
+      const lastDay = new Date(year, month + 1, 0);
+      const daysInMonth = lastDay.getDate();
+
+      // Get day of week for first day (0 = Sunday, adjust to Monday = 0)
+      let startDay = firstDay.getDay() - 1;
+      if (startDay === -1) startDay = 6; // Sunday becomes 6
+
+      // Get today's date for comparison
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const calendarGrid = document.getElementById('calendar-grid');
+      calendarGrid.innerHTML = '';
+
+      // Add empty cells for days before month starts
+      for (let i = 0; i < startDay; i++) {
+        const emptyCell = document.createElement('div');
+        emptyCell.className = 'text-gray-400 text-sm';
+        calendarGrid.appendChild(emptyCell);
+      }
+
+      // Add days of the month
+      for (let day = 1; day <= daysInMonth; day++) {
+        const date = new Date(year, month, day);
+        const dayCell = document.createElement('div');
+
+        const isPast = date < today;
+        const isSelected = bookingState.selectedDate &&
+          date.toDateString() === bookingState.selectedDate.toDateString();
+        const isToday = date.toDateString() === today.toDateString();
+
+        // Base classes
+        let classes = 'text-sm py-2 rounded-full transition-all';
+
+        if (isPast) {
+          // Past dates - disabled
+          classes += ' text-gray-400 cursor-not-allowed';
+        } else if (isSelected) {
+          // Selected date
+          classes += ' bg-primary text-white cursor-pointer font-semibold transform scale-110';
+        } else if (isToday) {
+          // Today
+          classes += ' bg-primary/20 border-2 border-primary text-primary cursor-pointer font-semibold hover:bg-primary/30';
+        } else {
+          // Future dates - selectable
+          classes += ' hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer';
+        }
+
+        dayCell.className = classes;
+        dayCell.textContent = day;
+
+        // Add click handler for future dates
+        if (!isPast) {
+          dayCell.onclick = () => selectDate(date);
+        }
+
+        calendarGrid.appendChild(dayCell);
+      }
+    }
+
+    // Select a date
+    function selectDate(date) {
+      bookingState.selectedDate = date;
+      bookingState.selectedTime = null; // Reset time selection
+
+      generateCalendar(); // Refresh calendar to show selection
+      generateTimeSlots(); // Show available time slots
+      updateStepIndicators(); // Update visual indicators
+    }
+
+    // Generate time slots for selected date
+    function generateTimeSlots() {
+      const timeSlotsContainer = document.getElementById('time-slots');
+      const dateInfo = document.getElementById('selected-date-info');
+
+      if (!bookingState.selectedDate) {
+        timeSlotsContainer.innerHTML = '<p class="text-gray-500 dark:text-gray-400 col-span-full text-center py-4">Seleccione una fecha para ver los horarios disponibles</p>';
+        dateInfo.textContent = '';
+        return;
+      }
+
+      // Show selected date
+      const dayName = dayNames[bookingState.selectedDate.getDay()];
+      const day = bookingState.selectedDate.getDate();
+      const month = monthNames[bookingState.selectedDate.getMonth()];
+      const year = bookingState.selectedDate.getFullYear();
+      dateInfo.textContent = `Horarios para ${dayName}, ${day} de ${month} de ${year}`;
+
+      // Generate time slot buttons
+      timeSlotsContainer.innerHTML = '';
+
+      Object.keys(sampleTimeSlots).forEach(time => {
+        const available = sampleTimeSlots[time];
+        const button = document.createElement('button');
+
+        const isSelected = bookingState.selectedTime === time;
+
+        if (isSelected) {
+          button.className = 'py-2 px-3 bg-primary text-white rounded-full border border-primary font-semibold';
+        } else if (available) {
+          button.className = 'py-2 px-3 border border-border-light dark:border-border-dark rounded-full hover:border-primary hover:text-primary transition';
+          button.onclick = () => selectTime(time);
+        } else {
+          button.className = 'py-2 px-3 border border-border-light dark:border-border-dark rounded-full text-gray-400 cursor-not-allowed opacity-50';
+          button.disabled = true;
+        }
+
+        button.textContent = time;
+        timeSlotsContainer.appendChild(button);
+      });
+    }
+
+    // Select a time slot
+    function selectTime(time) {
+      bookingState.selectedTime = time;
+      generateTimeSlots(); // Refresh to show selection
+      updateStepIndicators(); // Update visual indicators
+
+      console.log('Booking state:', bookingState);
+      // This will be used later for Smart Agenda API call
+    }
+
+    // Navigate to previous month
+    document.getElementById('prev-month').addEventListener('click', () => {
+      bookingState.currentMonth.setMonth(bookingState.currentMonth.getMonth() - 1);
+      generateCalendar();
+    });
+
+    // Navigate to next month
+    document.getElementById('next-month').addEventListener('click', () => {
+      bookingState.currentMonth.setMonth(bookingState.currentMonth.getMonth() + 1);
+      generateCalendar();
+    });
+
+    // Update booking state when center is selected
+    document.getElementById('center-select').addEventListener('change', async (e) => {
+      bookingState.selectedCenter = e.target.value;
+      console.log('Selected center:', bookingState.selectedCenter);
+
+      // Show visual feedback
+      updateStepIndicators();
+
+      // Reset selection
+      bookingState.selectedDate = null;
+      bookingState.selectedTime = null;
+      bookingState.selectedAppointmentType = null;
+
+      if (bookingState.selectedCenter) {
+        // Load appointment types for this center
+        await loadAppointmentTypes(bookingState.selectedCenter);
+
+        // Show booking type selector and populate it
+        populateBookingTypeDropdown(bookingState.appointmentTypes);
+
+        // Load availability for current month
+        const startDate = new Date(bookingState.currentMonth.getFullYear(), bookingState.currentMonth.getMonth(), 1);
+        const endDate = new Date(bookingState.currentMonth.getFullYear(), bookingState.currentMonth.getMonth() + 1, 0);
+        await loadAvailability(startDate, endDate);
+      } else {
+        // Hide booking type selector if no center selected
+        document.getElementById('step-1b').classList.add('hidden');
+        document.getElementById('step-2').classList.add('hidden');
+        document.getElementById('step-3').classList.add('hidden');
+        document.getElementById('step-4').classList.add('hidden');
+      }
+
+      generateCalendar();
+      generateTimeSlots();
+    });
+
+    /**
+     * Strip HTML tags from text
+     */
+    function stripHTML(html) {
+      const tmp = document.createElement('div');
+      tmp.innerHTML = html;
+      return tmp.textContent || tmp.innerText || '';
+    }
+
+    // Populate booking type dropdown
+    function populateBookingTypeDropdown(types) {
+      const select = document.getElementById('booking-type-select');
+      const step1b = document.getElementById('step-1b');
+
+      // Clear existing options except the first one
+      select.innerHTML = '<option value="">Seleccione el tipo de sesión...</option>';
+
+      if (types && types.length > 0) {
+        // Filter: Only show "pay at center" types (deposit = 0)
+        // Include all types where deposit is 0, including Rechute (price = 0)
+        const centerPaymentTypes = types.filter(type =>
+          type.deposit === 0 && type.price >= 0
+        );
+
+        if (centerPaymentTypes.length === 0) {
+          console.warn('No "pay at center" appointment types available');
+          step1b.classList.add('hidden');
+          return;
+        }
+
+        // Add types to dropdown
+        centerPaymentTypes.forEach(type => {
+          const option = document.createElement('option');
+          option.value = type.id;
+          option.textContent = type.name;
+          option.dataset.price = type.price !== undefined ? type.price : '190';  // Handle 0 correctly
+          option.dataset.duration = type.duration || '30';
+
+          // Strip HTML from description
+          const cleanDescription = stripHTML(type.description || '').trim();
+          option.dataset.description = cleanDescription || 'Pago en el centro';
+
+          select.appendChild(option);
+        });
+
+        // Show the booking type section
+        step1b.classList.remove('hidden');
+      } else {
+        // Hide the booking type section if no types available
+        step1b.classList.add('hidden');
+      }
+    }
+
+    // Handle booking type selection
+    document.getElementById('booking-type-select').addEventListener('change', (e) => {
+      const selectedOption = e.target.options[e.target.selectedIndex];
+      bookingState.selectedAppointmentType = e.target.value;
+
+      const infoBox = document.getElementById('booking-type-info');
+      const step2 = document.getElementById('step-2');
+      const step3 = document.getElementById('step-3');
+      const step4 = document.getElementById('step-4');
+
+      if (bookingState.selectedAppointmentType) {
+        // Show type details
+        const duration = selectedOption.dataset.duration || '30';
+        const price = selectedOption.dataset.price || '190';
+        const description = selectedOption.dataset.description || '-';
+
+        document.getElementById('type-duration').textContent = `${duration} minutos`;
+        document.getElementById('type-price').textContent = `€${price}`;
+        document.getElementById('type-description').textContent = description;
+
+        // Check if this is a Rechute (free) session
+        const typeName = selectedOption.textContent.toLowerCase();
+        const isRechute = price === '0' || typeName.includes('rechute') || typeName.includes('recaída');
+
+        // Remove any existing disclaimer
+        const existingDisclaimer = infoBox.querySelector('.rechute-disclaimer');
+        if (existingDisclaimer) {
+          existingDisclaimer.remove();
+        }
+
+        // Add Rechute disclaimer if applicable
+        if (isRechute) {
+          const disclaimer = document.createElement('div');
+          disclaimer.className = 'rechute-disclaimer mt-4 p-4 bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-400 rounded';
+          disclaimer.innerHTML = `
+            <div class="flex items-start gap-3">
+              <span class="material-icons text-yellow-600 text-xl">warning</span>
+              <div>
+                <p class="font-semibold text-yellow-800 dark:text-yellow-200">⚠️ Sesión de Recaída</p>
+                <p class="text-sm text-yellow-700 dark:text-yellow-300 mt-1">
+                  Su elegibilidad será verificada para confirmar que ya completó una sesión previa con LaserOstop.
+                </p>
+              </div>
+            </div>
+          `;
+          infoBox.appendChild(disclaimer);
+
+          // Store flag to prevent payment popup later
+          bookingState.isRechuteSession = true;
+        } else {
+          bookingState.isRechuteSession = false;
+        }
+
+        infoBox.classList.remove('hidden');
+
+        // Show next steps
+        step2.classList.remove('hidden');
+        step3.classList.remove('hidden');
+        step4.classList.remove('hidden');
+
+        // Update step indicators
+        updateStepIndicators();
+
+        console.log('Selected appointment type:', bookingState.selectedAppointmentType);
+      } else {
+        // Hide type details and next steps
+        infoBox.classList.add('hidden');
+        step2.classList.add('hidden');
+        step3.classList.add('hidden');
+        step4.classList.add('hidden');
+      }
+    });
+
+    // Update step completion indicators
+    function updateStepIndicators() {
+      const step1 = document.querySelector('#step-1 h2');
+      const step1b = document.querySelector('#step-1b h2');
+      const step2 = document.querySelector('#step-2 h2');
+      const step3 = document.querySelector('#step-3 h2');
+
+      // Step 1: Center selected
+      if (bookingState.selectedCenter) {
+        if (!step1.querySelector('.material-icons.text-green-500')) {
+          step1.innerHTML = '<span class="text-primary mr-3">1.</span>Elija su centro <span class="material-icons text-green-500 align-middle ml-2">check_circle</span>';
+        }
+      } else {
+        step1.innerHTML = '<span class="text-primary mr-3">1.</span>Elija su centro';
+      }
+
+      // Step 1b (2): Booking type selected
+      if (step1b) {
+        if (bookingState.selectedAppointmentType) {
+          if (!step1b.querySelector('.material-icons.text-green-500')) {
+            step1b.innerHTML = '<span class="text-primary mr-3">2.</span>Tipo de sesión <span class="material-icons text-green-500 align-middle ml-2">check_circle</span>';
+          }
+        } else {
+          step1b.innerHTML = '<span class="text-primary mr-3">2.</span>Tipo de sesión';
+        }
+      }
+
+      // Step 2 (now 3): Date and time selected
+      if (step2) {
+        if (bookingState.selectedDate && bookingState.selectedTime) {
+          if (!step2.querySelector('.material-icons.text-green-500')) {
+            step2.innerHTML = '<span class="text-primary mr-3">3.</span>Elija una fecha y una hora <span class="material-icons text-green-500 align-middle ml-2">check_circle</span>';
+          }
+        } else {
+          step2.innerHTML = '<span class="text-primary mr-3">3.</span>Elija una fecha y una hora';
+        }
+      }
+    }
+
+    // Initialize calendar on load
+    function initializeCalendar() {
+      generateCalendar();
+      generateTimeSlots();
+    }
+
+    // URL slug to center ID mapping
+    const CENTER_URL_MAPPING = {
+      'barcelona-sants': '3',      // Barcelona Sants
+      'valencia': '1',              // Valencia
+      'madrid-atocha': '8',         // Madrid Atocha
+      'madrid-chamartin': '7',      // Madrid Chamartín
+      'sevilla': '5',               // Sevilla
+      'majadahonda': '10',          // Majadahonda
+      'san-sebastian': '9',         // San Sebastián de los Reyes
+      'torrejon': '6'               // Torrejón de Ardoz
+    };
+
+    /**
+     * Detect center from URL path
+     */
+    function getCenterFromURL() {
+      const path = window.location.pathname;
+      const slug = path.split('/').filter(p => p)[0]; // Get first path segment
+
+      const centerId = CENTER_URL_MAPPING[slug];
+
+      if (centerId) {
+        console.log('📍 Detected center from URL:', slug, '→ Center ID:', centerId);
+      }
+
+      return centerId || null;
+    }
+
+    /**
+     * Auto-select center if URL contains center slug
+     */
+    async function autoSelectCenterFromURL() {
+      const centerId = getCenterFromURL();
+
+      if (centerId) {
+        // Wait for centers to be loaded
+        if (bookingState.smartAgendaCenters.length === 0) {
+          console.log('⏳ Waiting for centers to load before auto-selecting...');
+          return centerId; // Return for later use
+        }
+
+        // Check if this center exists
+        const centerExists = bookingState.smartAgendaCenters.find(c => c.id === centerId);
+
+        if (centerExists) {
+          console.log('✅ Auto-selecting center:', centerExists.name);
+
+          // Set the dropdown value
+          const select = document.getElementById('center-select');
+          select.value = centerId;
+
+          // Trigger the change event to load appointment types
+          select.dispatchEvent(new Event('change'));
+
+          // Scroll to booking section
+          setTimeout(() => {
+            document.getElementById('booking').scrollIntoView({ behavior: 'smooth' });
+          }, 500);
+        } else {
+          console.warn('⚠️ Center ID from URL not found in Smart Agenda:', centerId);
+        }
+      }
+    }
+
+    // Initialize everything on load
+    window.addEventListener('DOMContentLoaded', async () => {
+      console.log('LaserOstop Booking System - Initializing...');
+
+      // Initialize map
+      initializeMap();
+
+      // Initialize calendar
+      initializeCalendar();
+
+      // Load centers from Smart Agenda API
+      await loadCentersFromAPI();
+
+      // Auto-select center from URL if present
+      await autoSelectCenterFromURL();
+
+      console.log('Initialization complete!');
+    });
+
+    // ========== TOUCH-RESPONSIVE CAROUSEL (MOBILE ONLY) ==========
+
+    /**
+     * Add touch controls for review carousels on mobile
+     * Row 1 and Row 2 move in opposite directions at same speed
+     */
+    document.addEventListener('DOMContentLoaded', function() {
+      // Only enable on touch devices (mobile/tablet)
+      if (!('ontouchstart' in window)) {
+        console.log('Touch carousel disabled - not a touch device');
+        return;
+      }
+
+      const row1Track = document.querySelector('.carousel-row-1 .carousel-track');
+      const row2Track = document.querySelector('.carousel-row-2 .carousel-track');
+      const row1Container = document.querySelector('.carousel-row-1');
+      const row2Container = document.querySelector('.carousel-row-2');
+
+      if (!row1Track || !row2Track || !row1Container || !row2Container) {
+        console.log('Touch carousel disabled - elements not found');
+        return;
+      }
+
+      let touchStartX = 0;
+      let touchStartY = 0;
+      let row1StartTranslate = 0;
+      let row2StartTranslate = 0;
+      let isTouching = false;
+
+      function getTranslateX(element) {
+        const style = window.getComputedStyle(element);
+        const matrix = new DOMMatrixReadOnly(style.transform);
+        return matrix.m41;
+      }
+
+      function handleTouchStart(e) {
+        isTouching = true;
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+
+        // Pause animations
+        row1Track.style.animationPlayState = 'paused';
+        row2Track.style.animationPlayState = 'paused';
+
+        // Get current positions
+        row1StartTranslate = getTranslateX(row1Track);
+        row2StartTranslate = getTranslateX(row2Track);
+
+        console.log('Touch start at', touchStartX);
+      }
+
+      function handleTouchMove(e) {
+        if (!isTouching) return;
+
+        const touchX = e.touches[0].clientX;
+        const touchY = e.touches[0].clientY;
+        const deltaX = touchX - touchStartX;
+        const deltaY = touchY - touchStartY;
+
+        // Only handle horizontal swipes (prevent vertical scroll interference)
+        if (Math.abs(deltaX) > Math.abs(deltaY)) {
+          e.preventDefault();
+
+          // Row 1 moves with finger
+          // Row 2 moves opposite direction
+          row1Track.style.transform = `translateX(${row1StartTranslate + deltaX}px)`;
+          row2Track.style.transform = `translateX(${row2StartTranslate - deltaX}px)`;
+        }
+      }
+
+      function handleTouchEnd() {
+        if (!isTouching) return;
+        isTouching = false;
+
+        console.log('Touch end');
+
+        // Resume animations after brief delay
+        setTimeout(() => {
+          row1Track.style.animationPlayState = 'running';
+          row2Track.style.animationPlayState = 'running';
+        }, 300);
+      }
+
+      // Add event listeners to both carousel containers
+      [row1Container, row2Container].forEach(container => {
+        container.addEventListener('touchstart', handleTouchStart, { passive: true });
+        container.addEventListener('touchmove', handleTouchMove, { passive: false });
+        container.addEventListener('touchend', handleTouchEnd, { passive: true });
+        container.addEventListener('touchcancel', handleTouchEnd, { passive: true });
+      });
+
+      console.log('✅ Touch carousel controls initialized');
+    });
+
+    // ========== HERO CTA BUTTON SCROLL ==========
+
+    /**
+     * Smooth scroll to booking section when hero CTA button is clicked
+     */
+    document.addEventListener('DOMContentLoaded', function() {
+      const heroCtaBtn = document.getElementById('hero-cta-btn');
+      const bookingSection = document.getElementById('booking');
+
+      if (heroCtaBtn && bookingSection) {
+        heroCtaBtn.addEventListener('click', function() {
+          bookingSection.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        });
+        console.log('✅ Hero CTA button scroll initialized');
+      }
+    });
+  </script>
+
+</body>
+</html>
+<!-- Force rebuild at Fri Oct 17 09:03:49 CET 2025 -->

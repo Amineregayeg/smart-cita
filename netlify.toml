@@ -1,0 +1,48 @@
+[build]
+  publish = "."
+  command = "echo 'Static site - no build required'"
+  functions = "netlify/functions"
+
+# Netlify Functions configuration
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# API endpoint redirects - route API calls to Netlify Functions
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/laserostop_espagna/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+
+# Directory redirects
+[[redirects]]
+  from = "/laserostop_espagna"
+  to = "/laserostop_espagna/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/laserostop_espagna/*"
+  to = "/laserostop_espagna/:splat"
+  status = 200
+
+# Security headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# CORS headers for API endpoints
+[[headers]]
+  for = "/.netlify/functions/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, POST, OPTIONS"
+    Access-Control-Allow-Headers = "Content-Type"

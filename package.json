@@ -1,0 +1,33 @@
+{
+  "name": "smart-cita",
+  "version": "1.0.0",
+  "description": "Smart Cita - Calendar Integration Provider Platform",
+  "main": "index.html",
+  "scripts": {
+    "dev": "netlify dev",
+    "build": "echo 'Static site - no build required'"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "netlify-cli": "^17.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YOUR_USERNAME/smart-cita.git"
+  },
+  "keywords": [
+    "calendar",
+    "integration",
+    "booking",
+    "smart-agenda",
+    "laserostop"
+  ],
+  "author": "Smart Cita",
+  "license": "UNLICENSED",
+  "private": true
+}
