@@ -1,6 +1,6 @@
 [build]
   publish = "."
-  command = "echo 'Static site - no build required'"
+  command = "echo 'Deploying Smart Cita with Functions'"
   functions = "netlify/functions"
 
 # Netlify Functions configuration
