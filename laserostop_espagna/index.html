@@ -1435,10 +1435,25 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const centers = await response.json();
+        const agendas = await response.json();
+
+        // Filter to only include actual centers (affiche_agenda = 'O')
+        // and map to expected format
+        const centers = agendas
+          .filter(agenda => agenda.affiche_agenda === 'O')
+          .map(agenda => ({
+            id: agenda.id,
+            name: agenda.nom_complet || agenda.nom,
+            login: agenda.login,
+            mail: agenda.mail,
+            ordre: agenda.ordre
+          }))
+          .sort((a, b) => parseInt(a.ordre) - parseInt(b.ordre));
+
         bookingState.smartAgendaCenters = centers;
 
         console.log('Loaded', centers.length, 'centers from Smart Agenda');
+        console.log('Centers:', centers.map(c => c.name).join(', '));
 
         // Populate the center dropdown
         populateCenterDropdown(centers);
