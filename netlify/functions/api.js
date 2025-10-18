@@ -245,9 +245,21 @@ exports.handler = async (event, context) => {
   try {
     // Parse the path to determine which API endpoint to call
     // Handle both direct function calls and redirects
-    let path = event.path.replace('/.netlify/functions/api', '');
+    let path = event.path;
 
-    // Remove duplicate slashes if any
+    // Remove the function path if present
+    path = path.replace('/.netlify/functions/api', '');
+
+    // Remove the redirect source paths if present
+    path = path.replace('/laserostop_espagna/api', '');
+    path = path.replace('/api', '');
+
+    // Ensure path starts with /
+    if (!path.startsWith('/')) {
+      path = '/' + path;
+    }
+
+    // Remove duplicate slashes
     path = path.replace(/\/+/g, '/');
 
     const method = event.httpMethod;
