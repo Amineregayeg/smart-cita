@@ -1351,53 +1351,53 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
      * Availability and booking still use live API
      */
     const APPOINTMENT_TYPES = {
-      '1': [ // Valencia
-        { id: '1',  kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '1' },
-        { id: '9',  kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '1' },
-        { id: '18', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '1' },
-        { id: '3',  kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '1' }
+      '10': [ // Valencia (API ID: 10)
+        { id: '1',  kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '10' },
+        { id: '9',  kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '10' },
+        { id: '18', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '10' },
+        { id: '3',  kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '10' }
       ],
-      '4': [ // Barcelona Sants
-        { id: '25', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '4' },
-        { id: '21', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '4' },
-        { id: '23', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '4' },
-        { id: '22', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '4' }
+      '43': [ // Barcelona Sants (API ID: 43)
+        { id: '25', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '43' },
+        { id: '21', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '43' },
+        { id: '23', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '43' },
+        { id: '22', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '43' }
       ],
-      '5': [ // Sevilla
-        { id: '32', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '5' },
-        { id: '34', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '5' },
-        { id: '37', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '5' },
-        { id: '35', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '5' }
+      '44': [ // Sevilla (API ID: 44)
+        { id: '32', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '44' },
+        { id: '34', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '44' },
+        { id: '37', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '44' },
+        { id: '35', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '44' }
       ],
-      '6': [ // Torrejón
-        { id: '53', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '6' },
-        { id: '56', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '6' },
-        { id: '59', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '6' },
-        { id: '57', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '6' }
+      '49': [ // Torrejón (API ID: 49)
+        { id: '53', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '49' },
+        { id: '56', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '49' },
+        { id: '59', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '49' },
+        { id: '57', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '49' }
       ],
-      '7': [ // Madrid Chamartín
-        { id: '44', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '7' },
-        { id: '46', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '7' },
-        { id: '49', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '7' },
-        { id: '47', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '7' }
+      '48': [ // Madrid Chamartín (API ID: 48)
+        { id: '44', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '48' },
+        { id: '46', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '48' },
+        { id: '49', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '48' },
+        { id: '47', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '48' }
       ],
-      '8': [ // Madrid Atocha
-        { id: '63', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '8' },
-        { id: '65', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '8' },
-        { id: '68', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '8' },
-        { id: '66', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '8' }
+      '50': [ // Madrid Atocha (API ID: 50)
+        { id: '63', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '50' },
+        { id: '65', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '50' },
+        { id: '68', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '50' },
+        { id: '66', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '50' }
       ],
-      '9': [ // San Sebastián
-        { id: '81', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '9' },
-        { id: '83', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '9' },
-        { id: '86', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '9' },
-        { id: '84', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '9' }
+      '52': [ // San Sebastián (API ID: 52)
+        { id: '81', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '52' },
+        { id: '83', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '52' },
+        { id: '86', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '52' },
+        { id: '84', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '52' }
       ],
-      '10': [ // Majadahonda
-        { id: '72', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '10' },
-        { id: '74', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '10' },
-        { id: '77', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '10' },
-        { id: '75', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '10' }
+      '51': [ // Majadahonda (API ID: 51)
+        { id: '72', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '51' },
+        { id: '74', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '51' },
+        { id: '77', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '51' },
+        { id: '75', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '51' }
       ]
     };
 
