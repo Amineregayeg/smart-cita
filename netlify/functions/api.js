@@ -244,10 +244,15 @@ exports.handler = async (event, context) => {
 
   try {
     // Parse the path to determine which API endpoint to call
-    const path = event.path.replace('/.netlify/functions/api', '');
+    // Handle both direct function calls and redirects
+    let path = event.path.replace('/.netlify/functions/api', '');
+
+    // Remove duplicate slashes if any
+    path = path.replace(/\/+/g, '/');
+
     const method = event.httpMethod;
 
-    console.log(`${method} ${path}`);
+    console.log(`[API] ${method} ${event.path} -> ${path}`);
 
     // Route to appropriate handler
     if (path === '/centers' && method === 'GET') {
@@ -312,10 +317,18 @@ exports.handler = async (event, context) => {
     }
 
     // Unknown endpoint
+    console.log(`[API] 404 - No route matched for: ${method} ${path}`);
+    console.log(`[API] Available routes: GET /centers, GET /appointment-types, GET /availability, POST /booking, GET /health`);
     return {
       statusCode: 404,
       headers,
-      body: JSON.stringify({ error: 'Not found' })
+      body: JSON.stringify({
+        error: 'Not found',
+        path: path,
+        method: method,
+        originalPath: event.path,
+        message: 'No API route matches this request'
+      })
     };
 
   } catch (error) {
