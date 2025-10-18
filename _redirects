@@ -1,0 +1,6 @@
+# API redirects - must come first
+/laserostop_espagna/api/*  /.netlify/functions/api/:splat  200
+/api/*  /.netlify/functions/api/:splat  200
+
+# Directory redirects
+/laserostop_espagna  /laserostop_espagna/index.html  200

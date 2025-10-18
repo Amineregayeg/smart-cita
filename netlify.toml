@@ -14,11 +14,13 @@
   from = "/laserostop_espagna/api/*"
   to = "/.netlify/functions/api/:splat"
   status = 200
+  force = true
 
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/api/:splat"
   status = 200
+  force = true
 
 # Directory redirects - come after API redirects
 [[redirects]]
