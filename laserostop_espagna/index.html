@@ -1486,13 +1486,40 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
 
     /**
      * Load appointment types for selected center
-     * NOTE: Using hardcoded data instead of API due to Smart Agenda sync issues
+     * Fetches from Smart Agenda API and falls back to hardcoded data if needed
      */
     async function loadAppointmentTypes(centerId) {
       try {
         console.log('Loading appointment types for center:', centerId);
 
-        // Use hardcoded data instead of API
+        // Try to fetch from API first
+        try {
+          const response = await fetch(`${API_BASE_URL}/appointment-types?centerId=${centerId}`);
+
+          if (response.ok) {
+            const apiTypes = await response.json();
+            console.log('📋 Appointment types from API:', apiTypes);
+
+            if (apiTypes && apiTypes.length > 0) {
+              // Use API data
+              bookingState.appointmentTypes = apiTypes;
+              console.log(`Loaded ${apiTypes.length} appointment types from API`);
+
+              // Auto-select the first type if available
+              if (apiTypes.length > 0) {
+                bookingState.selectedAppointmentType = apiTypes[0].id;
+              }
+
+              return apiTypes;
+            }
+          } else {
+            console.warn('API returned non-OK status, falling back to hardcoded data');
+          }
+        } catch (apiError) {
+          console.warn('API fetch failed, falling back to hardcoded data:', apiError.message);
+        }
+
+        // Fallback to hardcoded data
         const types = APPOINTMENT_TYPES[centerId] || [];
         bookingState.appointmentTypes = types;
 
