@@ -4,6 +4,15 @@
  */
 
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+const sgMail = require('@sendgrid/mail');
+
+// Initialize SendGrid with API key from environment variables
+if (process.env.SENDGRID_API_KEY) {
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+  console.log('✅ SendGrid initialized');
+} else {
+  console.warn('⚠️ SENDGRID_API_KEY not found - admin emails will be skipped');
+}
 
 // Smart Agenda API Configuration from environment variables
 const SMART_AGENDA_BASE_URL = process.env.SMART_AGENDA_BASE_URL;
@@ -192,6 +201,105 @@ async function getAvailability(params) {
 }
 
 /**
+ * Send admin notification email about new booking
+ */
+async function sendAdminNotificationEmail(bookingDetails) {
+  // Skip if SendGrid not configured (local development or missing env var)
+  if (!process.env.SENDGRID_API_KEY) {
+    console.log('⚠️ SendGrid not configured - skipping admin email');
+    return;
+  }
+
+  const { fullName, email, phone, centerName, appointmentType, startTime, appointmentId } = bookingDetails;
+
+  const msg = {
+    to: process.env.ADMIN_EMAIL || 'laserostop.espagne@gmail.com',
+    from: process.env.FROM_EMAIL || 'aminregeq1@gmail.com',
+    subject: `🎯 Nueva Reserva - ${centerName}`,
+    text: `
+Nueva reserva confirmada:
+
+📍 Centro: ${centerName}
+👤 Cliente: ${fullName}
+📧 Email: ${email}
+📞 Teléfono: ${phone}
+🎯 Tipo de sesión: ${appointmentType}
+📅 Fecha y hora: ${new Date(startTime).toLocaleString('es-ES', {
+  weekday: 'long',
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit'
+})}
+🆔 ID de cita: ${appointmentId}
+
+---
+Este email fue generado automáticamente por el sistema de reservas LaserOstop.
+    `.trim(),
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
+        <div style="background-color: white; border-radius: 10px; padding: 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <h2 style="color: #10b981; margin-top: 0;">🎯 Nueva Reserva Confirmada</h2>
+
+          <div style="background-color: #f0fdf4; border-left: 4px solid #10b981; padding: 15px; margin: 20px 0;">
+            <p style="margin: 0; font-weight: bold; color: #059669;">Centro: ${centerName}</p>
+          </div>
+
+          <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+            <tr style="border-bottom: 1px solid #e5e7eb;">
+              <td style="padding: 10px 0; font-weight: bold; color: #6b7280;">👤 Cliente:</td>
+              <td style="padding: 10px 0;">${fullName}</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e5e7eb;">
+              <td style="padding: 10px 0; font-weight: bold; color: #6b7280;">📧 Email:</td>
+              <td style="padding: 10px 0;"><a href="mailto:${email}" style="color: #10b981;">${email}</a></td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e5e7eb;">
+              <td style="padding: 10px 0; font-weight: bold; color: #6b7280;">📞 Teléfono:</td>
+              <td style="padding: 10px 0;"><a href="tel:${phone}" style="color: #10b981;">${phone}</a></td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e5e7eb;">
+              <td style="padding: 10px 0; font-weight: bold; color: #6b7280;">🎯 Tipo de sesión:</td>
+              <td style="padding: 10px 0;">${appointmentType}</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e5e7eb;">
+              <td style="padding: 10px 0; font-weight: bold; color: #6b7280;">📅 Fecha y hora:</td>
+              <td style="padding: 10px 0;">${new Date(startTime).toLocaleString('es-ES', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+              })}</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px 0; font-weight: bold; color: #6b7280;">🆔 ID de cita:</td>
+              <td style="padding: 10px 0;">${appointmentId}</td>
+            </tr>
+          </table>
+
+          <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
+
+          <p style="color: #9ca3af; font-size: 12px; text-align: center; margin: 0;">
+            Este email fue generado automáticamente por el sistema de reservas LaserOstop
+          </p>
+        </div>
+      </div>
+    `
+  };
+
+  try {
+    await sgMail.send(msg);
+    console.log('✅ Admin notification email sent to:', process.env.ADMIN_EMAIL || 'laserostop.espagne@gmail.com');
+  } catch (error) {
+    console.error('❌ Failed to send admin email:', error);
+    // Don't throw - we don't want to fail the booking if email fails
+  }
+}
+
+/**
  * POST /api/booking
  * Create a booking in Smart Agenda - EXACTLY matches original Express backend
  */
@@ -261,6 +369,29 @@ async function createBooking(bookingData) {
   });
 
   console.log('✅ Appointment created successfully:', appointment.id);
+
+  // Send admin notification email (non-blocking, won't fail booking if email fails)
+  try {
+    // Get center and appointment type names for email
+    const centers = await smartAgendaRequest('/pdo_equipe');
+    const centerName = centers.find(c => c.id === centerId)?.nom || 'Unknown';
+
+    const types = await smartAgendaRequest('/pdo_prestation');
+    const appointmentType = types.find(t => t.id === typeId)?.nom || 'Unknown';
+
+    await sendAdminNotificationEmail({
+      fullName,
+      email,
+      phone,
+      centerName,
+      appointmentType,
+      startTime,
+      appointmentId: appointment.id
+    });
+  } catch (emailError) {
+    console.error('📧 Email notification failed (non-critical):', emailError);
+    // Continue - don't fail booking if email fails
+  }
 
   return {
     success: true,
