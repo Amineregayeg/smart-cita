@@ -1115,7 +1115,13 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
         const scrollY = window.scrollY;
         document.getElementById('booking-form').classList.add('hidden');
         document.getElementById('confirmation-message').classList.remove('hidden');
-        window.scrollTo(0, scrollY); // Prevent auto-scroll
+
+        // Use requestAnimationFrame to ensure scroll happens after DOM update
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            window.scrollTo(0, scrollY);
+          });
+        });
 
         // Show payment options popup after 2 seconds
         setTimeout(() => {
@@ -1198,7 +1204,13 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
       // Show popup (prevent page scroll by keeping current scroll position)
       const scrollY = window.scrollY;
       document.getElementById('payment-popup').classList.remove('hidden');
-      window.scrollTo(0, scrollY); // Maintain scroll position
+
+      // Use requestAnimationFrame to ensure scroll happens after DOM update
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          window.scrollTo(0, scrollY);
+        });
+      });
     }
 
     /**
