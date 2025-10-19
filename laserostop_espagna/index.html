@@ -104,6 +104,17 @@
       animation: scroll-right 40s linear infinite;
     }
 
+    /* Faster animation on mobile devices */
+    @media (max-width: 768px) {
+      .carousel-row-1 .carousel-track {
+        animation: scroll-left 20s linear infinite;
+      }
+
+      .carousel-row-2 .carousel-track {
+        animation: scroll-right 20s linear infinite;
+      }
+    }
+
     .carousel-container:hover .carousel-track {
       animation-play-state: paused;
     }
@@ -1182,8 +1193,10 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
         appointmentType: selectedType
       };
 
-      // Show popup
+      // Show popup (prevent page scroll by keeping current scroll position)
+      const scrollY = window.scrollY;
       document.getElementById('payment-popup').classList.remove('hidden');
+      window.scrollTo(0, scrollY); // Maintain scroll position
     }
 
     /**
@@ -1722,6 +1735,7 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
         const dayCell = document.createElement('div');
 
         const isPast = date < today;
+        const isSunday = date.getDay() === 0; // Sunday = 0 (centers closed)
         const isSelected = bookingState.selectedDate &&
           date.toDateString() === bookingState.selectedDate.toDateString();
         const isToday = date.toDateString() === today.toDateString();
@@ -1729,8 +1743,8 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
         // Base classes
         let classes = 'text-sm py-2 rounded-full transition-all';
 
-        if (isPast) {
-          // Past dates - disabled
+        if (isPast || isSunday) {
+          // Past dates or Sundays - disabled (centers closed on Sundays)
           classes += ' text-gray-400 cursor-not-allowed';
         } else if (isSelected) {
           // Selected date
@@ -1746,8 +1760,8 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
         dayCell.className = classes;
         dayCell.textContent = day;
 
-        // Add click handler for future dates
-        if (!isPast) {
+        // Add click handler for future dates (excluding Sundays)
+        if (!isPast && !isSunday) {
           dayCell.onclick = () => selectDate(date);
         }
 
