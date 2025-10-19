@@ -2052,12 +2052,18 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
      */
     function getCenterFromURL() {
       const path = window.location.pathname;
-      const slug = path.split('/').filter(p => p)[0]; // Get first path segment
+      const segments = path.split('/').filter(p => p);
 
-      const centerId = CENTER_URL_MAPPING[slug];
+      // For /laserostop_espagna/valencia -> segments = ['laserostop_espagna', 'valencia']
+      // We want the second segment (index 1)
+      const slug = segments.length > 1 ? segments[1] : null;
+
+      const centerId = slug ? CENTER_URL_MAPPING[slug] : null;
 
       if (centerId) {
         console.log('📍 Detected center from URL:', slug, '→ Center ID:', centerId);
+      } else if (slug) {
+        console.log('📍 URL slug detected but not in mapping:', slug);
       }
 
       return centerId || null;
