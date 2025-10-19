@@ -396,11 +396,14 @@ async function createBooking(bookingData) {
   // Send admin notification email (non-blocking, won't fail booking if email fails)
   try {
     // Get center and appointment type names for email
-    const centers = await smartAgendaRequest('/pdo_equipe');
-    const centerName = centers.find(c => c.id === centerId)?.nom || 'Unknown';
+    // Use correct Smart Agenda endpoints: /pdo_groupe for centers, /pdo_prestation for types
+    const centers = await smartAgendaRequest('/pdo_groupe');
+    const centerName = centers.find(c => c.id === centerId)?.nom || `Center ${centerId}`;
 
     const types = await smartAgendaRequest('/pdo_prestation');
-    const appointmentType = types.find(t => t.id === typeId)?.nom || 'Unknown';
+    const appointmentType = types.find(t => t.id === typeId)?.nom || `Type ${typeId}`;
+
+    console.log('📧 Email data - Center:', centerName, '| Type:', appointmentType);
 
     await sendAdminNotificationEmail({
       fullName,
@@ -412,7 +415,7 @@ async function createBooking(bookingData) {
       appointmentId: appointment.id
     });
   } catch (emailError) {
-    console.error('📧 Email notification failed (non-critical):', emailError);
+    console.error('📧 Email notification failed (non-critical):', emailError.message || emailError);
     // Continue - don't fail booking if email fails
   }
 
