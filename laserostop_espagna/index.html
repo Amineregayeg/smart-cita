@@ -1111,15 +1111,26 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
         document.querySelector('#confirmation-message p:last-child').innerHTML =
           `Estaremos encantados de recibirle en el centro <strong>${centerName}</strong> el <strong>${dateStr} a las ${bookingState.selectedTime}</strong>.`;
 
-        // Show confirmation (prevent scroll by saving and restoring position)
+        // Show confirmation (prevent scroll by maintaining position)
         const scrollY = window.scrollY;
+
+        // Temporarily disable smooth scrolling
+        const html = document.documentElement;
+        const originalScrollBehavior = html.style.scrollBehavior;
+        html.style.scrollBehavior = 'auto';
+
+        // Change visibility
         document.getElementById('booking-form').classList.add('hidden');
         document.getElementById('confirmation-message').classList.remove('hidden');
 
-        // Use requestAnimationFrame to ensure scroll happens after DOM update
+        // Force scroll position immediately and after render
+        window.scrollTo(0, scrollY);
         requestAnimationFrame(() => {
+          window.scrollTo(0, scrollY);
           requestAnimationFrame(() => {
             window.scrollTo(0, scrollY);
+            // Restore smooth scrolling
+            html.style.scrollBehavior = originalScrollBehavior;
           });
         });
 
@@ -1203,12 +1214,22 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
 
       // Show popup (prevent page scroll by keeping current scroll position)
       const scrollY = window.scrollY;
+
+      // Temporarily disable smooth scrolling
+      const html = document.documentElement;
+      const originalScrollBehavior = html.style.scrollBehavior;
+      html.style.scrollBehavior = 'auto';
+
       document.getElementById('payment-popup').classList.remove('hidden');
 
-      // Use requestAnimationFrame to ensure scroll happens after DOM update
+      // Force scroll position immediately and after render
+      window.scrollTo(0, scrollY);
       requestAnimationFrame(() => {
+        window.scrollTo(0, scrollY);
         requestAnimationFrame(() => {
           window.scrollTo(0, scrollY);
+          // Restore smooth scrolling
+          html.style.scrollBehavior = originalScrollBehavior;
         });
       });
     }
