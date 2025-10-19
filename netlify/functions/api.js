@@ -4,14 +4,22 @@
  */
 
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
-const sgMail = require('@sendgrid/mail');
 
-// Initialize SendGrid with API key from environment variables
-if (process.env.SENDGRID_API_KEY) {
-  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-  console.log('✅ SendGrid initialized');
-} else {
-  console.warn('⚠️ SENDGRID_API_KEY not found - admin emails will be skipped');
+// Import SendGrid (CommonJS require works in Netlify Functions)
+let sgMail;
+try {
+  sgMail = require('@sendgrid/mail');
+
+  // Initialize SendGrid with API key from environment variables
+  if (process.env.SENDGRID_API_KEY) {
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+    console.log('✅ SendGrid initialized with API key');
+  } else {
+    console.warn('⚠️ SENDGRID_API_KEY not found - admin emails will be skipped');
+  }
+} catch (error) {
+  console.error('❌ Failed to load SendGrid:', error);
+  sgMail = null;
 }
 
 // Smart Agenda API Configuration from environment variables
@@ -204,11 +212,18 @@ async function getAvailability(params) {
  * Send admin notification email about new booking
  */
 async function sendAdminNotificationEmail(bookingDetails) {
-  // Skip if SendGrid not configured (local development or missing env var)
-  if (!process.env.SENDGRID_API_KEY) {
-    console.log('⚠️ SendGrid not configured - skipping admin email');
+  // Skip if SendGrid not loaded or not configured
+  if (!sgMail) {
+    console.log('⚠️ SendGrid not loaded - skipping admin email');
     return;
   }
+
+  if (!process.env.SENDGRID_API_KEY) {
+    console.log('⚠️ SendGrid API key not configured - skipping admin email');
+    return;
+  }
+
+  console.log('📧 Preparing to send admin notification email...');
 
   const { fullName, email, phone, centerName, appointmentType, startTime, appointmentId } = bookingDetails;
 
@@ -291,10 +306,18 @@ Este email fue generado automáticamente por el sistema de reservas LaserOstop.
   };
 
   try {
-    await sgMail.send(msg);
-    console.log('✅ Admin notification email sent to:', process.env.ADMIN_EMAIL || 'laserostop.espagne@gmail.com');
+    console.log('📤 Sending email to:', msg.to);
+    console.log('📤 From:', msg.from);
+    console.log('📤 Subject:', msg.subject);
+
+    const result = await sgMail.send(msg);
+    console.log('✅ SendGrid response:', JSON.stringify(result[0]?.statusCode));
+    console.log('✅ Admin notification email sent successfully to:', msg.to);
   } catch (error) {
-    console.error('❌ Failed to send admin email:', error);
+    console.error('❌ Failed to send admin email:');
+    console.error('Error code:', error.code);
+    console.error('Error message:', error.message);
+    console.error('Error response:', error.response?.body);
     // Don't throw - we don't want to fail the booking if email fails
   }
 }
