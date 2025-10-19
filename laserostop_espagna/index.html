@@ -1785,6 +1785,14 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
       generateCalendar(); // Refresh calendar to show selection
       generateTimeSlots(); // Show available time slots
       updateStepIndicators(); // Update visual indicators
+
+      // Auto-scroll to time slots section for better UX
+      setTimeout(() => {
+        document.getElementById('time-slots-section').scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }, 100);
     }
 
     // Generate time slots for selected date
@@ -1834,6 +1842,14 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
       bookingState.selectedTime = time;
       generateTimeSlots(); // Refresh to show selection
       updateStepIndicators(); // Update visual indicators
+
+      // Auto-scroll to user info form for better UX
+      setTimeout(() => {
+        document.getElementById('step-3').scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }, 100);
 
       console.log('Booking state:', bookingState);
       // This will be used later for Smart Agenda API call
@@ -2002,6 +2018,14 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
 
         // Update step indicators
         updateStepIndicators();
+
+        // Auto-scroll to calendar section for better UX
+        setTimeout(() => {
+          document.getElementById('step-2').scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }, 300);
 
         console.log('Selected appointment type:', bookingState.selectedAppointmentType);
       } else {
