@@ -28,6 +28,12 @@
   to = "/laserostop_espagna/index.html"
   status = 200
 
+# Center-specific URLs (valencia, barcelona, etc.) - serve same index.html
+[[redirects]]
+  from = "/laserostop_espagna/*"
+  to = "/laserostop_espagna/index.html"
+  status = 200
+
 # Security headers
 [[headers]]
   for = "/*"
