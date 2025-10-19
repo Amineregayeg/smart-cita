@@ -295,13 +295,15 @@
                   </button>
 </div>
 </div>
-<div class="hidden text-center py-12" id="confirmation-message">
+<div class="hidden text-center" id="confirmation-message" style="min-height: 800px; display: flex; align-items: center; justify-content: center;">
+<div class="py-12">
 <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
 <span class="material-icons text-4xl text-green-500">check</span>
 </div>
 <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-4">¡Cita confirmada!</h2>
 <p class="text-lg text-gray-600 dark:text-gray-300 mb-2">Se ha enviado un correo de confirmación a su dirección.</p>
 <p class="text-gray-500 dark:text-gray-400">Estaremos encantados de recibirle en el centro <strong>LaserOstop Valencia</strong> el <strong>15 de Octubre de 2025 a las 11:30</strong>.</p>
+</div>
 </div>
 
 <!-- Payment Options Popup (Modal) -->
@@ -1111,28 +1113,9 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
         document.querySelector('#confirmation-message p:last-child').innerHTML =
           `Estaremos encantados de recibirle en el centro <strong>${centerName}</strong> el <strong>${dateStr} a las ${bookingState.selectedTime}</strong>.`;
 
-        // Show confirmation (prevent scroll by maintaining position)
-        const scrollY = window.scrollY;
-
-        // Temporarily disable smooth scrolling
-        const html = document.documentElement;
-        const originalScrollBehavior = html.style.scrollBehavior;
-        html.style.scrollBehavior = 'auto';
-
-        // Change visibility
+        // Show confirmation (centered - same height as form, no scroll jump)
         document.getElementById('booking-form').classList.add('hidden');
         document.getElementById('confirmation-message').classList.remove('hidden');
-
-        // Force scroll position immediately and after render
-        window.scrollTo(0, scrollY);
-        requestAnimationFrame(() => {
-          window.scrollTo(0, scrollY);
-          requestAnimationFrame(() => {
-            window.scrollTo(0, scrollY);
-            // Restore smooth scrolling
-            html.style.scrollBehavior = originalScrollBehavior;
-          });
-        });
 
         // Show payment options popup after 2 seconds
         setTimeout(() => {
@@ -1212,26 +1195,8 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
         appointmentType: selectedType
       };
 
-      // Show popup (prevent page scroll by keeping current scroll position)
-      const scrollY = window.scrollY;
-
-      // Temporarily disable smooth scrolling
-      const html = document.documentElement;
-      const originalScrollBehavior = html.style.scrollBehavior;
-      html.style.scrollBehavior = 'auto';
-
+      // Show popup (fixed overlay - no scroll issues)
       document.getElementById('payment-popup').classList.remove('hidden');
-
-      // Force scroll position immediately and after render
-      window.scrollTo(0, scrollY);
-      requestAnimationFrame(() => {
-        window.scrollTo(0, scrollY);
-        requestAnimationFrame(() => {
-          window.scrollTo(0, scrollY);
-          // Restore smooth scrolling
-          html.style.scrollBehavior = originalScrollBehavior;
-        });
-      });
     }
 
     /**
