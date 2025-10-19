@@ -396,11 +396,11 @@ async function createBooking(bookingData) {
   // Send admin notification email (non-blocking, won't fail booking if email fails)
   try {
     // Get center and appointment type names for email
-    // Use correct Smart Agenda endpoints: /pdo_groupe for centers, /pdo_prestation for types
+    // Use correct Smart Agenda endpoints: /pdo_groupe for centers, /pdo_type_rdv for types
     const centers = await smartAgendaRequest('/pdo_groupe');
     const centerName = centers.find(c => c.id === centerId)?.nom || `Center ${centerId}`;
 
-    const types = await smartAgendaRequest('/pdo_prestation');
+    const types = await smartAgendaRequest('/pdo_type_rdv');
     const appointmentType = types.find(t => t.id === typeId)?.nom || `Type ${typeId}`;
 
     console.log('📧 Email data - Center:', centerName, '| Type:', appointmentType);
