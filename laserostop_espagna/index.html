@@ -1111,9 +1111,11 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
         document.querySelector('#confirmation-message p:last-child').innerHTML =
           `Estaremos encantados de recibirle en el centro <strong>${centerName}</strong> el <strong>${dateStr} a las ${bookingState.selectedTime}</strong>.`;
 
-        // Show confirmation
+        // Show confirmation (prevent scroll by saving and restoring position)
+        const scrollY = window.scrollY;
         document.getElementById('booking-form').classList.add('hidden');
         document.getElementById('confirmation-message').classList.remove('hidden');
+        window.scrollTo(0, scrollY); // Prevent auto-scroll
 
         // Show payment options popup after 2 seconds
         setTimeout(() => {
