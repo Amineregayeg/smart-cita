@@ -1113,9 +1113,17 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
         document.querySelector('#confirmation-message p:last-child').innerHTML =
           `Estaremos encantados de recibirle en el centro <strong>${centerName}</strong> el <strong>${dateStr} a las ${bookingState.selectedTime}</strong>.`;
 
-        // Show confirmation (centered - same height as form, no scroll jump)
+        // Show confirmation and scroll to center it on screen
         document.getElementById('booking-form').classList.add('hidden');
         document.getElementById('confirmation-message').classList.remove('hidden');
+
+        // Scroll confirmation message to center of viewport
+        setTimeout(() => {
+          document.getElementById('confirmation-message').scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+          });
+        }, 100);
 
         // Show payment options popup after 2 seconds
         setTimeout(() => {
