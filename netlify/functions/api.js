@@ -218,12 +218,35 @@ async function getAvailability(params) {
     date_fin: endDate
   };
 
-  const availability = await smartAgendaRequest('/service/getAvailabilities', {
+  // Special handling: 404 is normal for availability (means no slots opened)
+  const token = await getToken();
+  const url = `${SMART_AGENDA_BASE_URL}/service/getAvailabilities`;
+  const headers = {
+    'X-SMARTAPI-TOKEN': token,
+    'Content-Type': 'application/json'
+  };
+
+  console.log(`Smart Agenda API: POST /service/getAvailabilities`);
+
+  const response = await fetch(url, {
     method: 'POST',
+    headers,
     body: JSON.stringify(payload)
   });
 
-  return availability;
+  // 404 means no availability - return empty array instead of throwing
+  if (response.status === 404) {
+    console.log(`No availability for agenda ${agendaId}, type ${typeId}`);
+    return [];
+  }
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error(`Smart Agenda API error: ${response.status}`, errorText);
+    throw new Error(`Smart Agenda API error: ${response.status} ${response.statusText}`);
+  }
+
+  return response.json();
 }
 
 /**
