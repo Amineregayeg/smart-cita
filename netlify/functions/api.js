@@ -382,7 +382,7 @@ async function createBooking(bookingData) {
     start_date: startTime,    // Start date/time
     end_date: endTime,        // End date/time
     equipe_id: centerId,      // Team/center ID
-    statut: 'C'               // Status: C = Confirmed
+    internet: '1'             // Required for calendar visibility in Smart Agenda dashboard
   };
   console.log('Appointment data:', appointmentData);
 
