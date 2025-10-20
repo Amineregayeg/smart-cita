@@ -119,24 +119,38 @@ async function smartAgendaRequest(endpoint, options = {}) {
 
 /**
  * GET /api/centers
- * Get all active centers - EXACTLY matches original Express backend
+ * Get all active centers from pdo_agenda (calendar columns) NOT pdo_groupe
+ * CRITICAL: Must use pdo_agenda IDs for bookings, not pdo_groupe IDs
  */
 async function getCenters() {
-  const groups = await smartAgendaRequest('/pdo_groupe');
+  // FIXED: Use pdo_agenda endpoint to get actual calendar columns
+  const agendas = await smartAgendaRequest('/pdo_agenda');
 
-  // Filter active centers (etat !== "S") and sort by order
-  const activeCenters = groups
-    .filter(center => center.etat !== 'S')
-    .sort((a, b) => parseInt(a.ordre) - parseInt(b.ordre))
-    .map(center => ({
-      id: center.id,
-      name: center.libelle,
-      order: parseInt(center.ordre),
-      image: center.image,
-      address: center.perso1 ? center.perso1.replace(/<[^>]*>/g, '') : '', // Strip HTML
-      mapLink: center.perso2 ? center.perso2.match(/href="([^"]*)"/)?.[1] : '',
-      bookingLink: center.link_rdv
-    }));
+  // Get groups for additional info (address, images, etc.)
+  const groups = await smartAgendaRequest('/pdo_groupe');
+  const groupMap = {};
+  groups.forEach(g => groupMap[g.libelle] = g);
+
+  // Filter visible agendas and exclude "RDV ANNULE"
+  const activeCenters = agendas
+    .filter(agenda => agenda.affiche_agenda === 'O')  // Only visible in calendar
+    .filter(agenda => agenda.id !== '53')  // Exclude "RDV ANNULE"
+    .map(agenda => {
+      // Try to find matching group by name for additional info
+      const matchingGroup = groupMap[agenda.nom] || {};
+
+      return {
+        id: agenda.id,  // CRITICAL: This is now pdo_agenda.id (10, 43-53)
+        name: agenda.nom,
+        login: agenda.login,
+        order: parseInt(agenda.ordre) || 0,
+        image: matchingGroup.image || '',
+        address: matchingGroup.perso1 ? matchingGroup.perso1.replace(/<[^>]*>/g, '') : '',
+        mapLink: matchingGroup.perso2 ? matchingGroup.perso2.match(/href="([^"]*)"/)?.[1] : '',
+        bookingLink: matchingGroup.link_rdv || ''
+      };
+    })
+    .sort((a, b) => a.order - b.order);
 
   return activeCenters;
 }
@@ -176,34 +190,38 @@ async function getAppointmentTypes(centerId) {
 }
 
 /**
- * GET /api/availability?startDate=X&endDate=Y
- * Get available time slots - EXACTLY matches original Express backend
+ * GET /api/availability?agendaId=X&typeId=Y&startDate=Z&endDate=W
+ * Get available time slots using correct Smart Agenda service
+ * CRITICAL: Must use POST to /service/getAvailabilities with pdo_agenda_id
  */
 async function getAvailability(params) {
-  const { centerId, typeId, startDate, endDate } = params;
+  const { agendaId, typeId, startDate, endDate } = params;
 
   if (!startDate || !endDate) {
     throw new Error('startDate and endDate are required');
   }
 
-  // Get resources first (practitioners)
-  const resources = await smartAgendaRequest('/pdo_ressource');
-
-  // Use generic resource (-1) or first available resource
-  const resourceId = resources.find(r => r.id === '-1')?.id || resources[0]?.id || '-1';
-
-  // Build query parameters
-  const queryParams = new URLSearchParams({
-    id_ressource: resourceId,
-    date_debut: startDate,
-    date_fin: endDate
-  });
-
-  if (typeId) {
-    queryParams.append('id_type_rdv', typeId);
+  if (!agendaId) {
+    throw new Error('agendaId is required');
   }
 
-  const availability = await smartAgendaRequest(`/getAvailabilities?${queryParams.toString()}`);
+  if (!typeId) {
+    throw new Error('typeId is required');
+  }
+
+  // FIXED: Use correct Smart Agenda service endpoint with POST
+  // This checks opened time slots (pdo_events_ouverture) for the specific agenda
+  const payload = {
+    pdo_type_rdv_id: typeId,
+    pdo_agenda_id: agendaId,  // CRITICAL: Use pdo_agenda ID not pdo_groupe ID
+    date_a_partir_de: startDate,
+    date_fin: endDate
+  };
+
+  const availability = await smartAgendaRequest('/service/getAvailabilities', {
+    method: 'POST',
+    body: JSON.stringify(payload)
+  });
 
   return availability;
 }
@@ -324,15 +342,19 @@ Este email fue generado automáticamente por el sistema de reservas LaserOstop.
 
 /**
  * POST /api/booking
- * Create a booking in Smart Agenda - EXACTLY matches original Express backend
+ * Create a booking in Smart Agenda using CORRECT pdo_agenda IDs
+ * CRITICAL: centerId is now agendaId from pdo_agenda, not pdo_groupe
  */
 async function createBooking(bookingData) {
   const { fullName, email, phone, centerId, typeId, startTime, endTime, source } = bookingData;
 
-  console.log('📋 Received booking request:', { fullName, email, phone, centerId, typeId, startTime, endTime, source: source || 'direct' });
+  // NOTE: centerId here is actually agendaId from frontend (pdo_agenda.id)
+  const agendaId = centerId;
+
+  console.log('📋 Received booking request:', { fullName, email, phone, agendaId, typeId, startTime, endTime, source: source || 'direct' });
 
   // Validate required fields
-  if (!fullName || !email || !phone || !centerId || !typeId || !startTime || !endTime) {
+  if (!fullName || !email || !phone || !agendaId || !typeId || !startTime || !endTime) {
     throw new Error('Missing required fields');
   }
 
@@ -353,8 +375,8 @@ async function createBooking(bookingData) {
       nom: lastName,
       prenom: firstName,
       mail: email,
-      telephone: phone,
-      id_groupe: centerId
+      telephone: phone
+      // NOTE: Removed id_groupe - not needed for client creation
     };
     console.log('Client data:', clientData);
 
@@ -381,8 +403,8 @@ async function createBooking(bookingData) {
     ressource_id: resourceId, // Resource/practitioner ID
     start_date: startTime,    // Start date/time
     end_date: endTime,        // End date/time
-    equipe_id: centerId,      // Team/center ID
-    internet: '1'             // Required for calendar visibility in Smart Agenda dashboard
+    equipe_id: agendaId,      // CRITICAL: Now using pdo_agenda.id (10, 43-53) not pdo_groupe.id
+    internet: 'O'             // CRITICAL: 'O' = Online booking by client (per documentation)
   };
   console.log('Appointment data:', appointmentData);
 
