@@ -1528,25 +1528,20 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
 
     /**
      * Load availability for selected date range
+     * FIXED: Now uses correct Smart Agenda service endpoint
      */
     async function loadAvailability(startDate, endDate) {
-      // DISABLED: Smart Agenda API doesn't support /getAvailabilities endpoint (returns HTTP 400)
-      // For now, we allow users to manually select any date/time
-      // Real availability checking would need to be done through Smart Agenda dashboard
-      console.log('Availability loading disabled (Smart Agenda API limitation)');
-      return {};
-
-      /* COMMENTED OUT - API not available
       if (!bookingState.selectedCenter || !bookingState.selectedAppointmentType) {
         console.log('Center or appointment type not selected');
         return {};
       }
 
       try {
-        console.log('Loading availability from', startDate, 'to', endDate);
+        console.log('Loading availability from', formatDateForAPI(startDate), 'to', formatDateForAPI(endDate));
 
         const params = new URLSearchParams({
-          centerId: bookingState.selectedCenter,
+          agendaId: bookingState.selectedCenter,  // Using pdo_agenda ID
+          typeId: bookingState.selectedAppointmentType,
           startDate: formatDateForAPI(startDate),
           endDate: formatDateForAPI(endDate)
         });
@@ -1554,39 +1549,60 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
         const response = await fetch(`${API_BASE_URL}/availability?${params.toString()}`);
 
         if (!response.ok) {
+          if (response.status === 404) {
+            console.warn('⚠️ No availability found - Time slots may not be opened in Smart Agenda dashboard');
+            bookingState.availableSlots = {};
+            return {};
+          }
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const availability = await response.json();
-        console.log('Availability data:', availability);
+        console.log('✅ Availability data loaded:', availability.length, 'days');
 
         bookingState.availableSlots = processAvailabilityData(availability);
 
         return bookingState.availableSlots;
       } catch (error) {
-        console.error('Error loading availability:', error);
+        console.error('❌ Error loading availability:', error);
+        bookingState.availableSlots = {};
         return {};
       }
-      */
     }
 
     /**
      * Process availability data from API into time slots format
+     * Smart Agenda format: Array of {dj: 'YYYY-MM-DD', det: [{hd: 'HH:MM:SS', ...}, ...]}
      */
     function processAvailabilityData(apiData) {
-      // TODO: Parse Smart Agenda availability format
-      // For now, return sample data structure
-      // This will be updated once we test the actual API response format
-
       const slots = {};
 
-      // Example: if apiData has array of available times
-      // apiData.forEach(slot => {
-      //   const dateKey = slot.date;
-      //   if (!slots[dateKey]) slots[dateKey] = {};
-      //   slots[dateKey][slot.time] = true;
-      // });
+      if (!Array.isArray(apiData)) {
+        console.warn('Invalid availability data format');
+        return slots;
+      }
 
+      // Process each day
+      apiData.forEach(day => {
+        const dateKey = day.dj; // Date in YYYY-MM-DD format
+        if (!dateKey || !day.det || !Array.isArray(day.det)) {
+          return;
+        }
+
+        // Create slots object for this date
+        slots[dateKey] = {};
+
+        // Process each time slot
+        day.det.forEach(slot => {
+          if (slot.hd) {
+            // hd is in format 'HH:MM:SS', we need 'HH:MM'
+            const time = slot.hd.substring(0, 5); // Extract 'HH:MM'
+            slots[dateKey][time] = true;
+          }
+        });
+      });
+
+      console.log('Processed availability slots:', Object.keys(slots).length, 'days');
       return slots;
     }
 
@@ -1816,11 +1832,23 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
       const year = bookingState.selectedDate.getFullYear();
       dateInfo.textContent = `Horarios para ${dayName}, ${day} de ${month} de ${year}`;
 
+      // Get available slots for selected date
+      const dateKey = formatDateForAPI(bookingState.selectedDate);
+      const daySlots = bookingState.availableSlots[dateKey] || {};
+
       // Generate time slot buttons
       timeSlotsContainer.innerHTML = '';
 
-      Object.keys(sampleTimeSlots).forEach(time => {
-        const available = sampleTimeSlots[time];
+      // If no slots available for this date, show message
+      if (Object.keys(daySlots).length === 0) {
+        timeSlotsContainer.innerHTML = '<p class="text-gray-500 dark:text-gray-400 col-span-full text-center py-4">⚠️ No hay horarios disponibles para esta fecha. Por favor, seleccione otra fecha o contacte al centro.</p>';
+        return;
+      }
+
+      // Sort times and generate buttons
+      const times = Object.keys(daySlots).sort();
+      times.forEach(time => {
+        const available = daySlots[time];
         const button = document.createElement('button');
 
         const isSelected = bookingState.selectedTime === time;
@@ -1861,13 +1889,33 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
     // Navigate to previous month
     document.getElementById('prev-month').addEventListener('click', () => {
       bookingState.currentMonth.setMonth(bookingState.currentMonth.getMonth() - 1);
-      generateCalendar();
+
+      // Load availability for new month
+      if (bookingState.selectedCenter && bookingState.selectedAppointmentType) {
+        const startDate = new Date(bookingState.currentMonth.getFullYear(), bookingState.currentMonth.getMonth(), 1);
+        const endDate = new Date(bookingState.currentMonth.getFullYear(), bookingState.currentMonth.getMonth() + 1, 0);
+        loadAvailability(startDate, endDate).then(() => {
+          generateCalendar();
+        });
+      } else {
+        generateCalendar();
+      }
     });
 
     // Navigate to next month
     document.getElementById('next-month').addEventListener('click', () => {
       bookingState.currentMonth.setMonth(bookingState.currentMonth.getMonth() + 1);
-      generateCalendar();
+
+      // Load availability for new month
+      if (bookingState.selectedCenter && bookingState.selectedAppointmentType) {
+        const startDate = new Date(bookingState.currentMonth.getFullYear(), bookingState.currentMonth.getMonth(), 1);
+        const endDate = new Date(bookingState.currentMonth.getFullYear(), bookingState.currentMonth.getMonth() + 1, 0);
+        loadAvailability(startDate, endDate).then(() => {
+          generateCalendar();
+        });
+      } else {
+        generateCalendar();
+      }
     });
 
     // Update booking state when center is selected
@@ -2021,6 +2069,13 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
 
         // Update step indicators
         updateStepIndicators();
+
+        // Load availability for current month when appointment type is selected
+        const startDate = new Date(bookingState.currentMonth.getFullYear(), bookingState.currentMonth.getMonth(), 1);
+        const endDate = new Date(bookingState.currentMonth.getFullYear(), bookingState.currentMonth.getMonth() + 1, 0);
+        loadAvailability(startDate, endDate).then(() => {
+          generateCalendar(); // Refresh calendar with availability data
+        });
 
         // Auto-scroll to calendar section for better UX
         setTimeout(() => {
