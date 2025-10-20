@@ -1572,7 +1572,7 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
 
     /**
      * Process availability data from API into time slots format
-     * Smart Agenda format: Array of {dj: 'YYYY-MM-DD', det: [{hd: 'HH:MM:SS', ...}, ...]}
+     * Smart Agenda format: Array of {dj: 'YYYY-MM-DD', det: [{idp: 'HH:MM', ...}, ...]}
      */
     function processAvailabilityData(apiData) {
       const slots = {};
@@ -1594,9 +1594,9 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
 
         // Process each time slot
         day.det.forEach(slot => {
-          if (slot.hd) {
-            // hd is in format 'HH:MM:SS', we need 'HH:MM'
-            const time = slot.hd.substring(0, 5); // Extract 'HH:MM'
+          // FIXED: Smart Agenda uses 'idp' field, not 'hd'
+          if (slot.idp) {
+            const time = slot.idp; // Already in 'HH:MM' format
             slots[dateKey][time] = true;
           }
         });
