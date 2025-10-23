@@ -2014,14 +2014,12 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
       select.innerHTML = '<option value="">Seleccione el tipo de sesión...</option>';
 
       if (types && types.length > 0) {
-        // Filter: Only show "pay at center" types (deposit = 0)
-        // Include all types where deposit is 0, including Rechute (price = 0)
-        const centerPaymentTypes = types.filter(type =>
-          type.deposit === 0 && type.price >= 0
-        );
+        // Show ALL appointment types (no filtering)
+        // Types will auto-hide if deleted from Smart Agenda backend
+        const centerPaymentTypes = types;
 
         if (centerPaymentTypes.length === 0) {
-          console.warn('No "pay at center" appointment types available');
+          console.warn('No appointment types available');
           step1b.classList.add('hidden');
           return;
         }
