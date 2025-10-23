@@ -354,7 +354,8 @@ app.get('/api/health', (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`✅ LaserOstop API Server running on http://localhost:${PORT}`);
-  console.log(`📍 Smart Agenda Environment: laserostop-esh-dev (test)`);
+  const envName = SMART_AGENDA_BASE_URL.includes('-dev') ? 'laserostop-esh-dev (test)' : 'laserostop-esh (PRODUCTION)';
+  console.log(`📍 Smart Agenda Environment: ${envName}`);
   console.log(`🔗 Frontend: http://localhost:${PORT}/lp_code/index.html`);
   console.log('\nAvailable endpoints:');
   console.log('  GET  /api/health');
