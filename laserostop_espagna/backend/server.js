@@ -147,14 +147,15 @@ async function smartAgendaRequest(endpoint, options = {}) {
 
 /**
  * GET /api/centers - Get all active centers
+ * Note: Both TEST and PROD use pdo_groupe for centers (locations)
+ * pdo_agenda is for practitioners/staff, not centers
  */
 app.get('/api/centers', async (req, res) => {
   try {
-    // PROD uses pdo_agenda instead of pdo_groupe
-    const agendas = await smartAgendaRequest('/pdo_agenda');
+    const groups = await smartAgendaRequest('/pdo_groupe');
 
     // Filter active centers (etat !== "S") and sort by order
-    const activeCenters = agendas
+    const activeCenters = groups
       .filter(center => center.etat !== 'S')
       .sort((a, b) => parseInt(a.ordre) - parseInt(b.ordre))
       .map(center => ({
@@ -186,9 +187,9 @@ app.get('/api/appointment-types', async (req, res) => {
     // Filter by center only (no longer filtering by afficher_site or reservable flags)
     let filteredTypes = types;
 
-    // If centerId provided, filter by center (PROD uses id_agenda)
+    // If centerId provided, filter by center
     if (centerId) {
-      filteredTypes = filteredTypes.filter(type => type.id_agenda === centerId);
+      filteredTypes = filteredTypes.filter(type => type.id_groupe === centerId);
     }
 
     const formattedTypes = filteredTypes.map(type => ({
@@ -197,7 +198,7 @@ app.get('/api/appointment-types', async (req, res) => {
       duration: parseInt(type.duree),
       price: parseFloat(type.prix_ttc),
       deposit: type.acompte ? parseFloat(type.acompte) : 0,
-      centerId: type.id_agenda, // PROD uses id_agenda
+      centerId: type.id_groupe,
       description: type.description,
       instructions: type.perso1,
       stripeLink: type.perso2,
