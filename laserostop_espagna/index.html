@@ -152,17 +152,59 @@
 <body class="bg-background-light dark:bg-background-dark font-display text-text-light dark:text-text-dark">
 <div class="min-h-screen flex flex-col">
 
-<!-- Logo Header -->
-<header class="bg-white dark:bg-gray-900 shadow-sm">
-<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
-<div class="flex justify-center">
-<img src="assets/logolaserostop-bleu.svg" alt="LaserOstop España" class="h-16 sm:h-20 w-auto"/>
+<!-- Modern Navigation Bar -->
+<nav class="bg-white dark:bg-gray-900 shadow-md sticky top-0 z-50 transition-all duration-300" id="navbar">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-20">
+<!-- Logo -->
+<div class="flex-shrink-0">
+<a href="#hero" class="smooth-scroll">
+<img src="assets/logolaserostop-bleu.svg" alt="LaserOstop España" class="h-12 sm:h-14 w-auto transition-all duration-300"/>
+</a>
+</div>
+
+<!-- Desktop Navigation Links -->
+<div class="hidden md:flex items-center space-x-8">
+<a href="#hero" class="smooth-scroll text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors duration-200 font-medium">Inicio</a>
+<a href="#about" class="smooth-scroll text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors duration-200 font-medium">Sobre Nosotros</a>
+<a href="#how-it-works" class="smooth-scroll text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors duration-200 font-medium">Cómo Funciona</a>
+<a href="#testimonials" class="smooth-scroll text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors duration-200 font-medium">Testimonios</a>
+</div>
+
+<!-- Reservation CTA Button (Desktop) -->
+<div class="hidden md:flex items-center">
+<a href="#booking" class="smooth-scroll inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white font-semibold px-6 py-3 rounded-full shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300">
+<span class="material-icons text-lg">event_available</span>
+<span>Reservar Cita</span>
+</a>
+</div>
+
+<!-- Mobile Menu Button -->
+<div class="md:hidden">
+<button id="mobile-menu-button" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary focus:outline-none">
+<span class="material-icons text-3xl">menu</span>
+</button>
 </div>
 </div>
-</header>
+
+<!-- Mobile Navigation Menu -->
+<div id="mobile-menu" class="hidden md:hidden pb-4 pt-2">
+<div class="flex flex-col space-y-3">
+<a href="#hero" class="smooth-scroll mobile-link text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors duration-200 font-medium py-2 px-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">Inicio</a>
+<a href="#about" class="smooth-scroll mobile-link text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors duration-200 font-medium py-2 px-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">Sobre Nosotros</a>
+<a href="#how-it-works" class="smooth-scroll mobile-link text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors duration-200 font-medium py-2 px-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">Cómo Funciona</a>
+<a href="#testimonials" class="smooth-scroll mobile-link text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors duration-200 font-medium py-2 px-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">Testimonios</a>
+<a href="#booking" class="smooth-scroll mobile-link inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white font-semibold px-6 py-3 rounded-full shadow-md transition-all duration-300 mt-2">
+<span class="material-icons text-lg">event_available</span>
+<span>Reservar Cita</span>
+</a>
+</div>
+</div>
+</div>
+</nav>
 
 <main class="flex-grow">
-<section class="relative py-20 sm:py-32 bg-cover bg-center" style="background-image: url('assets/cigarettes.png');">
+<section id="hero" class="relative py-20 sm:py-32 bg-cover bg-center" style="background-image: url('assets/cigarettes.png');">
 <div class="absolute inset-0 bg-black opacity-40"></div>
 <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative text-center">
 <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold text-white leading-tight mb-8">Reserve su cita hoy mismo <br class="hidden sm:block"/> para dejar de fumar suavemente</h1>
@@ -2507,6 +2549,68 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
         icon.textContent = 'volume_off';
       }
     }
+
+    // Navigation - Mobile Menu Toggle
+    document.addEventListener('DOMContentLoaded', function() {
+      const mobileMenuButton = document.getElementById('mobile-menu-button');
+      const mobileMenu = document.getElementById('mobile-menu');
+      const mobileMenuIcon = mobileMenuButton.querySelector('.material-icons');
+
+      // Toggle mobile menu
+      mobileMenuButton.addEventListener('click', function() {
+        mobileMenu.classList.toggle('hidden');
+        // Toggle icon between menu and close
+        if (mobileMenu.classList.contains('hidden')) {
+          mobileMenuIcon.textContent = 'menu';
+        } else {
+          mobileMenuIcon.textContent = 'close';
+        }
+      });
+
+      // Close mobile menu when clicking a link
+      const mobileLinks = document.querySelectorAll('.mobile-link');
+      mobileLinks.forEach(link => {
+        link.addEventListener('click', function() {
+          mobileMenu.classList.add('hidden');
+          mobileMenuIcon.textContent = 'menu';
+        });
+      });
+
+      // Smooth scroll for all navigation links
+      const smoothScrollLinks = document.querySelectorAll('.smooth-scroll');
+      smoothScrollLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          const targetId = this.getAttribute('href');
+          const targetSection = document.querySelector(targetId);
+
+          if (targetSection) {
+            const navbarHeight = document.getElementById('navbar').offsetHeight;
+            const targetPosition = targetSection.offsetTop - navbarHeight;
+
+            window.scrollTo({
+              top: targetPosition,
+              behavior: 'smooth'
+            });
+          }
+        });
+      });
+
+      // Add scroll effect to navbar (shrink on scroll)
+      let lastScroll = 0;
+      window.addEventListener('scroll', function() {
+        const navbar = document.getElementById('navbar');
+        const currentScroll = window.pageYOffset;
+
+        if (currentScroll > 100) {
+          navbar.classList.add('shadow-lg');
+        } else {
+          navbar.classList.remove('shadow-lg');
+        }
+
+        lastScroll = currentScroll;
+      });
+    });
   </script>
 
 </body>
