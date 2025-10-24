@@ -150,10 +150,11 @@ async function smartAgendaRequest(endpoint, options = {}) {
  */
 app.get('/api/centers', async (req, res) => {
   try {
-    const groups = await smartAgendaRequest('/pdo_groupe');
+    // PROD uses pdo_agenda instead of pdo_groupe
+    const agendas = await smartAgendaRequest('/pdo_agenda');
 
     // Filter active centers (etat !== "S") and sort by order
-    const activeCenters = groups
+    const activeCenters = agendas
       .filter(center => center.etat !== 'S')
       .sort((a, b) => parseInt(a.ordre) - parseInt(b.ordre))
       .map(center => ({
@@ -185,9 +186,9 @@ app.get('/api/appointment-types', async (req, res) => {
     // Filter by center only (no longer filtering by afficher_site or reservable flags)
     let filteredTypes = types;
 
-    // If centerId provided, filter by center
+    // If centerId provided, filter by center (PROD uses id_agenda)
     if (centerId) {
-      filteredTypes = filteredTypes.filter(type => type.id_groupe === centerId);
+      filteredTypes = filteredTypes.filter(type => type.id_agenda === centerId);
     }
 
     const formattedTypes = filteredTypes.map(type => ({
@@ -196,7 +197,7 @@ app.get('/api/appointment-types', async (req, res) => {
       duration: parseInt(type.duree),
       price: parseFloat(type.prix_ttc),
       deposit: type.acompte ? parseFloat(type.acompte) : 0,
-      centerId: type.id_groupe,
+      centerId: type.id_agenda, // PROD uses id_agenda
       description: type.description,
       instructions: type.perso1,
       stripeLink: type.perso2,
@@ -236,6 +237,10 @@ app.get('/api/availability', async (req, res) => {
       date_debut: startDate,
       date_fin: endDate
     });
+
+    if (centerId) {
+      params.append('id_agenda', centerId); // PROD uses id_agenda
+    }
 
     if (typeId) {
       params.append('id_type_rdv', typeId);
@@ -282,7 +287,7 @@ app.post('/api/booking', async (req, res) => {
         prenom: firstName,
         mail: email,
         telephone: phone,
-        id_groupe: centerId
+        id_agenda: centerId // PROD uses id_agenda instead of id_groupe
       };
       console.log('Client data:', clientData);
 
@@ -309,7 +314,7 @@ app.post('/api/booking', async (req, res) => {
       ressource_id: resourceId, // Resource/practitioner ID
       start_date: startTime,    // Start date/time
       end_date: endTime,        // End date/time
-      equipe_id: centerId,      // Team/center ID
+      agenda_id: centerId,      // PROD uses agenda_id instead of equipe_id
       statut: 'C'               // Status: C = Confirmed
     };
     console.log('Appointment data:', appointmentData);
