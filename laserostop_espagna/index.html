@@ -198,7 +198,7 @@
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
 <!-- About Video - Left on Desktop, Top on Mobile -->
 <div class="order-1 lg:order-1 flex justify-center">
-<div class="relative rounded-2xl overflow-hidden shadow-2xl aspect-[9/16] w-full max-w-sm">
+<div class="relative rounded-2xl overflow-hidden shadow-2xl aspect-[9/16] w-full max-w-sm group cursor-pointer" onclick="toggleVideoAudio(this)">
 <video
   class="w-full h-full object-cover"
   autoplay
@@ -210,6 +210,19 @@
   <source src="assets/about-video.mp4" type="video/mp4">
   Tu navegador no soporta el elemento de vídeo.
 </video>
+<!-- Audio Toggle Button -->
+<div class="absolute bottom-4 right-4 bg-black/70 backdrop-blur-sm rounded-full p-3 transition-all duration-300 hover:bg-black/90 hover:scale-110">
+  <span class="material-icons text-white text-2xl audio-icon">volume_off</span>
+</div>
+<!-- Tap to unmute hint -->
+<div class="absolute inset-0 bg-black/30 backdrop-blur-[1px] flex items-center justify-center transition-opacity duration-300 opacity-100 group-hover:opacity-0 pointer-events-none audio-hint">
+  <div class="bg-white/90 dark:bg-gray-900/90 px-6 py-3 rounded-full shadow-lg">
+    <div class="flex items-center gap-2">
+      <span class="material-icons text-primary">volume_up</span>
+      <p class="text-sm font-medium text-gray-800 dark:text-gray-200">Toca para activar audio</p>
+    </div>
+  </div>
+</div>
 </div>
 </div>
 
@@ -293,7 +306,7 @@ El tratamiento es <strong>indoloro, no invasivo y no presenta efectos secundario
 
 <!-- How It Works Video - Right on Desktop, Bottom on Mobile -->
 <div class="order-1 lg:order-2 flex justify-center">
-<div class="relative rounded-2xl overflow-hidden shadow-2xl aspect-[9/16] w-full max-w-sm">
+<div class="relative rounded-2xl overflow-hidden shadow-2xl aspect-[9/16] w-full max-w-sm group cursor-pointer" onclick="toggleVideoAudio(this)">
 <video
   class="w-full h-full object-cover"
   autoplay
@@ -305,6 +318,19 @@ El tratamiento es <strong>indoloro, no invasivo y no presenta efectos secundario
   <source src="assets/how-it-works-video.mp4" type="video/mp4">
   Tu navegador no soporta el elemento de vídeo.
 </video>
+<!-- Audio Toggle Button -->
+<div class="absolute bottom-4 right-4 bg-black/70 backdrop-blur-sm rounded-full p-3 transition-all duration-300 hover:bg-black/90 hover:scale-110">
+  <span class="material-icons text-white text-2xl audio-icon">volume_off</span>
+</div>
+<!-- Tap to unmute hint -->
+<div class="absolute inset-0 bg-black/30 backdrop-blur-[1px] flex items-center justify-center transition-opacity duration-300 opacity-100 group-hover:opacity-0 pointer-events-none audio-hint">
+  <div class="bg-white/90 dark:bg-gray-900/90 px-6 py-3 rounded-full shadow-lg">
+    <div class="flex items-center gap-2">
+      <span class="material-icons text-primary">volume_up</span>
+      <p class="text-sm font-medium text-gray-800 dark:text-gray-200">Toca para activar audio</p>
+    </div>
+  </div>
+</div>
 </div>
 </div>
 </div>
@@ -2502,6 +2528,25 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
         console.log('✅ Hero CTA button scroll initialized');
       }
     });
+
+    // Video audio toggle function
+    function toggleVideoAudio(container) {
+      const video = container.querySelector('video');
+      const icon = container.querySelector('.audio-icon');
+      const hint = container.querySelector('.audio-hint');
+
+      if (video.muted) {
+        video.muted = false;
+        icon.textContent = 'volume_up';
+        if (hint) {
+          hint.style.opacity = '0';
+          setTimeout(() => hint.style.display = 'none', 300);
+        }
+      } else {
+        video.muted = true;
+        icon.textContent = 'volume_off';
+      }
+    }
   </script>
 
 </body>
