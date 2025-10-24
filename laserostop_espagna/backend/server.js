@@ -231,19 +231,18 @@ app.get('/api/availability', async (req, res) => {
     // Use generic resource (-1) or first available resource
     const resourceId = resources.find(r => r.id === '-1')?.id || resources[0]?.id || '-1';
 
-    // Build query parameters
+    // Build query parameters for getAvailabilities service
     const params = new URLSearchParams({
-      id_ressource: resourceId,
-      date_debut: startDate,
+      date_a_partir_de: startDate,
       date_fin: endDate
     });
 
     if (centerId) {
-      params.append('id_agenda', centerId); // PROD uses id_agenda
+      params.append('pdo_agenda_id', centerId); // Filter by specific agenda/center
     }
 
     if (typeId) {
-      params.append('id_type_rdv', typeId);
+      params.append('pdo_type_rdv_id', typeId); // Filter by appointment type
     }
 
     const availability = await smartAgendaRequest(`/getAvailabilities?${params.toString()}`);
@@ -286,8 +285,8 @@ app.post('/api/booking', async (req, res) => {
         nom: lastName,
         prenom: firstName,
         mail: email,
-        telephone: phone,
-        id_agenda: centerId // PROD uses id_agenda instead of id_groupe
+        telephone: phone
+        // Note: Not setting id_agenda or id_groupe - let API handle assignment
       };
       console.log('Client data:', clientData);
 
@@ -310,11 +309,12 @@ app.post('/api/booking', async (req, res) => {
     console.log('📅 Creating appointment...');
     const appointmentData = {
       client_id: client.id,     // Client ID
+      client_nom: lastName,     // Required by API
       presta_id: typeId,        // IMPORTANT: presta_id = appointment TYPE (prestation/service), not practitioner!
       ressource_id: resourceId, // Resource/practitioner ID
       start_date: startTime,    // Start date/time
       end_date: endTime,        // End date/time
-      agenda_id: centerId,      // PROD uses agenda_id instead of equipe_id
+      equipe_id: centerId,      // Required: column ID in agenda
       statut: 'C'               // Status: C = Confirmed
     };
     console.log('Appointment data:', appointmentData);
