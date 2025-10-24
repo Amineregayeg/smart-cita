@@ -1648,7 +1648,7 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
         console.log('Loading availability from', formatDateForAPI(startDate), 'to', formatDateForAPI(endDate));
 
         const params = new URLSearchParams({
-          agendaId: bookingState.selectedCenter,  // Using pdo_agenda ID
+          centerId: bookingState.selectedCenter,  // Center ID (pdo_groupe)
           typeId: bookingState.selectedAppointmentType,
           startDate: formatDateForAPI(startDate),
           endDate: formatDateForAPI(endDate)
