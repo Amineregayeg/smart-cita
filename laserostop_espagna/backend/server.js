@@ -147,25 +147,24 @@ async function smartAgendaRequest(endpoint, options = {}) {
 
 /**
  * GET /api/centers - Get all active centers
- * Note: Both TEST and PROD use pdo_groupe for centers (locations)
- * pdo_agenda is for practitioners/staff, not centers
+ * Uses pdo_agenda which represents booking calendars/locations (not pdo_groupe)
  */
 app.get('/api/centers', async (req, res) => {
   try {
-    const groups = await smartAgendaRequest('/pdo_groupe');
+    const agendas = await smartAgendaRequest('/pdo_agenda');
 
-    // Filter active centers (etat !== "S") and sort by order
-    const activeCenters = groups
-      .filter(center => center.etat !== 'S')
+    // Filter active centers (etat !== "S" and affiche_agenda === "O") and sort by order
+    const activeCenters = agendas
+      .filter(center => center.etat !== 'S' && center.affiche_agenda === 'O')
       .sort((a, b) => parseInt(a.ordre) - parseInt(b.ordre))
       .map(center => ({
         id: center.id,
         name: center.libelle,
         order: parseInt(center.ordre),
-        image: center.image,
+        image: center.image || '',
         address: center.perso1 ? center.perso1.replace(/<[^>]*>/g, '') : '', // Strip HTML
         mapLink: center.perso2 ? center.perso2.match(/href="([^"]*)"/)?.[1] : '',
-        bookingLink: center.link_rdv
+        bookingLink: center.link_rdv || ''
       }));
 
     res.json(activeCenters);
