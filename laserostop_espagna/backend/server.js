@@ -365,6 +365,19 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+/**
+ * DEBUG endpoint - Get raw pdo_agenda data
+ */
+app.get('/api/debug/raw-agendas', async (req, res) => {
+  try {
+    const agendas = await smartAgendaRequest('/pdo_agenda');
+    res.json(agendas);
+  } catch (error) {
+    console.error('Error fetching raw agendas:', error);
+    res.status(500).json({ error: 'Failed to fetch raw agendas', message: error.message });
+  }
+});
+
 // ========== START SERVER ==========
 
 app.listen(PORT, () => {
