@@ -158,6 +158,11 @@ app.get('/api/centers', async (req, res) => {
   try {
     const agendas = await smartAgendaRequest('/pdo_agenda');
 
+    // DEBUG: Log first agenda item to see available fields
+    if (agendas.length > 0) {
+      console.log('📋 Sample pdo_agenda item:', JSON.stringify(agendas[0], null, 2));
+    }
+
     // Filter active centers (etat !== "S" and affiche_agenda === "O") and sort by order
     const activeCenters = agendas
       .filter(center => center.etat !== 'S' && center.affiche_agenda === 'O')
