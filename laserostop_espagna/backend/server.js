@@ -1,7 +1,7 @@
 /**
  * LaserOstop Backend API Server
- * Last Deploy: 2025-10-25 - PROD with center names fix
- * Fix: Uses center.nom (PROD) instead of center.libelle (TEST) for center names
+ * Last Deploy: 2025-10-25 - PROD with availability fix
+ * Fix: Use POST /service/getAvailabilities (not GET /getAvailabilities)
  */
 require('dotenv').config();
 const express = require('express');
@@ -222,6 +222,7 @@ app.get('/api/appointment-types', async (req, res) => {
 
 /**
  * GET /api/availability - Get available time slots
+ * Smart Agenda requires POST to /service/getAvailabilities (not GET)
  */
 app.get('/api/availability', async (req, res) => {
   try {
@@ -231,27 +232,27 @@ app.get('/api/availability', async (req, res) => {
       return res.status(400).json({ error: 'startDate and endDate are required' });
     }
 
-    // Get resources first (practitioners)
-    const resources = await smartAgendaRequest('/pdo_ressource');
+    if (!typeId) {
+      return res.status(400).json({ error: 'typeId is required for availability search' });
+    }
 
-    // Use generic resource (-1) or first available resource
-    const resourceId = resources.find(r => r.id === '-1')?.id || resources[0]?.id || '-1';
+    // Build POST body parameters for getAvailabilities service
+    // According to Smart Agenda docs: POST to /service/getAvailabilities
+    const requestBody = {
+      pdo_type_rdv_id: typeId,        // Required: appointment type
+      pdo_agenda_id: centerId || '0', // 0 = all agendas, or specific ID
+      date_a_partir_de: startDate,    // Start date YYYY-MM-DD
+      date_fin: endDate                // End date YYYY-MM-DD
+    };
 
-    // Build query parameters for getAvailabilities service
-    const params = new URLSearchParams({
-      date_a_partir_de: startDate,
-      date_fin: endDate
+    console.log('🔍 Fetching availability with:', requestBody);
+
+    const availability = await smartAgendaRequest('/service/getAvailabilities', {
+      method: 'POST',
+      body: JSON.stringify(requestBody)
     });
 
-    if (centerId) {
-      params.append('pdo_agenda_id', centerId); // Filter by specific agenda/center
-    }
-
-    if (typeId) {
-      params.append('pdo_type_rdv_id', typeId); // Filter by appointment type
-    }
-
-    const availability = await smartAgendaRequest(`/getAvailabilities?${params.toString()}`);
+    console.log(`✅ Found ${availability.length || 0} days with availability`);
 
     res.json(availability);
   } catch (error) {
