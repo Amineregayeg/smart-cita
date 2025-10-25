@@ -1,3 +1,8 @@
+/**
+ * LaserOstop Backend API Server
+ * Last Deploy: 2025-10-25 - PROD with pdo_agenda fix
+ * Commit: Uses /pdo_agenda for centers (not /pdo_groupe)
+ */
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
