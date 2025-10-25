@@ -1,7 +1,7 @@
 /**
  * LaserOstop Backend API Server
- * Last Deploy: 2025-10-25 - PROD with pdo_agenda fix
- * Commit: Uses /pdo_agenda for centers (not /pdo_groupe)
+ * Last Deploy: 2025-10-25 - PROD with center names fix
+ * Fix: Uses center.nom (PROD) instead of center.libelle (TEST) for center names
  */
 require('dotenv').config();
 const express = require('express');
@@ -158,21 +158,17 @@ app.get('/api/centers', async (req, res) => {
   try {
     const agendas = await smartAgendaRequest('/pdo_agenda');
 
-    // DEBUG: Log first agenda item to see available fields
-    if (agendas.length > 0) {
-      console.log('📋 Sample pdo_agenda item:', JSON.stringify(agendas[0], null, 2));
-    }
-
-    // Filter active centers (etat !== "S" and affiche_agenda === "O") and sort by order
+    // Filter active centers (affiche_agenda === "O") and sort by order
+    // Note: PROD API uses 'nom' field for names (not 'libelle')
     const activeCenters = agendas
-      .filter(center => center.etat !== 'S' && center.affiche_agenda === 'O')
+      .filter(center => center.affiche_agenda === 'O')
       .sort((a, b) => parseInt(a.ordre) - parseInt(b.ordre))
       .map(center => ({
         id: center.id,
-        name: center.libelle,
+        name: center.nom || center.nom_complet || '',  // Use 'nom' (PROD) not 'libelle' (TEST)
         order: parseInt(center.ordre),
         image: center.image || '',
-        address: center.perso1 ? center.perso1.replace(/<[^>]*>/g, '') : '', // Strip HTML
+        address: center.perso1 || '',
         mapLink: center.perso2 ? center.perso2.match(/href="([^"]*)"/)?.[1] : '',
         bookingLink: center.link_rdv || ''
       }));
@@ -363,19 +359,6 @@ app.get('/api/health', (req, res) => {
     timestamp: new Date().toISOString(),
     tokenCached: !!tokenCache.token
   });
-});
-
-/**
- * DEBUG endpoint - Get raw pdo_agenda data
- */
-app.get('/api/debug/raw-agendas', async (req, res) => {
-  try {
-    const agendas = await smartAgendaRequest('/pdo_agenda');
-    res.json(agendas);
-  } catch (error) {
-    console.error('Error fetching raw agendas:', error);
-    res.status(500).json({ error: 'Failed to fetch raw agendas', message: error.message });
-  }
 });
 
 // ========== START SERVER ==========
