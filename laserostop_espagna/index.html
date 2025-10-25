@@ -4,7 +4,26 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>LaserOstop España - Reserve su cita</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='40' fill='%2322A9AF'/><text x='50' y='65' text-anchor='middle' font-size='50' fill='white' font-family='Arial,sans-serif' font-weight='bold'>L</text></svg>"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<script>
+  // Suppress Tailwind CDN production warning
+  tailwind.config = {
+    corePlugins: {
+      preflight: true,
+    }
+  };
+  // Override console.warn to suppress the specific Tailwind warning
+  (function() {
+    const originalWarn = console.warn;
+    console.warn = function(...args) {
+      if (args[0] && typeof args[0] === 'string' && args[0].includes('Tailwind')) {
+        return; // Suppress Tailwind warnings
+      }
+      originalWarn.apply(console, args);
+    };
+  })();
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
 <!-- Leaflet CSS -->
@@ -1479,56 +1498,56 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
      */
     // PROD APPOINTMENT TYPES - Filtered to show only original 4 types (matching TEST/DEV)
     // Source: https://www.smartagenda.fr/pro/laserostop-esh (PROD environment)
-    // Showing: Solo 190€, Duo 170€, Cannabis 190€, Recaída (same as TEST had)
-    // Mapping: Valencia=10, Barcelona=43, Sevilla=44, Chamartin=48, Torrejon=49, Atocha=50, Majadahonda=51, San Sebastian=52
+    // Keys are pdo_groupe IDs (from /api/centers endpoint)
+    // Mapping: Valencia=1, Barcelona=4, Sevilla=5, Torrejon=6, Chamartin=7, Atocha=8, San Sebastian=9, Majadahonda=10
     const APPOINTMENT_TYPES = {
-      '10': [ // Valencia - 4 types (original)
-        { id: '1',  kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '10' },
-        { id: '9',  kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '10' },
-        { id: '18', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '10' },
-        { id: '3',  kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '10' }
+      '1': [ // Valencia (pdo_groupe ID: 1)
+        { id: '1',  kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '1' },
+        { id: '9',  kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '1' },
+        { id: '18', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '1' },
+        { id: '3',  kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '1' }
       ],
-      '43': [ // Barcelona - 4 types (original)
-        { id: '20', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '43' },
-        { id: '21', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '43' },
-        { id: '23', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '43' },
-        { id: '22', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '43' }
+      '4': [ // Barcelona Sants (pdo_groupe ID: 4)
+        { id: '20', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '4' },
+        { id: '21', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '4' },
+        { id: '23', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '4' },
+        { id: '22', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '4' }
       ],
-      '44': [ // Sevilla - 4 types (original)
-        { id: '32', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '44' },
-        { id: '34', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '44' },
-        { id: '37', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '44' },
-        { id: '35', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '44' }
+      '5': [ // Sevilla (pdo_groupe ID: 5)
+        { id: '32', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '5' },
+        { id: '34', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '5' },
+        { id: '37', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '5' },
+        { id: '35', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '5' }
       ],
-      '49': [ // Torrejón - 4 types (original)
-        { id: '53', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '49' },
-        { id: '56', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '49' },
-        { id: '59', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '49' },
-        { id: '57', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '49' }
+      '6': [ // Torrejón (pdo_groupe ID: 6)
+        { id: '53', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '6' },
+        { id: '56', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '6' },
+        { id: '59', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '6' },
+        { id: '57', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '6' }
       ],
-      '48': [ // Madrid Chamartín - 4 types (original)
-        { id: '44', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '48' },
-        { id: '46', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '48' },
-        { id: '49', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '48' },
-        { id: '47', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '48' }
+      '7': [ // Madrid Chamartín (pdo_groupe ID: 7)
+        { id: '44', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '7' },
+        { id: '46', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '7' },
+        { id: '49', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '7' },
+        { id: '47', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '7' }
       ],
-      '50': [ // Madrid Atocha - 4 types (original)
-        { id: '63', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '50' },
-        { id: '65', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '50' },
-        { id: '68', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '50' },
-        { id: '66', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '50' }
+      '8': [ // Madrid Atocha (pdo_groupe ID: 8)
+        { id: '63', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '8' },
+        { id: '65', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '8' },
+        { id: '68', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '8' },
+        { id: '66', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '8' }
       ],
-      '52': [ // San Sebastián - 4 types (original)
-        { id: '81', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '52' },
-        { id: '83', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '52' },
-        { id: '86', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '52' },
-        { id: '84', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '52' }
+      '9': [ // San Sebastián (pdo_groupe ID: 9)
+        { id: '81', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '9' },
+        { id: '83', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '9' },
+        { id: '86', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '9' },
+        { id: '84', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '9' }
       ],
-      '51': [ // Majadahonda - 4 types (original)
-        { id: '72', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '51' },
-        { id: '74', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '51' },
-        { id: '77', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '51' },
-        { id: '75', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '51' }
+      '10': [ // Majadahonda (pdo_groupe ID: 10)
+        { id: '72', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '10' },
+        { id: '74', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '10' },
+        { id: '77', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '10' },
+        { id: '75', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '10' }
       ]
     };
 
@@ -1544,10 +1563,10 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
 
     /**
      * Company routing - determines which Stripe account to use
-     * FIXED: Using correct pdo_agenda IDs
+     * Using pdo_groupe IDs (from /api/centers)
      */
-    const COMPANY1_CENTERS = new Set(['48', '49', '51', '52']); // Madrid Chamartín, Torrejón, Majadahonda, San Sebastián
-    const COMPANY2_CENTERS = new Set(['10', '43', '44', '50']);  // Valencia, Barcelona Sants, Sevilla, Madrid Atocha
+    const COMPANY1_CENTERS = new Set(['7', '6', '10', '9']); // Madrid Chamartín, Torrejón, Majadahonda, San Sebastián
+    const COMPANY2_CENTERS = new Set(['1', '4', '5', '8']);  // Valencia, Barcelona Sants, Sevilla, Madrid Atocha
 
     function getCompany(centerId) {
       return COMPANY1_CENTERS.has(String(centerId)) ? 'company1' : 'company2';
@@ -2246,17 +2265,17 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
       generateTimeSlots();
     }
 
-    // URL slug to center ID mapping (PROD pdo_agenda IDs)
+    // URL slug to center ID mapping (pdo_groupe IDs from /api/centers)
     const CENTER_URL_MAPPING = {
-      'barcelona-sants': '43',       // Barcelona Sants
-      'barcelona': '43',             // Barcelona (alias)
-      'valencia': '10',              // Valencia
-      'madrid-atocha': '50',         // Madrid Atocha
-      'madrid-chamartin': '48',      // Madrid Chamartín
-      'sevilla': '44',               // Sevilla
-      'majadahonda': '51',           // Majadahonda
-      'san-sebastian': '52',         // San Sebastián de Los Reyes
-      'torrejon': '49'               // Torrejón de Ardoz
+      'barcelona-sants': '4',        // Barcelona Sants
+      'barcelona': '4',              // Barcelona (alias)
+      'valencia': '1',               // Valencia
+      'madrid-atocha': '8',          // Madrid Atocha
+      'madrid-chamartin': '7',       // Madrid Chamartín
+      'sevilla': '5',                // Sevilla
+      'majadahonda': '10',           // Majadahonda
+      'san-sebastian': '9',          // San Sebastián de Los Reyes
+      'torrejon': '6'                // Torrejón de Ardoz
     };
 
     /**
