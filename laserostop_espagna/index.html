@@ -2109,11 +2109,12 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
 
       // Load availability for new month
       if (bookingState.selectedCenter && bookingState.selectedAppointmentType) {
-        // Start from today if we're in the current month, otherwise from the 1st
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
+        // Start from tomorrow to avoid timezone issues with Smart Agenda
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        tomorrow.setHours(0, 0, 0, 0);
         const firstOfMonth = new Date(bookingState.currentMonth.getFullYear(), bookingState.currentMonth.getMonth(), 1);
-        const startDate = firstOfMonth < today ? today : firstOfMonth;
+        const startDate = firstOfMonth < tomorrow ? tomorrow : firstOfMonth;
         const endDate = new Date(bookingState.currentMonth.getFullYear(), bookingState.currentMonth.getMonth() + 1, 0);
 
         loadAvailability(startDate, endDate).then(() => {
@@ -2130,11 +2131,12 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
 
       // Load availability for new month
       if (bookingState.selectedCenter && bookingState.selectedAppointmentType) {
-        // Start from today if we're in the current month, otherwise from the 1st
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
+        // Start from tomorrow to avoid timezone issues with Smart Agenda
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        tomorrow.setHours(0, 0, 0, 0);
         const firstOfMonth = new Date(bookingState.currentMonth.getFullYear(), bookingState.currentMonth.getMonth(), 1);
-        const startDate = firstOfMonth < today ? today : firstOfMonth;
+        const startDate = firstOfMonth < tomorrow ? tomorrow : firstOfMonth;
         const endDate = new Date(bookingState.currentMonth.getFullYear(), bookingState.currentMonth.getMonth() + 1, 0);
 
         loadAvailability(startDate, endDate).then(() => {
@@ -2296,11 +2298,12 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
         updateStepIndicators();
 
         // Load availability for current month when appointment type is selected
-        // Start from today if we're in the current month, otherwise from the 1st
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
+        // Start from tomorrow to avoid timezone issues with Smart Agenda
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        tomorrow.setHours(0, 0, 0, 0);
         const firstOfMonth = new Date(bookingState.currentMonth.getFullYear(), bookingState.currentMonth.getMonth(), 1);
-        const startDate = firstOfMonth < today ? today : firstOfMonth;
+        const startDate = firstOfMonth < tomorrow ? tomorrow : firstOfMonth;
         const endDate = new Date(bookingState.currentMonth.getFullYear(), bookingState.currentMonth.getMonth() + 1, 0);
 
         loadAvailability(startDate, endDate).then(() => {
