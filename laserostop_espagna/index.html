@@ -1458,7 +1458,8 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
       currentMonth: new Date(),
       availableSlots: {}, // Will be populated from Smart Agenda API
       smartAgendaCenters: [], // Centers from Smart Agenda
-      appointmentTypes: [] // Appointment types for selected center
+      appointmentTypes: [], // Appointment types for selected center
+      autoSelected: false // Track if slot was auto-selected
     };
 
     // Month names in Spanish
@@ -1994,6 +1995,114 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
       // This will be used later for Smart Agenda API call
     }
 
+    /**
+     * Auto-select the soonest available date and time slot
+     * Called after availability data is loaded
+     */
+    function autoSelectSoonestSlot() {
+      // Check if we have availability data
+      if (!bookingState.availableSlots || Object.keys(bookingState.availableSlots).length === 0) {
+        console.log('No availability data to auto-select');
+        return;
+      }
+
+      // Get all dates sorted chronologically
+      const availableDates = Object.keys(bookingState.availableSlots)
+        .sort() // Already in YYYY-MM-DD format, sorts correctly
+        .map(dateStr => new Date(dateStr));
+
+      if (availableDates.length === 0) {
+        console.log('No available dates found');
+        return;
+      }
+
+      // Find the first future date (not in the past)
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const soonestDate = availableDates.find(date => date >= today);
+
+      if (!soonestDate) {
+        console.log('No future dates available');
+        return;
+      }
+
+      // Get time slots for this date
+      const dateKey = formatDateForAPI(soonestDate);
+      const daySlots = bookingState.availableSlots[dateKey] || {};
+      const availableTimes = Object.keys(daySlots).sort(); // Sort times: 09:00, 10:00, etc.
+
+      if (availableTimes.length === 0) {
+        console.log('No time slots available for soonest date');
+        return;
+      }
+
+      const earliestTime = availableTimes[0];
+
+      // Auto-select the date and time
+      console.log(`✨ Auto-selecting: ${dateKey} at ${earliestTime}`);
+
+      bookingState.selectedDate = soonestDate;
+      bookingState.selectedTime = earliestTime;
+      bookingState.autoSelected = true; // Flag to show it was auto-selected
+
+      // Update UI
+      generateCalendar(); // Refresh calendar with selection
+      generateTimeSlots(); // Show time slots with selection
+      updateStepIndicators();
+
+      // Show notification to user
+      showAutoSelectNotification(soonestDate, earliestTime);
+
+      // Scroll to time slots so user sees the selection
+      setTimeout(() => {
+        document.getElementById('time-slots-section').scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }, 500);
+    }
+
+    /**
+     * Show notification that a slot was auto-selected
+     */
+    function showAutoSelectNotification(date, time) {
+      const dayName = dayNames[date.getDay()];
+      const day = date.getDate();
+      const month = monthNames[date.getMonth()];
+
+      const notification = document.createElement('div');
+      notification.className = 'bg-green-50 dark:bg-green-900/20 border-l-4 border-green-500 p-4 rounded mb-4 animate-fade-in';
+      notification.innerHTML = `
+        <div class="flex items-start gap-3">
+          <span class="material-icons text-green-600 text-xl">check_circle</span>
+          <div>
+            <p class="font-semibold text-green-800 dark:text-green-200">
+              ✨ Preseleccionado para ti
+            </p>
+            <p class="text-sm text-green-700 dark:text-green-300 mt-1">
+              ${dayName}, ${day} de ${month} a las ${time}
+              <span class="text-xs block mt-1 opacity-75">Puedes cambiar la fecha y hora si lo deseas</span>
+            </p>
+          </div>
+        </div>
+      `;
+
+      // Insert before calendar
+      const step2 = document.getElementById('step-2');
+      const calendarDiv = step2.querySelector('.bg-gray-50');
+      if (calendarDiv && calendarDiv.parentElement) {
+        calendarDiv.parentElement.insertBefore(notification, calendarDiv);
+
+        // Auto-remove after 10 seconds
+        setTimeout(() => {
+          notification.style.transition = 'opacity 0.5s';
+          notification.style.opacity = '0';
+          setTimeout(() => notification.remove(), 500);
+        }, 10000);
+      }
+    }
+
     // Navigate to previous month
     document.getElementById('prev-month').addEventListener('click', () => {
       bookingState.currentMonth.setMonth(bookingState.currentMonth.getMonth() - 1);
@@ -2181,6 +2290,7 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
         const endDate = new Date(bookingState.currentMonth.getFullYear(), bookingState.currentMonth.getMonth() + 1, 0);
         loadAvailability(startDate, endDate).then(() => {
           generateCalendar(); // Refresh calendar with availability data
+          autoSelectSoonestSlot(); // Auto-select the soonest available slot
         });
 
         // Auto-scroll to calendar section for better UX
