@@ -2115,7 +2115,12 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
         tomorrow.setHours(0, 0, 0, 0);
         const firstOfMonth = new Date(bookingState.currentMonth.getFullYear(), bookingState.currentMonth.getMonth(), 1);
         const startDate = firstOfMonth < tomorrow ? tomorrow : firstOfMonth;
-        const endDate = new Date(bookingState.currentMonth.getFullYear(), bookingState.currentMonth.getMonth() + 1, 0);
+
+        // End date: last day of current month OR 30 days from start (whichever is later)
+        const lastDayOfMonth = new Date(bookingState.currentMonth.getFullYear(), bookingState.currentMonth.getMonth() + 1, 0);
+        const thirtyDaysOut = new Date(startDate);
+        thirtyDaysOut.setDate(startDate.getDate() + 30);
+        const endDate = lastDayOfMonth > startDate ? lastDayOfMonth : thirtyDaysOut;
 
         loadAvailability(startDate, endDate).then(() => {
           generateCalendar();
@@ -2137,7 +2142,12 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
         tomorrow.setHours(0, 0, 0, 0);
         const firstOfMonth = new Date(bookingState.currentMonth.getFullYear(), bookingState.currentMonth.getMonth(), 1);
         const startDate = firstOfMonth < tomorrow ? tomorrow : firstOfMonth;
-        const endDate = new Date(bookingState.currentMonth.getFullYear(), bookingState.currentMonth.getMonth() + 1, 0);
+
+        // End date: last day of current month OR 30 days from start (whichever is later)
+        const lastDayOfMonth = new Date(bookingState.currentMonth.getFullYear(), bookingState.currentMonth.getMonth() + 1, 0);
+        const thirtyDaysOut = new Date(startDate);
+        thirtyDaysOut.setDate(startDate.getDate() + 30);
+        const endDate = lastDayOfMonth > startDate ? lastDayOfMonth : thirtyDaysOut;
 
         loadAvailability(startDate, endDate).then(() => {
           generateCalendar();
@@ -2304,7 +2314,12 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
         tomorrow.setHours(0, 0, 0, 0);
         const firstOfMonth = new Date(bookingState.currentMonth.getFullYear(), bookingState.currentMonth.getMonth(), 1);
         const startDate = firstOfMonth < tomorrow ? tomorrow : firstOfMonth;
-        const endDate = new Date(bookingState.currentMonth.getFullYear(), bookingState.currentMonth.getMonth() + 1, 0);
+
+        // End date: last day of current month OR 30 days from start (whichever is later)
+        const lastDayOfMonth = new Date(bookingState.currentMonth.getFullYear(), bookingState.currentMonth.getMonth() + 1, 0);
+        const thirtyDaysOut = new Date(startDate);
+        thirtyDaysOut.setDate(startDate.getDate() + 30);
+        const endDate = lastDayOfMonth > startDate ? lastDayOfMonth : thirtyDaysOut;
 
         loadAvailability(startDate, endDate).then(() => {
           generateCalendar(); // Refresh calendar with availability data
