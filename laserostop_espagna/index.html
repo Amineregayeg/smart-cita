@@ -149,21 +149,167 @@
     };
   </script>
 
-  <!-- Hotjar/Contentsquare Tracking Code -->
+  <!-- Cookie Consent & Hotjar/Contentsquare Tracking Code -->
   <script>
-    (function (c, s, q, u, a, r, e) {
-        c.hj=c.hj||function(){(c.hj.q=c.hj.q||[]).push(arguments)};
-        c._hjSettings = { hjid: a };
-        r = s.getElementsByTagName('head')[0];
-        e = s.createElement('script');
-        e.async = true;
-        e.src = q + c._hjSettings.hjid + u;
-        r.appendChild(e);
-    })(window, document, 'https://static.hj.contentsquare.net/c/csq-', '.js', 6574639);
+    // Cookie Consent Management
+    window.CookieConsent = {
+      init: function() {
+        const consent = localStorage.getItem('analyticsConsent');
+        if (consent === 'accepted') {
+          this.loadHotjar();
+        } else if (consent === null) {
+          // First visit - show banner
+          this.showBanner();
+        }
+        // If 'rejected', do nothing
+      },
+
+      showBanner: function() {
+        const banner = document.getElementById('cookie-consent-banner');
+        if (banner) {
+          banner.classList.remove('hidden');
+          banner.classList.add('animate-slide-up');
+        }
+      },
+
+      accept: function() {
+        localStorage.setItem('analyticsConsent', 'accepted');
+        this.hideBanner();
+        this.loadHotjar();
+      },
+
+      reject: function() {
+        localStorage.setItem('analyticsConsent', 'rejected');
+        this.hideBanner();
+      },
+
+      hideBanner: function() {
+        const banner = document.getElementById('cookie-consent-banner');
+        if (banner) {
+          banner.classList.add('opacity-0');
+          setTimeout(() => banner.remove(), 300);
+        }
+      },
+
+      loadHotjar: function() {
+        if (window.hj) return; // Already loaded
+
+        // Mask sensitive form fields before loading Hotjar
+        this.maskSensitiveFields();
+
+        (function (c, s, q, u, a, r, e) {
+            c.hj=c.hj||function(){(c.hj.q=c.hj.q||[]).push(arguments)};
+            c._hjSettings = { hjid: a };
+            r = s.getElementsByTagName('head')[0];
+            e = s.createElement('script');
+            e.async = true;
+            e.src = q + c._hjSettings.hjid + u;
+            r.appendChild(e);
+        })(window, document, 'https://static.hj.contentsquare.net/c/csq-', '.js', 6574639);
+
+        console.log('✅ Hotjar loaded with user consent');
+      },
+
+      maskSensitiveFields: function() {
+        // Add data-hj-suppress attribute to sensitive fields
+        // This prevents Hotjar from recording their values
+        const sensitiveSelectors = [
+          'input[type="email"]',
+          'input[type="tel"]',
+          'input[name*="email"]',
+          'input[name*="phone"]',
+          'input[name*="telefono"]',
+          'input[id*="email"]',
+          'input[id*="phone"]',
+          'input[id*="telefono"]',
+          '#contact-name',
+          '#contact-email',
+          '#contact-phone'
+        ];
+
+        sensitiveSelectors.forEach(selector => {
+          document.querySelectorAll(selector).forEach(field => {
+            field.setAttribute('data-hj-suppress', '');
+            field.setAttribute('data-cs-mask', ''); // Contentsquare masking
+          });
+        });
+
+        console.log('🔒 Sensitive fields masked for privacy');
+      }
+    };
+
+    // Initialize on page load
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => window.CookieConsent.init());
+    } else {
+      window.CookieConsent.init();
+    }
   </script>
+
+  <style>
+    @keyframes slide-up {
+      from {
+        transform: translateY(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+    .animate-slide-up {
+      animation: slide-up 0.4s ease-out;
+    }
+    #cookie-consent-banner {
+      transition: opacity 0.3s ease-out;
+    }
+  </style>
 
 </head>
 <body class="bg-background-light dark:bg-background-dark font-display text-text-light dark:text-text-dark">
+
+<!-- Cookie Consent Banner -->
+<div id="cookie-consent-banner" class="hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 shadow-2xl border-t-4 border-primary z-[9999]">
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <!-- Content -->
+      <div class="flex items-start gap-4 flex-1">
+        <div class="flex-shrink-0 mt-1">
+          <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </div>
+        <div class="flex-1">
+          <h3 class="font-semibold text-text-light dark:text-text-dark mb-2">
+            🍪 Uso de Cookies
+          </h3>
+          <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+            Utilizamos cookies y herramientas de análisis (Hotjar/Contentsquare) para mejorar su experiencia, analizar el uso del sitio web y optimizar nuestros servicios.
+            <span class="font-medium">No compartimos datos personales con terceros.</span>
+          </p>
+          <p class="text-xs text-gray-500 dark:text-gray-500 mt-2">
+            Al aceptar, nos ayuda a entender cómo mejorar nuestro servicio de reservas.
+          </p>
+        </div>
+      </div>
+
+      <!-- Buttons -->
+      <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+        <button
+          onclick="window.CookieConsent.reject()"
+          class="px-6 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200 whitespace-nowrap">
+          Rechazar
+        </button>
+        <button
+          onclick="window.CookieConsent.accept()"
+          class="px-6 py-3 text-sm font-medium text-white bg-primary hover:bg-[#1d9199] rounded-full transition-colors duration-200 shadow-md hover:shadow-lg whitespace-nowrap">
+          Aceptar Cookies
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="min-h-screen flex flex-col">
 
 <!-- Modern Navigation Bar -->
