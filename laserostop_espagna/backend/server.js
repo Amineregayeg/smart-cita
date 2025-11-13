@@ -158,10 +158,17 @@ app.get('/api/centers', async (req, res) => {
   try {
     const agendas = await smartAgendaRequest('/pdo_agenda');
 
-    // Filter active centers (affiche_agenda === "O") and sort by order
+    // List of internal/system center IDs to exclude from user-facing lists
+    // These are used internally by Smart Agenda but should not appear in booking forms
+    const excludedCenterIds = ['53']; // 53 = "RDV ANNULE" (cancelled appointments)
+
+    // Filter active centers (affiche_agenda === "O") and exclude internal centers
     // Note: PROD API uses 'nom' field for names (not 'libelle')
     const activeCenters = agendas
-      .filter(center => center.affiche_agenda === 'O')
+      .filter(center =>
+        center.affiche_agenda === 'O' &&
+        !excludedCenterIds.includes(center.id) // Exclude internal/system centers
+      )
       .sort((a, b) => parseInt(a.ordre) - parseInt(b.ordre))
       .map(center => ({
         id: center.id,
@@ -173,6 +180,7 @@ app.get('/api/centers', async (req, res) => {
         bookingLink: center.link_rdv || ''
       }));
 
+    console.log(`✅ Returning ${activeCenters.length} user-facing centers (excluded ${excludedCenterIds.length} internal)`);
     res.json(activeCenters);
   } catch (error) {
     console.error('Error fetching centers:', error);
