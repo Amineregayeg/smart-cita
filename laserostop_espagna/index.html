@@ -2425,6 +2425,15 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
 
         // Show the booking type section
         step1b.classList.remove('hidden');
+
+        // ✅ AUTO-SELECT FIRST APPOINTMENT TYPE
+        // Automatically select the first type and trigger change event
+        // This loads availability and shows calendar without requiring manual selection
+        if (centerPaymentTypes.length > 0) {
+          select.value = centerPaymentTypes[0].id;
+          select.dispatchEvent(new Event('change'));
+          console.log('✅ Auto-selected first appointment type:', centerPaymentTypes[0].name);
+        }
       } else {
         // Hide the booking type section if no types available
         step1b.classList.add('hidden');
