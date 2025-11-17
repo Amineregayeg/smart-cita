@@ -2110,6 +2110,24 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
       }, 100);
     }
 
+    /**
+     * Get session-wide slot viewing pattern (odd vs even hours)
+     * Assigns pattern randomly on first use and stores in sessionStorage
+     */
+    function getSessionSlotPattern() {
+      const key = 'slotViewPattern_v1';
+      let pattern = sessionStorage.getItem(key);
+
+      if (!pattern) {
+        // Randomly assign odd or even for this session
+        pattern = Math.random() < 0.5 ? 'even' : 'odd';
+        sessionStorage.setItem(key, pattern);
+        console.log('🎯 Assigned slot pattern for session:', pattern);
+      }
+
+      return pattern;
+    }
+
     // Generate time slots for selected date
     function generateTimeSlots() {
       const timeSlotsContainer = document.getElementById('time-slots');
@@ -2141,9 +2159,51 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
         return;
       }
 
-      // Sort times and generate buttons
-      const times = Object.keys(daySlots).sort();
-      times.forEach(time => {
+      // PHASE 3: Slot filtering (odd/even pattern + max 4 slots)
+      const allTimes = Object.keys(daySlots).sort();
+      const pattern = getSessionSlotPattern(); // 'odd' or 'even'
+      console.log('🧩 Using slot pattern', pattern, 'for date', dateKey, '- Total available:', allTimes.length);
+
+      // Filter by odd/even hour according to session pattern
+      const filteredTimes = allTimes.filter(time => {
+        const hour = parseInt(time.split(':')[0], 10);
+        if (isNaN(hour)) return true; // Safeguard: keep slot if parsing fails
+        const isEven = hour % 2 === 0;
+        return pattern === 'even' ? isEven : !isEven;
+      });
+
+      // Choose which slots to display (min 3, max 4)
+      const MAX_SLOTS = 4;
+      const MIN_SLOTS = 3;
+      let displayTimes = [];
+
+      if (filteredTimes.length >= MIN_SLOTS) {
+        // Enough slots in the patterned set
+        displayTimes = filteredTimes.slice(0, MAX_SLOTS);
+        console.log(
+          `✅ Showing ${displayTimes.length} patterned (${pattern}) slots out of`,
+          filteredTimes.length,
+          'filtered,',
+          allTimes.length,
+          'total for',
+          dateKey
+        );
+      } else {
+        // Not enough odd/even slots: fallback to all slots (still limit to max 4)
+        if (allTimes.length <= MAX_SLOTS) {
+          displayTimes = allTimes.slice(); // show all (1-4 slots)
+        } else {
+          displayTimes = allTimes.slice(0, MAX_SLOTS);
+        }
+        console.log(
+          `⚠️ Not enough ${pattern} slots (found ${filteredTimes.length}).`,
+          `Falling back to first ${displayTimes.length} of all slots for`,
+          dateKey
+        );
+      }
+
+      // Render selected time slots
+      displayTimes.forEach(time => {
         const available = daySlots[time];
         const button = document.createElement('button');
 
