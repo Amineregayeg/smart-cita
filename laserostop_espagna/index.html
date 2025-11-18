@@ -393,9 +393,74 @@
 </section>
 
 <!-- About Section -->
+<section class="py-16 sm:py-24 bg-white dark:bg-gray-900" id="about">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+<!-- About Video - Left on Desktop, Top on Mobile -->
+<div class="order-1 lg:order-1 flex justify-center">
+<div class="relative rounded-2xl overflow-hidden shadow-2xl aspect-[9/16] w-full max-w-sm group cursor-pointer" onclick="toggleVideoAudio(this)">
+<video
+  class="w-full h-full object-cover"
+  autoplay
+  muted
+  loop
+  playsinline
+  poster="assets/cigarettes.png"
+>
+  <source src="assets/about-video.mp4" type="video/mp4">
+  Tu navegador no soporta el elemento de vídeo.
+</video>
+<!-- Audio Toggle Button -->
+<div class="absolute bottom-4 right-4 bg-black/70 backdrop-blur-sm rounded-full p-3 transition-all duration-300 hover:bg-black/90 hover:scale-110">
+  <span class="material-icons text-white text-2xl audio-icon">volume_off</span>
+</div>
+<!-- Tap to unmute hint -->
+<div class="absolute inset-0 bg-black/30 backdrop-blur-[1px] flex items-center justify-center transition-opacity duration-300 opacity-100 group-hover:opacity-0 pointer-events-none audio-hint">
+  <div class="bg-white/90 dark:bg-gray-900/90 px-6 py-3 rounded-full shadow-lg">
+    <div class="flex items-center gap-2">
+      <span class="material-icons text-primary">volume_up</span>
+      <p class="text-sm font-medium text-gray-800 dark:text-gray-200">Toca para activar audio</p>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- About Content - Right on Desktop, Bottom on Mobile -->
+<div class="order-2 lg:order-2">
+<div class="max-w-xl lg:max-w-none">
+<h2 class="text-3xl sm:text-4xl font-bold text-text-light dark:text-text-dark mb-4">
+<span class="text-primary">Sobre</span> LaserOstop
+</h2>
+<div class="h-1 w-20 bg-primary rounded mb-6"></div>
+<div class="prose prose-lg dark:prose-invert max-w-none">
+<p class="text-gray-700 dark:text-gray-300 leading-relaxed text-lg">
+LaserOstop ofrece una terapia láser <strong class="text-primary">segura, indolora y altamente eficaz</strong> para ayudar a las personas a dejar de fumar en una sola sesión. Utilizando tecnología avanzada de <strong>fotobiomodulación</strong>, este método estimula puntos específicos de la oreja con láser de baja intensidad para combatir la dependencia física a la nicotina, <strong>sin efectos secundarios, sin aumento de peso y sin síntomas de abstinencia.</strong>
+</p>
+<p class="text-gray-700 dark:text-gray-300 leading-relaxed text-lg mt-4">
+Con más de <strong class="text-primary">500,000 personas asistidas</strong> en todo el mundo, LaserOstop proporciona una solución científica, no invasiva, y respaldada por resultados reales para quienes desean superar la adicción y llevar una vida más saludable y libre de tabaco.
+</p>
+</div>
+<!-- Stats -->
+<div class="grid grid-cols-2 gap-6 mt-8">
+<div class="text-center p-4 bg-primary/10 rounded-xl">
+<div class="text-3xl font-bold text-primary mb-1">500K+</div>
+<div class="text-sm text-gray-600 dark:text-gray-400">Personas asistidas</div>
+</div>
+<div class="text-center p-4 bg-primary/10 rounded-xl">
+<div class="text-3xl font-bold text-primary mb-1">1 sesión</div>
+<div class="text-sm text-gray-600 dark:text-gray-400">Para dejar de fumar</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
 <section class="py-16 sm:py-24" id="booking">
 <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-<div class="max-w-4xl mx-auto bg-background-light dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden border-2 border-primary">
+<div class="max-w-4xl mx-auto bg-background-light dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden">
 <div class="p-8 sm:p-12">
 <div id="booking-form">
 <div class="mb-8" id="step-1">
@@ -591,72 +656,6 @@ Pagar en 3 cuotas
 Cerrar y continuar con pago en centro
 </button>
 </div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</section>
-
-<!-- About Section -->
-<section class="py-16 sm:py-24 bg-white dark:bg-gray-900" id="about">
-<div class="container mx-auto px-4 sm:px-6 lg:px-8">
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-<!-- About Video - Left on Desktop, Top on Mobile -->
-<div class="order-1 lg:order-1 flex justify-center">
-<div class="relative rounded-2xl overflow-hidden shadow-2xl aspect-[9/16] w-full max-w-sm group cursor-pointer" onclick="toggleVideoAudio(this)">
-<video
-  class="w-full h-full object-cover"
-  autoplay
-  muted
-  loop
-  playsinline
-  poster="assets/cigarettes.png"
->
-  <source src="assets/about-video.mp4" type="video/mp4">
-  Tu navegador no soporta el elemento de vídeo.
-</video>
-<!-- Audio Toggle Button -->
-<div class="absolute bottom-4 right-4 bg-black/70 backdrop-blur-sm rounded-full p-3 transition-all duration-300 hover:bg-black/90 hover:scale-110">
-  <span class="material-icons text-white text-2xl audio-icon">volume_off</span>
-</div>
-<!-- Tap to unmute hint -->
-<div class="absolute inset-0 bg-black/30 backdrop-blur-[1px] flex items-center justify-center transition-opacity duration-300 opacity-100 group-hover:opacity-0 pointer-events-none audio-hint">
-  <div class="bg-white/90 dark:bg-gray-900/90 px-6 py-3 rounded-full shadow-lg">
-    <div class="flex items-center gap-2">
-      <span class="material-icons text-primary">volume_up</span>
-      <p class="text-sm font-medium text-gray-800 dark:text-gray-200">Toca para activar audio</p>
-    </div>
-  </div>
-</div>
-</div>
-</div>
-
-<!-- About Content - Right on Desktop, Bottom on Mobile -->
-<div class="order-2 lg:order-2">
-<div class="max-w-xl lg:max-w-none">
-<h2 class="text-3xl sm:text-4xl font-bold text-text-light dark:text-text-dark mb-4">
-<span class="text-primary">Sobre</span> LaserOstop
-</h2>
-<div class="h-1 w-20 bg-primary rounded mb-6"></div>
-<div class="prose prose-lg dark:prose-invert max-w-none">
-<p class="text-gray-700 dark:text-gray-300 leading-relaxed text-lg">
-LaserOstop ofrece una terapia láser <strong class="text-primary">segura, indolora y altamente eficaz</strong> para ayudar a las personas a dejar de fumar en una sola sesión. Utilizando tecnología avanzada de <strong>fotobiomodulación</strong>, este método estimula puntos específicos de la oreja con láser de baja intensidad para combatir la dependencia física a la nicotina, <strong>sin efectos secundarios, sin aumento de peso y sin síntomas de abstinencia.</strong>
-</p>
-<p class="text-gray-700 dark:text-gray-300 leading-relaxed text-lg mt-4">
-Con más de <strong class="text-primary">500,000 personas asistidas</strong> en todo el mundo, LaserOstop proporciona una solución científica, no invasiva, y respaldada por resultados reales para quienes desean superar la adicción y llevar una vida más saludable y libre de tabaco.
-</p>
-</div>
-<!-- Stats -->
-<div class="grid grid-cols-2 gap-6 mt-8">
-<div class="text-center p-4 bg-primary/10 rounded-xl">
-<div class="text-3xl font-bold text-primary mb-1">500K+</div>
-<div class="text-sm text-gray-600 dark:text-gray-400">Personas asistidas</div>
-</div>
-<div class="text-center p-4 bg-primary/10 rounded-xl">
-<div class="text-3xl font-bold text-primary mb-1">1 sesión</div>
-<div class="text-sm text-gray-600 dark:text-gray-400">Para dejar de fumar</div>
 </div>
 </div>
 </div>
