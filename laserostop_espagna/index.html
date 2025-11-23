@@ -1964,7 +1964,178 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
       });
 
       console.log('Processed availability slots:', Object.keys(slots).length, 'days');
-      return slots;
+
+      // Apply slot filtering to create scarcity perception
+      return applySlotFiltering(slots);
+    }
+
+    // ========== SLOT FILTERING SYSTEM ==========
+    // Strategy: Show limited slots per day to create urgency and distribute bookings evenly
+    // Different users see different slots based on fingerprint + date hash
+
+    /**
+     * Slot filtering configuration
+     */
+    const SLOT_FILTER_CONFIG = {
+      enabled: true,              // Master toggle
+      maxSlotsPerDay: 4,         // Maximum slots to show per day
+      minSpacingMinutes: 60,     // Minimum minutes between displayed slots
+      showAllIfFewer: 4          // If total slots <= this, show all
+    };
+
+    /**
+     * Generate anonymous user fingerprint for consistent slot selection
+     * Uses browser characteristics (no personal data)
+     */
+    function getUserFingerprint() {
+      // Try to get cached fingerprint first
+      let fingerprint = sessionStorage.getItem('userFingerprint');
+
+      if (!fingerprint) {
+        // Create fingerprint from browser metadata
+        const components = [
+          navigator.userAgent,
+          navigator.language,
+          screen.width + 'x' + screen.height,
+          screen.colorDepth,
+          new Date().getTimezoneOffset(),
+          navigator.hardwareConcurrency || 0,
+          navigator.platform
+        ];
+
+        // Simple hash function
+        let hash = 0;
+        const str = components.join('|');
+        for (let i = 0; i < str.length; i++) {
+          const char = str.charCodeAt(i);
+          hash = ((hash << 5) - hash) + char;
+          hash = hash & hash; // Convert to 32-bit integer
+        }
+
+        fingerprint = Math.abs(hash).toString(36);
+        sessionStorage.setItem('userFingerprint', fingerprint);
+      }
+
+      return fingerprint;
+    }
+
+    /**
+     * Seeded random number generator for deterministic shuffling
+     * Same seed always produces same sequence
+     */
+    function seededRandom(seed) {
+      let value = seed;
+      return function() {
+        value = (value * 9301 + 49297) % 233280;
+        return value / 233280;
+      };
+    }
+
+    /**
+     * Shuffle array using seeded random (deterministic)
+     */
+    function seededShuffle(array, seed) {
+      const shuffled = [...array];
+      const random = seededRandom(seed);
+
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+
+      return shuffled;
+    }
+
+    /**
+     * Convert time string (HH:MM) to minutes since midnight
+     */
+    function timeToMinutes(timeStr) {
+      const [hours, minutes] = timeStr.split(':').map(Number);
+      return hours * 60 + minutes;
+    }
+
+    /**
+     * Simple string hash function
+     */
+    function simpleHash(str) {
+      let hash = 0;
+      for (let i = 0; i < str.length; i++) {
+        const char = str.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash;
+      }
+      return Math.abs(hash);
+    }
+
+    /**
+     * Filter slots for a single date to show limited selection
+     */
+    function filterSlotsForDate(times, date, userFingerprint) {
+      if (!SLOT_FILTER_CONFIG.enabled) {
+        return times; // Filtering disabled, return all
+      }
+
+      if (times.length <= SLOT_FILTER_CONFIG.showAllIfFewer) {
+        return times; // Show all if few slots available
+      }
+
+      // Generate deterministic seed from fingerprint + date
+      const seed = simpleHash(userFingerprint + date);
+
+      // Shuffle slots deterministically
+      const shuffled = seededShuffle(times, seed);
+
+      // Select slots with minimum spacing
+      const selected = [];
+
+      for (const time of shuffled) {
+        if (selected.length >= SLOT_FILTER_CONFIG.maxSlotsPerDay) {
+          break;
+        }
+
+        // Check if time has minimum spacing from all selected slots
+        const timeMinutes = timeToMinutes(time);
+        const hasMinimumSpacing = selected.every(selectedTime => {
+          const selectedMinutes = timeToMinutes(selectedTime);
+          return Math.abs(timeMinutes - selectedMinutes) >= SLOT_FILTER_CONFIG.minSpacingMinutes;
+        });
+
+        if (hasMinimumSpacing || selected.length === 0) {
+          selected.push(time);
+        }
+      }
+
+      // Return in chronological order
+      return selected.sort();
+    }
+
+    /**
+     * Apply slot filtering to all dates
+     */
+    function applySlotFiltering(allSlots) {
+      if (!SLOT_FILTER_CONFIG.enabled) {
+        return allSlots; // Return unfiltered if disabled
+      }
+
+      const fingerprint = getUserFingerprint();
+      const filteredSlots = {};
+
+      // Process each date
+      for (const dateKey in allSlots) {
+        const times = Object.keys(allSlots[dateKey]).sort();
+        const filteredTimes = filterSlotsForDate(times, dateKey, fingerprint);
+
+        // Rebuild slots object with filtered times
+        filteredSlots[dateKey] = {};
+        filteredTimes.forEach(time => {
+          filteredSlots[dateKey][time] = true;
+        });
+
+        console.log(`📊 Date ${dateKey}: ${times.length} slots → ${filteredTimes.length} shown`);
+      }
+
+      console.log('✅ Slot filtering applied - User fingerprint:', fingerprint.substring(0, 8) + '...');
+      return filteredSlots;
     }
 
     /**
