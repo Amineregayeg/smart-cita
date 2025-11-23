@@ -1446,31 +1446,21 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
         return;
       }
 
-      // Calculate prices based on appointment type
+      // Calculate prices based on appointment type using PRICE_TABLE
       let centerPrice, onlinePrice, monthlyPrice, monthlyTotal;
 
-      // Determine pricing based on type name
-      const typeName = selectedType.name.toLowerCase();
+      // Get pricing from PRICE_TABLE using the 'kind' field for accurate mapping
+      const priceData = PRICE_TABLE[selectedType.kind];
 
-      if (typeName.includes('duo')) {
-        // DUO Cigarettes: 2×€170 center, 2×€160 online, 3×€105 monthly
-        centerPrice = 170; // per person (total €340)
-        onlinePrice = 160; // per person (total €320)
-        monthlyPrice = 105;
-        monthlyTotal = monthlyPrice * 3;
-      } else if (typeName.includes('cannabis')) {
-        // Cannabis: €250 center, €230 online, 3×€80 monthly
-        centerPrice = 250;
-        onlinePrice = 230;
-        monthlyPrice = 80;
-        monthlyTotal = monthlyPrice * 3;
-      } else {
-        // Cigarettes SOLO (default): €190 center, €170 online, 3×€60 monthly
-        centerPrice = 190;
-        onlinePrice = 170;
-        monthlyPrice = 60;
-        monthlyTotal = monthlyPrice * 3;
+      if (!priceData) {
+        console.error('No price data found for appointment type:', selectedType.kind);
+        return;
       }
+
+      centerPrice = priceData.center;
+      onlinePrice = priceData.online;
+      monthlyPrice = priceData.plan ? priceData.plan[0] : 0;
+      monthlyTotal = priceData.plan ? priceData.plan.reduce((sum, val) => sum + val, 0) : 0;
 
       // Update popup prices
       document.getElementById('popup-center-price').textContent = `€${centerPrice}`;
@@ -1537,6 +1527,10 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
           solo_drugs: {
             onetime: 'https://buy.stripe.com/00w8wOgYvbAq6Dj36dawo02', // €230
             monthly: 'https://buy.stripe.com/dRmfZggYvdIyf9P0Y5awo08'  // 3×€80 (UPDATED)
+          },
+          solo_sugar: {
+            onetime: 'https://buy.stripe.com/4gM5kCaA7dIyaTz9uBawo09', // €180
+            monthly: 'https://buy.stripe.com/8x214maA7fQG7Hn36dawo0a'  // 3×€60
           }
         },
         company2: {
@@ -1552,6 +1546,10 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
           solo_drugs: {
             onetime: 'https://buy.stripe.com/cNi14nesB2RD4K78EMdby0a', // €230
             monthly: 'https://buy.stripe.com/28E7sL3NX8bXdgDaMUdby0g'  // 3×€80 (UPDATED)
+          },
+          solo_sugar: {
+            onetime: 'https://buy.stripe.com/5kQ14n7090Jv3G39IQdby0h', // €180
+            monthly: 'https://buy.stripe.com/9B6bJ198h3VH0tR8EMdby0i'  // 3×€60
           }
         }
       };
