@@ -2498,23 +2498,23 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
         // Update step indicators
         updateStepIndicators();
 
-        // Load availability for current month when appointment type is selected
+        // Load availability for next 3 months when appointment type is selected
         // Start from tomorrow to avoid timezone issues with Smart Agenda
         const tomorrow = new Date();
         tomorrow.setDate(tomorrow.getDate() + 1);
         tomorrow.setHours(0, 0, 0, 0);
-        const firstOfMonth = new Date(bookingState.currentMonth.getFullYear(), bookingState.currentMonth.getMonth(), 1);
-        const startDate = firstOfMonth < tomorrow ? tomorrow : firstOfMonth;
+        const startDate = new Date(tomorrow);
 
-        // End date: last day of current month OR 30 days from start (whichever is later)
-        const lastDayOfMonth = new Date(bookingState.currentMonth.getFullYear(), bookingState.currentMonth.getMonth() + 1, 0);
-        const thirtyDaysOut = new Date(startDate);
-        thirtyDaysOut.setDate(startDate.getDate() + 30);
-        const endDate = lastDayOfMonth > startDate ? lastDayOfMonth : thirtyDaysOut;
+        // End date: 3 months from tomorrow (90 days)
+        const threeMonthsOut = new Date(startDate);
+        threeMonthsOut.setDate(startDate.getDate() + 90);
+        const endDate = threeMonthsOut;
+
+        console.log(`📅 Loading availability for 3 months: ${formatDateForAPI(startDate)} to ${formatDateForAPI(endDate)}`);
 
         loadAvailability(startDate, endDate).then(() => {
           generateCalendar(); // Refresh calendar with availability data
-          autoSelectSoonestSlot(); // Auto-select the soonest available slot
+          autoSelectSoonestSlot(); // Auto-select the soonest available slot across all 3 months
         });
 
         // Auto-scroll to calendar section for better UX
