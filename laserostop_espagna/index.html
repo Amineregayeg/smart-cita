@@ -123,6 +123,31 @@
       flex: 0 0 350px;
       min-width: 350px;
     }
+
+    /* City-grouped dropdown styling */
+    #center-select optgroup {
+      font-weight: 700;
+      font-size: 0.95em;
+      color: #22A9AF;
+      font-style: normal;
+      padding: 8px 0 4px 0;
+    }
+
+    #center-select option {
+      padding-left: 8px;
+      font-weight: 400;
+      color: #374151;
+    }
+
+    /* Dark mode support for dropdown */
+    @media (prefers-color-scheme: dark) {
+      #center-select optgroup {
+        color: #22A9AF;
+      }
+      #center-select option {
+        color: #D1D5DB;
+      }
+    }
   </style>
 
   <!-- Cookie Consent & Hotjar/Contentsquare Tracking Code -->
@@ -1767,20 +1792,56 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
     }
 
     /**
-     * Populate center dropdown with API data
+     * Populate center dropdown with API data - Grouped by city
      */
     function populateCenterDropdown(centers) {
       const select = document.getElementById('center-select');
 
-      // Clear existing options except the first one
-      select.innerHTML = '<option value="">Seleccione un centro...</option>';
+      // Clear existing options
+      select.innerHTML = '<option value="">Seleccione su ciudad y centro...</option>';
 
-      // Add centers from API
-      centers.forEach(center => {
-        const option = document.createElement('option');
-        option.value = center.id;
-        option.textContent = center.name;
-        select.appendChild(option);
+      // Define city groups with their centers
+      const cityGroups = {
+        'Madrid': [
+          { id: '50', name: 'Madrid – Atocha' },
+          { id: '48', name: 'Madrid – Chamartín' },
+          { id: '51', name: 'Madrid – Majadahonda' },
+          { id: '49', name: 'Madrid – Torrejón de Ardoz' }
+        ],
+        'Barcelona': [
+          { id: '43', name: 'Barcelona' }
+        ],
+        'San Sebastián': [
+          { id: '52', name: 'San Sebastián' }
+        ],
+        'Sevilla': [
+          { id: '44', name: 'Sevilla' }
+        ],
+        'Valencia': [
+          { id: '10', name: 'Valencia' }
+        ]
+      };
+
+      // Create optgroups for each city
+      Object.entries(cityGroups).forEach(([city, cityCenters]) => {
+        const optgroup = document.createElement('optgroup');
+        optgroup.label = city;
+
+        cityCenters.forEach(center => {
+          // Check if this center exists in the API data
+          const centerExists = centers.find(c => c.id === center.id);
+          if (centerExists) {
+            const option = document.createElement('option');
+            option.value = center.id;
+            option.textContent = center.name;
+            optgroup.appendChild(option);
+          }
+        });
+
+        // Only add optgroup if it has at least one center
+        if (optgroup.children.length > 0) {
+          select.appendChild(optgroup);
+        }
       });
     }
 
