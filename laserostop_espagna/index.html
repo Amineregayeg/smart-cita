@@ -2228,6 +2228,9 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
       bookingState.selectedTime = earliestTime;
       bookingState.autoSelected = true; // Flag to show it was auto-selected
 
+      // Update calendar month to show the selected date's month
+      bookingState.currentMonth = new Date(soonestDate.getFullYear(), soonestDate.getMonth(), 1);
+
       // Update UI
       generateCalendar(); // Refresh calendar with selection
       generateTimeSlots(); // Show time slots with selection
