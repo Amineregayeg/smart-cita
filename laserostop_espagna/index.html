@@ -1453,22 +1453,22 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
       const typeName = selectedType.name.toLowerCase();
 
       if (typeName.includes('duo')) {
-        // DUO Cigarettes: 2×€170 center, 2×€160 online, 3×€114 monthly
+        // DUO Cigarettes: 2×€170 center, 2×€160 online, 3×€105 monthly
         centerPrice = 170; // per person (total €340)
         onlinePrice = 160; // per person (total €320)
-        monthlyPrice = 114;
+        monthlyPrice = 105;
         monthlyTotal = monthlyPrice * 3;
       } else if (typeName.includes('cannabis')) {
-        // Cannabis: €250 center, €230 online, 3×€84 monthly
+        // Cannabis: €250 center, €230 online, 3×€80 monthly
         centerPrice = 250;
         onlinePrice = 230;
-        monthlyPrice = 84;
+        monthlyPrice = 80;
         monthlyTotal = monthlyPrice * 3;
       } else {
-        // Cigarettes SOLO (default): €190 center, €170 online, 3×€65 monthly
+        // Cigarettes SOLO (default): €190 center, €170 online, 3×€60 monthly
         centerPrice = 190;
         onlinePrice = 170;
-        monthlyPrice = 65;
+        monthlyPrice = 60;
         monthlyTotal = monthlyPrice * 3;
       }
 
@@ -1528,30 +1528,30 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
           // Company 1: Madrid Chamartín, Torrejón, Majadahonda, San Sebastián
           solo_cig: {
             onetime: 'https://buy.stripe.com/9B628q23B9si9Pv7mtawo00',  // €170
-            monthly: 'https://buy.stripe.com/bJe00i5fN47Y1iZfSZawo03'   // 3×€65
+            monthly: 'https://buy.stripe.com/4gM7sKeQn0VMd1H4ahawo06'   // 3×€60 (UPDATED)
           },
           duo_cig: {
             onetime: 'https://buy.stripe.com/28E9AS0ZxfQGd1H4ahawo01',   // €320
-            monthly: 'https://buy.stripe.com/6oUbJ0cIfgUKaTzgX3awo04'    // 3×€114
+            monthly: 'https://buy.stripe.com/9B64gyeQn7kabXD9uBawo07'    // 3×€105 (UPDATED)
           },
           solo_drugs: {
             onetime: 'https://buy.stripe.com/00w8wOgYvbAq6Dj36dawo02', // €230
-            monthly: 'https://buy.stripe.com/6oU3cu0Zx47Y5zfgX3awo05'  // 3×€84
+            monthly: 'https://buy.stripe.com/dRmfZggYvdIyf9P0Y5awo08'  // 3×€80 (UPDATED)
           }
         },
         company2: {
           // Company 2: Valencia, Barcelona Sants, Sevilla, Madrid Atocha
           solo_cig: {
             onetime: 'https://buy.stripe.com/8x25kD2JTcsdgsPdZ6dby08',  // €170
-            monthly: 'https://buy.stripe.com/9B65kDesB3VH7Wjg7edby0b'   // 3×€65
+            monthly: 'https://buy.stripe.com/14AeVd4S1ak55Obf3adby0e'   // 3×€60 (UPDATED)
           },
           duo_cig: {
             onetime: 'https://buy.stripe.com/8x2fZh3NX4ZL2BZ6wEdby09',   // €320
-            monthly: 'https://buy.stripe.com/aFa00j0BLfEpfoL2godby0c'    // 3×€114
+            monthly: 'https://buy.stripe.com/7sYcN5dox3VH1xV08gdby0f'    // 3×€105 (UPDATED)
           },
           solo_drugs: {
             onetime: 'https://buy.stripe.com/cNi14nesB2RD4K78EMdby0a', // €230
-            monthly: 'https://buy.stripe.com/cNi7sLesB2RD4K7dZ6dby0d'  // 3×€84
+            monthly: 'https://buy.stripe.com/28E7sL3NX8bXdgDaMUdby0g'  // 3×€80 (UPDATED)
           }
         }
       };
@@ -1725,11 +1725,11 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
      * Price table - Single source of truth for payment UI
      */
     const PRICE_TABLE = {
-      solo_cig:   { center: 190, online: 170, plan: [65, 65, 65] },
-      duo_cig:    { center: 340, online: 320, plan: [114, 114, 114] },
-      solo_drugs: { center: 250, online: 230, plan: [84, 84, 84] },
+      solo_cig:   { center: 190, online: 170, plan: [60, 60, 60] },
+      duo_cig:    { center: 340, online: 320, plan: [105, 105, 105] },
+      solo_drugs: { center: 250, online: 230, plan: [80, 80, 80] },
       rechute:    { center: 0 },
-      solo_sugar: { center: 200, online: 180, plan: [65, 65, 65] }
+      solo_sugar: { center: 200, online: 180, plan: [60, 60, 60] }
     };
 
     /**
