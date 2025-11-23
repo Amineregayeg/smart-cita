@@ -1403,13 +1403,13 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
         document.getElementById('booking-form').classList.add('hidden');
         document.getElementById('confirmation-message').classList.remove('hidden');
 
-        // Scroll confirmation message to center of viewport
-        setTimeout(() => {
-          document.getElementById('confirmation-message').scrollIntoView({
-            behavior: 'smooth',
-            block: 'center'
-          });
-        }, 100);
+        // Scroll confirmation message to center of viewport - DISABLED
+        // setTimeout(() => {
+        //   document.getElementById('confirmation-message').scrollIntoView({
+        //     behavior: 'smooth',
+        //     block: 'center'
+        //   });
+        // }, 100);
 
         // Show payment options popup after 2 seconds
         setTimeout(() => {
@@ -2166,13 +2166,13 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
       generateTimeSlots(); // Show available time slots
       updateStepIndicators(); // Update visual indicators
 
-      // Auto-scroll to time slots section for better UX
-      setTimeout(() => {
-        document.getElementById('time-slots-section').scrollIntoView({
-          behavior: 'smooth',
-          block: 'start'
-        });
-      }, 100);
+      // Auto-scroll to time slots section for better UX - DISABLED
+      // setTimeout(() => {
+      //   document.getElementById('time-slots-section').scrollIntoView({
+      //     behavior: 'smooth',
+      //     block: 'start'
+      //   });
+      // }, 100);
     }
 
     // Generate time slots for selected date
@@ -2235,13 +2235,13 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
       generateTimeSlots(); // Refresh to show selection
       updateStepIndicators(); // Update visual indicators
 
-      // Auto-scroll to user info form for better UX
-      setTimeout(() => {
-        document.getElementById('step-3').scrollIntoView({
-          behavior: 'smooth',
-          block: 'start'
-        });
-      }, 100);
+      // Auto-scroll to user info form for better UX - DISABLED
+      // setTimeout(() => {
+      //   document.getElementById('step-3').scrollIntoView({
+      //     behavior: 'smooth',
+      //     block: 'start'
+      //   });
+      // }, 100);
 
       console.log('Booking state:', bookingState);
       // This will be used later for Smart Agenda API call
@@ -2309,13 +2309,13 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
       // Show notification to user
       showAutoSelectNotification(soonestDate, earliestTime);
 
-      // Scroll to time slots so user sees the selection
-      setTimeout(() => {
-        document.getElementById('time-slots-section').scrollIntoView({
-          behavior: 'smooth',
-          block: 'start'
-        });
-      }, 500);
+      // Scroll to time slots so user sees the selection - DISABLED
+      // setTimeout(() => {
+      //   document.getElementById('time-slots-section').scrollIntoView({
+      //     behavior: 'smooth',
+      //     block: 'start'
+      //   });
+      // }, 500);
     }
 
     /**
@@ -2590,13 +2590,13 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
           autoSelectSoonestSlot(); // Auto-select the soonest available slot across all 3 months
         });
 
-        // Auto-scroll to calendar section for better UX
-        setTimeout(() => {
-          document.getElementById('step-2').scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-          });
-        }, 300);
+        // Auto-scroll to calendar section for better UX - DISABLED
+        // setTimeout(() => {
+        //   document.getElementById('step-2').scrollIntoView({
+        //     behavior: 'smooth',
+        //     block: 'start'
+        //   });
+        // }, 300);
 
         console.log('Selected appointment type:', bookingState.selectedAppointmentType);
       } else {
