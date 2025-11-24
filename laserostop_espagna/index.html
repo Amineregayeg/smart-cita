@@ -610,7 +610,7 @@ AHORRO
 <!-- Payment Options -->
 <div class="space-y-4">
 <!-- Option 1: Pay at Center (Default - Already Selected) -->
-<div class="border-2 border-primary bg-primary/5 rounded-xl p-6 relative">
+<div class="border-2 border-primary bg-primary/5 rounded-xl p-6 relative cursor-pointer hover:bg-primary/10 transition-all" onclick="selectPaymentOption(1)">
 <div class="absolute top-4 right-4">
 <span class="bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">SELECCIONADO</span>
 </div>
@@ -1499,13 +1499,13 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
         document.getElementById('booking-form').classList.add('hidden');
         document.getElementById('confirmation-message').classList.remove('hidden');
 
-        // Scroll confirmation message to center of viewport - DISABLED
-        // setTimeout(() => {
-        //   document.getElementById('confirmation-message').scrollIntoView({
-        //     behavior: 'smooth',
-        //     block: 'center'
-        //   });
-        // }, 100);
+        // Scroll confirmation message to center of viewport
+        setTimeout(() => {
+          document.getElementById('confirmation-message').scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+          });
+        }, 100);
 
         // Show payment options popup after 2 seconds
         setTimeout(() => {
