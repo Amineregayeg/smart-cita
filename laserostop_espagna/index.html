@@ -528,95 +528,61 @@
 
 <!-- Promotional Popup (Modal) -->
 <div id="promo-popup" class="hidden fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-[60] p-4 animate-fadeIn">
-<div class="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden transform transition-all animate-scaleIn">
-<!-- Decorative Header with Gradient -->
-<div class="relative bg-gradient-to-br from-[#22A9AF] via-[#1d9199] to-[#188087] p-8 text-white overflow-hidden">
-<!-- Background Pattern -->
-<div class="absolute inset-0 opacity-10">
-<svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-<pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
-<path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" stroke-width="0.5"/>
-</pattern>
-<rect width="100" height="100" fill="url(#grid)" />
-</svg>
+<div class="bg-white dark:bg-gray-900 rounded-lg shadow-2xl max-w-sm w-full overflow-hidden transform transition-all animate-scaleIn" style="border: 3px solid #22A9AF; max-height: 85vh;">
+<!-- Logo at Top -->
+<div class="flex justify-center pt-6 pb-4 bg-white dark:bg-gray-900">
+<img src="assets/logolaserostop-bleu.svg" alt="LaserOstop" class="h-12">
 </div>
 
 <!-- Content -->
-<div class="relative z-10 text-center">
-<div class="inline-block mb-4">
-<div class="flex items-center justify-center space-x-3">
-<div class="h-1 w-12 bg-white rounded-full"></div>
-<span class="material-icons text-4xl">stars</span>
-<div class="h-1 w-12 bg-white rounded-full"></div>
-</div>
-</div>
-<h2 class="text-4xl font-bold mb-2 tracking-tight">Oferta Especial</h2>
-<div class="flex items-center justify-center space-x-3 mb-2">
-<p class="text-lg font-medium opacity-90">Descuentos hasta</p>
-<div class="bg-white text-[#22A9AF] px-4 py-2 rounded-xl font-bold text-3xl shadow-lg transform -rotate-2">
-30%
-</div>
+<div class="px-6 pb-6">
+<!-- Discount Badge -->
+<div class="text-center mb-4">
+<div class="inline-flex items-center justify-center space-x-2 bg-gradient-to-r from-[#22A9AF] to-[#1d9199] text-white px-6 py-2 rounded-full">
+<span class="material-icons text-lg">local_offer</span>
+<span class="font-bold text-xl">Hasta 30% de descuento</span>
 </div>
 </div>
 
-<!-- Decorative Wave -->
-<div class="absolute bottom-0 left-0 right-0">
-<svg viewBox="0 0 1200 120" preserveAspectRatio="none" class="w-full h-8">
-<path d="M0,0 C150,60 350,0 600,60 C850,120 1050,60 1200,60 L1200,120 L0,120 Z" fill="white" class="dark:fill-gray-900"></path>
-</svg>
-</div>
-</div>
-
-<!-- Body Content -->
-<div class="p-8 pt-6">
 <!-- Benefits List -->
-<div class="space-y-4 mb-8">
+<div class="space-y-3 mb-5">
 <!-- Benefit 1 -->
-<div class="flex items-start space-x-4 group">
-<div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-[#22A9AF]/20 to-[#22A9AF]/10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-<span class="material-icons text-[#22A9AF] text-2xl">local_offer</span>
+<div class="flex items-center space-x-3">
+<div class="flex-shrink-0 w-8 h-8 bg-[#22A9AF]/10 rounded-full flex items-center justify-center">
+<span class="material-icons text-[#22A9AF] text-sm">check_circle</span>
 </div>
-<div class="flex-1 pt-2">
-<h3 class="font-semibold text-gray-800 dark:text-white mb-1">Precios reducidos</h3>
-<p class="text-sm text-gray-600 dark:text-gray-400">Ahorra hasta un 30% en tratamientos seleccionados</p>
-</div>
+<p class="text-sm text-gray-700 dark:text-gray-300">Precios reducidos en tratamientos</p>
 </div>
 
 <!-- Benefit 2 -->
-<div class="flex items-start space-x-4 group">
-<div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-[#22A9AF]/20 to-[#22A9AF]/10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-<span class="material-icons text-[#22A9AF] text-2xl">calendar_today</span>
+<div class="flex items-center space-x-3">
+<div class="flex-shrink-0 w-8 h-8 bg-[#22A9AF]/10 rounded-full flex items-center justify-center">
+<span class="material-icons text-[#22A9AF] text-sm">check_circle</span>
 </div>
-<div class="flex-1 pt-2">
-<h3 class="font-semibold text-gray-800 dark:text-white mb-1">Pago en 3 veces</h3>
-<p class="text-sm text-gray-600 dark:text-gray-400">Sin intereses ni comisiones adicionales</p>
-</div>
+<p class="text-sm text-gray-700 dark:text-gray-300">Pago en 3 veces sin intereses</p>
 </div>
 
 <!-- Benefit 3 -->
-<div class="flex items-start space-x-4 group">
-<div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-[#22A9AF]/20 to-[#22A9AF]/10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-<span class="material-icons text-[#22A9AF] text-2xl">verified</span>
+<div class="flex items-center space-x-3">
+<div class="flex-shrink-0 w-8 h-8 bg-[#22A9AF]/10 rounded-full flex items-center justify-center">
+<span class="material-icons text-[#22A9AF] text-sm">check_circle</span>
 </div>
-<div class="flex-1 pt-2">
-<h3 class="font-semibold text-gray-800 dark:text-white mb-1">Garantía de calidad</h3>
-<p class="text-sm text-gray-600 dark:text-gray-400">Profesionales certificados y resultados probados</p>
-</div>
+<p class="text-sm text-gray-700 dark:text-gray-300">Profesionales certificados</p>
 </div>
 </div>
 
 <!-- CTA Button -->
 <button
 onclick="closePromoPopup()"
-class="w-full bg-gradient-to-r from-[#22A9AF] to-[#1d9199] hover:from-[#1d9199] hover:to-[#188087] text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl flex items-center justify-center space-x-2 group">
-<span class="text-lg">Reservar mi cita</span>
-<span class="material-icons group-hover:translate-x-1 transition-transform">arrow_forward</span>
+class="w-full bg-gradient-to-r from-[#22A9AF] to-[#1d9199] hover:from-[#1d9199] hover:to-[#188087] text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 hover:shadow-lg flex items-center justify-center space-x-2">
+<span>Reservar mi cita</span>
+<span class="material-icons text-sm">arrow_forward</span>
 </button>
 
 <!-- Close Text -->
 <button
 onclick="closePromoPopup()"
-class="w-full mt-4 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
+class="w-full mt-3 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
 Cerrar
 </button>
 </div>
