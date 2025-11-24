@@ -1889,11 +1889,11 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
      * Price table - Single source of truth for payment UI
      */
     const PRICE_TABLE = {
-      solo_cig:   { center: 190, online: 170, plan: [60, 60, 60] },
-      duo_cig:    { center: 340, online: 320, plan: [105, 105, 105] },
-      solo_drugs: { center: 250, online: 230, plan: [80, 80, 80] },
+      solo_cig:   { centerOld: 250, center: 190, online: 170, plan: [60, 60, 60] },
+      duo_cig:    { centerOld: 400, center: 340, online: 320, plan: [105, 105, 105] },
+      solo_drugs: { centerOld: 300, center: 250, online: 230, plan: [80, 80, 80] },
       rechute:    { center: 0 },
-      solo_sugar: { center: 200, centerOld: 280, online: 180, plan: [60, 60, 60] }
+      solo_sugar: { centerOld: 280, center: 200, online: 180, plan: [60, 60, 60] }
     };
 
     /**
