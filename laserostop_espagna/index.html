@@ -1505,6 +1505,9 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
 
         // Show payment options popup after 2 seconds
         setTimeout(() => {
+          console.log('🔔 Attempting to show payment popup...');
+          console.log('📋 Booking state:', bookingState);
+          console.log('🎯 Selected appointment type ID:', bookingState.selectedAppointmentType);
           showPaymentPopup();
         }, 2000);
 
@@ -1524,19 +1527,27 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
      * Show payment options popup
      */
     function showPaymentPopup() {
+      console.log('💳 showPaymentPopup() called');
+
       // Get selected appointment type to determine pricing
       const selectedType = bookingState.appointmentTypes.find(t => t.id === bookingState.selectedAppointmentType);
 
+      console.log('🔍 Looking for appointment type with ID:', bookingState.selectedAppointmentType);
+      console.log('📚 Available appointment types:', bookingState.appointmentTypes);
+      console.log('✅ Found appointment type:', selectedType);
+
       if (!selectedType) {
-        console.warn('No appointment type found for payment popup');
+        console.warn('❌ No appointment type found for payment popup');
         return;
       }
 
       // Prevent payment popup for free Rechute sessions
       if (selectedType.kind === 'rechute' || selectedType.price === 0) {
-        console.log('Rechute session (€0) - no payment required, skipping popup');
+        console.log('⚠️ Rechute session (€0) - no payment required, skipping popup');
         return;
       }
+
+      console.log('✅ Appointment type is valid, proceeding with popup...');
 
       // Calculate prices based on appointment type using PRICE_TABLE
       let centerPrice, onlinePrice, monthlyPrice, monthlyTotal;
@@ -1585,7 +1596,10 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
       };
 
       // Show popup (fixed overlay - no scroll issues)
-      document.getElementById('payment-popup').classList.remove('hidden');
+      const popupElement = document.getElementById('payment-popup');
+      console.log('🎨 Payment popup element:', popupElement);
+      popupElement.classList.remove('hidden');
+      console.log('✅ Payment popup should now be visible!');
     }
 
     /**
