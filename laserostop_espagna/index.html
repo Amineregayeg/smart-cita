@@ -528,7 +528,7 @@
 
 <!-- Promotional Popup (Modal) -->
 <div id="promo-popup" class="hidden fixed inset-0 bg-white/40 dark:bg-black/40 backdrop-blur-md flex items-center justify-center z-[60] p-4 animate-fadeIn">
-<div class="relative bg-white dark:bg-gray-900 rounded-lg shadow-2xl overflow-hidden transform transition-all animate-scaleIn" style="border: 3px solid #22A9AF; width: 420px; height: 550px;">
+<div class="relative bg-white dark:bg-gray-900 rounded-lg shadow-2xl overflow-hidden transform transition-all animate-scaleIn flex flex-col justify-center" style="border: 3px solid #22A9AF; width: 420px; height: 550px;">
 <!-- Close Button (X in corner) -->
 <button
 onclick="closePromoPopup()"
@@ -537,13 +537,15 @@ aria-label="Cerrar">
 <span class="material-icons text-gray-600 dark:text-gray-300 text-lg">close</span>
 </button>
 
+<!-- Centered Content Wrapper -->
+<div class="flex flex-col items-center">
 <!-- Logo at Top -->
-<div class="flex justify-center bg-white dark:bg-gray-900" style="padding-top: 24px; padding-bottom: 12px;">
+<div class="flex justify-center bg-white dark:bg-gray-900" style="padding-bottom: 12px;">
 <img src="assets/logolaserostop-bleu.svg" alt="LaserOstop" style="height: 40px;">
 </div>
 
 <!-- Content -->
-<div style="padding-left: 24px; padding-right: 24px; padding-bottom: 24px;">
+<div style="padding-left: 24px; padding-right: 24px;">
 <!-- Big Discount Section -->
 <div class="text-center" style="margin-bottom: 24px;">
 <p class="text-sm font-medium text-gray-600 dark:text-gray-400" style="margin-bottom: 8px;">OFERTA ESPECIAL</p>
@@ -577,6 +579,14 @@ AHORRO
 <p class="text-xs font-semibold text-[#22A9AF] uppercase tracking-wide" style="margin-bottom: 4px;">Facilidades de pago</p>
 <p class="text-2xl font-bold text-gray-800 dark:text-white">3 cuotas sin intereses</p>
 <p class="text-xs text-gray-600 dark:text-gray-400" style="margin-top: 4px;">Sin comisiones adicionales</p>
+</div>
+
+<!-- CTA Button -->
+<div class="text-center" style="margin-top: 24px;">
+<button onclick="closePromoAndScroll()" class="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white font-semibold px-8 py-3 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300" style="width: 100%;">
+<span class="material-icons">event_available</span>
+<span>Reservar mi cita</span>
+</button>
 </div>
 </div>
 </div>
@@ -1610,6 +1620,23 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
      */
     function closePromoPopup() {
       document.getElementById('promo-popup').classList.add('hidden');
+    }
+
+    /**
+     * Close promotional popup and scroll to booking section
+     */
+    function closePromoAndScroll() {
+      // Close the popup
+      closePromoPopup();
+
+      // Scroll to booking section
+      const bookingSection = document.getElementById('booking');
+      if (bookingSection) {
+        bookingSection.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
     }
 
     /**
