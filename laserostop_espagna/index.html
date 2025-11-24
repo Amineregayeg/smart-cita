@@ -528,17 +528,18 @@
 
 <!-- Promotional Popup (Modal) -->
 <div id="promo-popup" class="hidden fixed inset-0 bg-white/40 dark:bg-black/40 backdrop-blur-md flex items-center justify-center z-[60] p-4 animate-fadeIn">
-<div class="relative bg-white dark:bg-gray-900 rounded-lg shadow-2xl overflow-hidden transform transition-all animate-scaleIn flex flex-col justify-center" style="border: 3px solid #22A9AF; width: 420px; height: 550px;">
-<!-- Close Button (X in corner) -->
+<div class="relative bg-white dark:bg-gray-900 rounded-lg shadow-2xl overflow-hidden transform transition-all animate-scaleIn" style="border: 3px solid #22A9AF; width: 420px; height: 550px;">
+<!-- Close Button (X in corner) - MUST BE FIRST for absolute positioning -->
 <button
 onclick="closePromoPopup()"
 class="absolute top-3 right-3 w-8 h-8 flex items-center justify-center hover:opacity-70 transition-opacity z-10"
-aria-label="Cerrar">
+aria-label="Cerrar"
+style="z-index: 20;">
 <span class="material-icons text-gray-600 dark:text-gray-300 text-lg">close</span>
 </button>
 
 <!-- Centered Content Wrapper -->
-<div class="flex flex-col items-center">
+<div class="flex flex-col items-center justify-center" style="height: 100%;">
 <!-- Logo at Top -->
 <div class="flex justify-center bg-white dark:bg-gray-900" style="padding-bottom: 12px;">
 <img src="assets/logolaserostop-bleu.svg" alt="LaserOstop" style="height: 40px;">
