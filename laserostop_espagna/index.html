@@ -532,7 +532,7 @@
 <!-- Close Button (X in corner) -->
 <button
 onclick="closePromoPopup()"
-class="absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors z-10"
+class="absolute top-3 right-3 w-8 h-8 flex items-center justify-center hover:opacity-70 transition-opacity z-10"
 aria-label="Cerrar">
 <span class="material-icons text-gray-600 dark:text-gray-300 text-lg">close</span>
 </button>
@@ -548,7 +548,7 @@ aria-label="Cerrar">
 <div class="text-center" style="margin-bottom: 24px;">
 <p class="text-sm font-medium text-gray-600 dark:text-gray-400" style="margin-bottom: 8px;">OFERTA ESPECIAL</p>
 <div class="relative inline-block">
-<div class="text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#22A9AF] to-[#1d9199] leading-none">
+<div class="text-7xl font-black leading-none" style="color: #22A9AF;">
 30%
 </div>
 <div class="absolute bg-red-500 text-white text-xs font-bold rounded transform rotate-12" style="top: -8px; right: -48px; padding: 4px 8px;">
@@ -563,11 +563,11 @@ AHORRO
 <div style="display: flex; flex-direction: column; gap: 8px;">
 <div style="display: flex; align-items: center; justify-content: space-between;">
 <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Precio normal</span>
-<span class="text-sm font-bold text-gray-400 line-through">hasta 280€</span>
+<span class="text-sm font-bold line-through" style="color: #EF4444;">hasta 280€</span>
 </div>
 <div style="display: flex; align-items: center; justify-content: space-between;">
 <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Precio con descuento</span>
-<span class="text-lg font-bold text-[#22A9AF]">desde 200€</span>
+<span class="text-lg font-bold" style="color: #22A9AF;">desde 200€</span>
 </div>
 </div>
 </div>
