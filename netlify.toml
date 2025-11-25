@@ -23,6 +23,12 @@
   force = true
 
 [[redirects]]
+  from = "/laserostop_azucar/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/api/:splat"
   status = 200
@@ -39,6 +45,11 @@
   to = "/laserostop_es/index.html"
   status = 200
 
+[[redirects]]
+  from = "/laserostop_azucar"
+  to = "/laserostop_azucar/index.html"
+  status = 200
+
 # Center-specific URLs (valencia, barcelona, etc.) - serve same index.html
 [[redirects]]
   from = "/laserostop_espagna/*"
@@ -48,6 +59,11 @@
 [[redirects]]
   from = "/laserostop_es/*"
   to = "/laserostop_es/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/laserostop_azucar/*"
+  to = "/laserostop_azucar/index.html"
   status = 200
 
 # Security headers
