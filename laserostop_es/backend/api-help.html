@@ -1,0 +1,744 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+				  <html>
+				  <head>
+				  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+				  <style>
+					.titre {}
+					.menu-gauche {float:left;width:20%;position:fixed;top:0px;height:100%;overflow-y:auto;}
+					.content {float:left;width:78%;margin-left:20%;padding-left:10px;border-left:solid 1px #2E96F9;}
+					.titre {text-align:center;color:#FFF;font-size:22px;background-color:#2E96F9;height:30px;padding:10px;}
+					.titre2 {font-size:20px;background-color:#2E96F9;color:#FFF;height:30px;margin-bottom: 10px;padding: 10px;}
+					.titre3 {font-size:16px;color:orange;}
+					.exemple {background-color: #f7f7f7;padding: 15px 0px 15px 40px; font-size:12px;}
+					p {padding:0 20px;}
+					.entete {border-bottom:solid 1px #2E96F9 !important;color:#2E96F9;}
+					.tableobjet,.tableservice{padding:20px 0px;}
+					.tableobjet table, .tableservice table {border-collapse:collapse;}
+					.tableobjet table td, .tableservice table td {border:solid 1px #aacbe4;padding:5px;font-size:12px;}
+					.objettitle {font-style:italic;color:orange;}
+					.objeturi {background-color:#f1f1f1;padding:10px;border:solid 1px #cecece;color:#2E96F9;}
+					body {margin:0px;font-family:"Roboto", sans-serif;}
+					.menu-gauche a {text-decoration:none;color:#2E96F9}
+					.menu-gauche a:hover {color:#2e47f9;}
+					.menu-gauche ul {list-style-type: square;color:#2E96F9;}
+					.menu-gauche ul li {padding:3px 0;}
+					.menu-gauche .niv1 {padding-top:10px;}
+					.obj-example {background-color:#ffffec;width:877px;height:250px;}
+					.obj-reponse {background-color:#ffffec;width:100%;height:500px;}
+					.methodehtml {background-color:#2E96F9;color:#FFF;margin:3px;padding:3px;border-radius:4px;}
+					.methodeobj {padding-top:10px;}
+					.classeobjet {padding:20px;border-top:solid 1px orange;}
+					.classeobjettitle {font-size:20px;font-weight:bold;color:orange;}
+				  </style>
+				  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
+				  </head><body><div class='menu-gauche'><div class='titre'>Documentation de l'API V4</div><ul><li class='niv1'><a href='?#t1'>Présentation générale</a></li><ul><li><a href='?#t1-1'>API de type REST</a></li><li><a href='?#t1-2'>Accès aux objets</a></li><li><a href='?#t1-3'>Actions sur les objets</a></li></ul><li class='niv1'><a href='?#t2'>Authentification</a></li><li class='niv1'><a href='?#t3'>Exemples et retours des appels</a></li><li class='niv1'><a href='?#t4'>Utiliser les filtres de recherche (GET)</a></li><li class='niv1'><a href='?#t5'>Gestion des erreurs</a></li><li class='niv1'><a href='?#t6'>Notification des changements (WEBHOOK)</a></li><li class='niv1'><a href='?#t7'>Liste des objets disponibles</a><ul><li><a href='?#t7-champ_perso'>champ_perso</a></li><li><a href='?#t7-pdo_agenda'>pdo_agenda</a></li><li><a href='?#t7-pdo_agenda_type_rdv'>pdo_agenda_type_rdv</a></li><li><a href='?#t7-pdo_client'>pdo_client</a></li><li><a href='?#t7-pdo_enquete'>pdo_enquete</a></li><li><a href='?#t7-pdo_enquete_reponse'>pdo_enquete_reponse</a></li><li><a href='?#t7-pdo_envoi'>pdo_envoi</a></li><li><a href='?#t7-pdo_events'>pdo_events</a></li><li><a href='?#t7-pdo_events_ouverture'>pdo_events_ouverture</a></li><li><a href='?#t7-pdo_events_supprime'>pdo_events_supprime</a></li><li><a href='?#t7-pdo_form'>pdo_form</a></li><li><a href='?#t7-pdo_form_champ'>pdo_form_champ</a></li><li><a href='?#t7-pdo_form_type_rdv'>pdo_form_type_rdv</a></li><li><a href='?#t7-pdo_groupe'>pdo_groupe</a></li><li><a href='?#t7-pdo_journal'>pdo_journal</a></li><li><a href='?#t7-pdo_ressource'>pdo_ressource</a></li><li><a href='?#t7-pdo_surveillance'>pdo_surveillance</a></li><li><a href='?#t7-pdo_type_indispo'>pdo_type_indispo</a></li><li><a href='?#t7-pdo_type_rdv'>pdo_type_rdv</a></li></ul></li><li class='niv1'><a href='?#t8'>Cas particulier : Gestion de la récurrence des plages</a></li><li class='niv1'><a href='?#t9'>Service de prise de rendez-vous</a><ul><li><a href='?#t9-1'>getAvailabilities</a></li><li><a href='?#t9-2'>getLinkRdv</a></li><li><a href='?#t9-3'>getVisioLink</a></li><li><a href='?#t9-4'>GetActionLink</a></li></ul></li></ul></div><div class='content'><div class='titre2' id='t1'>Présentation générale</div><div class='titre3' id='t1-1'>API de type REST</div><p>L'API permet d'accéder directement à certains objets de l'application (client, rendez-vous, ...). L'API est de type REST. REST (REpresentational State Transfer) est un style d’architecture pour concevoir un service web, utilisant au maximum les possibilités de HTTP.</p><p>L'avantage de REST est que cette architecture est compatible avec tous les langages sachant requêter des adresses internet (PHP, Java, Javascript, Ruby, <a href='http://php.net/manual/fr/book.curl.php' target='blank'>cUrl</a>, ...)</p><div class='titre3'  id='t1-2'>Accès aux objets</div><p>L'URI à appeler est la suivante : <b>https://www.smartagenda.fr/pro/laserostop-esh/api</b></p><p>Pour accéder à un objet, l'URI est : <b>https://www.smartagenda.fr/pro/laserostop-esh/api/[nom de l'objet]</b></p><p class='exemple'>Exemple pour accéder aux clients, l'URI est : <b>https://www.smartagenda.fr/pro/laserostop-esh/api/pdo_client</b></p><p class='exemple'>Exemple pour accéder au client numéro 18, l'URI est : <b>https://www.smartagenda.fr/pro/laserostop-esh/api/pdo_client/18</b></p><div class='titre3'  id='t1-3'>Actions sur les objets</div><p>Pour effectuer une action, il suffit d'utiliser les verbes proposés par le HTML : </p><ul><li>GET : Lister un objet à partir de son id, ou une collection d'objets</li><li>POST : Créer un objet</li><li>PUT : Modifier un objet à partir de son id</li><li>DELETE : Supprimer un objet à partir de son id</li></ul><p>Toutes les actions ne sont pas disponibles sur tous les objets. Le détail des objets précise les autorisations disponibles.</p><p>Pour les actions POST et PUT, l'objet peut être passé : <br/></p><ul><li>En json avec Content-Type : application/json</li><li>En paramètres de type form avec Content-Type : application/x-www-form-urlencoded</li></ul><div class='titre2'  id='t2'>Authentification</div><p>Pour s'authentifier, il faut appeler l'URI suivante avec les paramètres :</p><p><b>https://www.smartagenda.fr/pro/laserostop-esh/api/token</b> avec les paramètres suivants fournis sur demande :</p><ul><li>login : Identifiant fourni</li><li>pwd : Mot de passe fourni</li><li>api_id : Nom de votre application</li><li>api_key : Clé fournie associée à votre application</li></ul><p>Ces paramètres sont fournis en mode <strong>POST (recommandé)</strong> ou GET (obsolète)</p><p>Le retour de cet appel est un identifiant (appelé token).</p><p class='exemple'>Exemple de retour d'appel JSON : <br/><br/>
+			Appel POST : <b>https://www.smartagenda.fr/pro/laserostop-esh/api/token</b><br/><br/> 
+			Payload : <br/>{<br/>
+			&nbsp;&nbsp;"login" : "mon_login",<br/>
+			&nbsp;&nbsp;"pwd"   : "mon_pwd",<br/>
+			&nbsp;&nbsp;"api_id": "nom_application",<br/>
+			&nbsp;&nbsp;"api_key" : "ma_cle"<br/>
+			}
+			<br/><br/>
+			
+			Retour : {"token":"d087bcd112342ca9625f158b83ce17dd"}</p><p>Ce token doit être passé en paramètre pour <b>TOUS LES APPELS</b> de l'api quelque soit l'action.Il est valide pendant 2h après le dernier appel d'action.</p><p><ul><li>Soit dans une entête X-SMARTAPI-TOKEN <strong>(recommandé)</strong></li><li>Soit en paramètre GET : token=valeur</li></ul></p><p class='exemple'>Exemple d'appel du client numéro 18 action GET : <b>https://www.smartagenda.fr/pro/laserostop-esh/api/pdo_client/18?token=a5dc9c9b61534c30e58d629c437aa469</b></p><div class='titre2' id='t3'>Exemples et retours des appels</div><p>Le format des retours est par défaut JSON. En ajoutant .xml à l'URI (avant les paramètres), le retour est au format XML.</p><p class='exemple'>Exemple d'appel du client numéro 18 avec un retour JSON :<br/><br/>
+			Appel : https://www.smartagenda.fr/pro/laserostop-esh/api/pdo_client/18?token=a5dc9c9b61534c30e58d629c437aa469<br/>
+			<br/>Retour : {"login":"","mail":"","nom":"DUMAS","prenom":"Chloe","adresse":"","code_postal":"","ville":"","telephone":"","portable":"","date_creation":"2011-07-11 10:08:34","sexe":"F","date_naissance":"","infos":"","sms_actif":"O","mail_actif":"O","id":"20"}</p><p class='exemple'>Exemple d'appel d'une liste de clients avec un retour JSON :<br/><br/>
+			Appel : https://www.smartagenda.fr/pro/laserostop-esh/api/pdo_client?token=a5dc9c9b61534c30e58d629c437aa469<br/>
+			<br/>Retour : [<br/>{"login":"","mail":"","nom":"DUMAS","prenom":"Chloe","adresse":"","code_postal":"","ville":"","telephone":"","portable":"","date_creation":"2011-07-11 10:08:34","sexe":"F","date_naissance":"","infos":"","sms_actif":"O","mail_actif":"O","id":"20"},<br/>{"login":"","mail":"","nom":"DUMAS","prenom":"Chloe","adresse":"","code_postal":"","ville":"","telephone":"","portable":"","date_creation":"2011-07-11 10:08:34","sexe":"F","date_naissance":"","infos":"","sms_actif":"O","mail_actif":"O","id":"20"}<br/>]</p><p class='exemple'>Exemple d'appel du client numéro 18 avec un retour XML :<br/><br/>
+			Appel : https://www.smartagenda.fr/pro/laserostop-esh/api/pdo_client/18<b>.xml</b>?token=a5dc9c9b61534c30e58d629c437aa469<br/>
+			<br/>Retour : <br/>&lt;pdo_client id="20"&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;login&gt;&lt;/login&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;mail&gt;&lt;/mail&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;nom&gt;DUMAS&lt;/nom&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;prenom&gt;Chloe&lt;/prenom&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;adresse&gt;&lt;/adresse&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;code_postal&gt;&lt;/code_postal&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;ville&gt;&lt;/ville&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;telephone&gt;&lt;/telephone&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;portable&gt;&lt;/portable&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;date_creation&gt;2011-07-11 10:08:34&lt;/date_creation&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;sexe&gt;F&lt;/sexe&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;date_naissance&gt;&lt;/date_naissance&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;infos&gt;&lt;/infos&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;sms_actif&gt;O&lt;/sms_actif&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;mail_actif&gt;O&lt;/mail_actif&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;id&gt;20&lt;/id&gt;<br/>
+&lt;/pdo_client&gt;</p><p class='exemple'>Exemple de retour d'une liste de clients en XML : <br/>
+			<br/>Appel : Appel : https://www.smartagenda.fr/pro/laserostop-esh/api/pdo_client<b>.xml</b>?token=a5dc9c9b61534c30e58d629c437aa469<br/>
+			<br/>Retour : <br/>&lt;liste count="10"&gt;<br/>&lt;pdo_client id="21"&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;login&gt;&lt;/login&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;mail&gt;&lt;/mail&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;nom&gt;DUMAS&lt;/nom&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;prenom&gt;Chloe&lt;/prenom&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;adresse&gt;&lt;/adresse&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;code_postal&gt;&lt;/code_postal&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;ville&gt;&lt;/ville&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;telephone&gt;&lt;/telephone&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;portable&gt;&lt;/portable&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;date_creation&gt;2011-07-11 10:08:34&lt;/date_creation&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;sexe&gt;F&lt;/sexe&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;date_naissance&gt;&lt;/date_naissance&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;infos&gt;&lt;/infos&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;sms_actif&gt;O&lt;/sms_actif&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;mail_actif&gt;O&lt;/mail_actif&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;id&gt;20&lt;/id&gt;<br/>
+&lt;/pdo_client&gt;<br/>&lt;pdo_client id="20"&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;login&gt;&lt;/login&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;mail&gt;&lt;/mail&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;nom&gt;DUMAS&lt;/nom&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;prenom&gt;Chloe&lt;/prenom&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;adresse&gt;&lt;/adresse&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;code_postal&gt;&lt;/code_postal&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;ville&gt;&lt;/ville&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;telephone&gt;&lt;/telephone&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;portable&gt;&lt;/portable&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;date_creation&gt;2011-07-11 10:08:34&lt;/date_creation&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;sexe&gt;F&lt;/sexe&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;date_naissance&gt;&lt;/date_naissance&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;infos&gt;&lt;/infos&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;sms_actif&gt;O&lt;/sms_actif&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;mail_actif&gt;O&lt;/mail_actif&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;id&gt;20&lt;/id&gt;<br/>
+&lt;/pdo_client&gt;<br/>...<br/>&lt;/liste&gt;</p><div class='titre2'  id='t4'>Utiliser les filtres de recherche (GET)</div><p>Il est possible de filter les recherches en mode GET en passant les paramètres suivants :
+			<ul>
+				<li>sortby : tri des résultats dans l'ordre du champ</li>
+				<li>sortdesc : tri descendant (ascendant par défaut si ce paramètre n'est pas utilisé)</li>
+				<li>nbresults : nombre de résultats à renvoyer (par défaut 20)</li>
+				<li>fromresults : renvoi les resultats à partir du 'fromresults'<sup>ième</sup> résultat (utile pour la pagination)</li>
+				<li>filter : tableau de filtres. Un filtre est constitué de 3 informations : 
+				<ul>
+					<li>field : Le champ sur lequel on veut filtrer</li>
+					<li>comp : Le comparateur utilisé (&lt;,&gt;,&lt;&gt;,&lt;=,&gt;=,LIKE,=) à encoder au format HTML <ul><li>&lt; : %3C</li><li>&gt; : %3E</li><li>&lt;&gt; : %3C%3E</li><li>&lt;= : %3C%3D</li><li>&gt;= : %3E%3D</li><li>LIKE</li><li>= : %3D</li></ul></li>
+					<li>value : La valeur utilisée pour la comparaison</li>
+				</ul>
+				</li>
+			</ul>
+			</p><p class='exemple'>Exemple de recherche des 5 premiers clients dont le nom commence par DES, triés par ordre descendant sur le champ prénom<br/><br/>
+			https://www.smartagenda.fr/pro/laserostop-esh/api/pdo_client?filter[0][field]=nom&filter[0][comp]=LIKE&filter[0][value]=DES%25&sortdesc&sortby=prenom&nbresults=5&token=8d3079822dc196546eca5f1bdeceb86d
+			<br/><br/>
+			Explications : <br/><br/>
+			&nbsp;&nbsp;&nbsp;&nbsp;Filtre du nom qui commence par DES, on remarque que le % est encodé en %25 : filter[0][field]=nom&filter[0][comp]=LIKE&filter[0][value]=DES%25<br/><br/>
+			&nbsp;&nbsp;&nbsp;&nbsp;Tri descendant sur le champ prenom : sortdesc&sortby=prenom<br/><br/>
+			&nbsp;&nbsp;&nbsp;&nbsp;Les 5 premiers résultats : nbresults=5<br/><br/>
+			</p><p class='exemple'>Exemple de recherche du client dont le mail est jean@exemple.fr,<br/><br/>
+			https://www.smartagenda.fr/pro/laserostop-esh/api/pdo_client?filter[0][field]=mail&filter[0][comp]=%3D&filter[0][value]=jean%40exemple.fr&token=8d3079822dc196546eca5f1bdeceb86d
+			<br/><br/>
+
+			</p><p class='exemple'>On peut combiner plusieurs filtres de comparaisons : <br/><br/>
+			filter[0][field]=nom&filter[0][comp]=LIKE&filter[0][value]=DES%25&filter[1][field]=sexe&filter[1][comp]=%3D&filter[1][value]=M
+			</p><div class='titre2' id='t5'>Gestion des erreurs</div><p>Les erreurs sont gérées par les codes de retour HTML (404, ...) et par un contenu XML ou JSON.</p><p>Les codes d'erreur HTML sont les suivants :
+			<ul>
+			<li>400 : Requete incorrecte (paramètres manquants, ...)</li>
+			<li>401 : Authentification incorrecte</li>
+			<li>403 : Action non autorisée sur cet objet</li>
+			<li>404 : Objet non trouvé</li>			
+			<li>500 : Erreur interne</li>
+			</ul></p><p>A chaque retour d'erreur, un contenu est renvoyé avec un code d'erreur et un message :</p><p class='exemple'>Exemple de retour d'erreur JSON : {"code":401,"message":"Authentification incorrecte"}</p><p class='exemple'>Exemple de retour d'erreur XML : <br/><br/>
+&lt;erreur&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;code&gt;401&lt;/code&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;message&gt;Authentification incorrecte&lt;/message&gt;<br/>
+&lt;/erreur&gt;</p><div class='titre2' id='t6'>Notification des changements</div><p>Chaque création / modification / suppression de rendez-vous peut être notifiée en temps réel par appel d'une URL externe de votre choix.</p><p>Dès qu'une modification de rendez-vous se produit, nous appelons une URL de votre choix pour vous avertir d'un changement. Vous pouvez alors
+			récupérer les changements effectués et les reporter sur votre SI.</p><p>L'URL est appelée en POST avec le rendez-vous créé / modifié / supprimé. Les paramètres sont postés en json avec le format suivant :<br/></p><p class="exemple">{<br/>
+					"sender":"smartagenda",<br/>
+					"senderSite":"laserostop-esh",<br/>
+					"objClass":"pdo_events",<br/>
+					"objId":"1814",<br/>
+					"action":"insert" ou "update" ou "delete",<br/>
+					"timestamp":"2017-01-11 11:17:52",<br/>
+					"data":{<br/>
+					&nbsp;&nbsp;&nbsp;&nbsp;"obj":{<br/>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"start_date_gmt":"2017-01-12T07:05:00Z",<br/>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"end_date_gmt":"2017-01-12T07:15:00Z",<br/>					
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="?#t7-pdo_events"><b>voir objet pdo_events</b></a><br/>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"agenda":{<br/>	
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"id":"18",<br/>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"mail":"mail@exemple.com",<br/>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"nom":"Libellé de la colonne",<br/>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"prenom":"Paul",<br/>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"nom_complet":"DUPOND",<br/>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"perso1":"champ personnalisé 1",<br/>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"perso2":"champ personnalisé 2",<br/>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"perso3":"champ personnalisé 3"<br/>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;},<br/>					
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+					&nbsp;},<br/>
+					"hash":"hash permettant de vérifier la provenance du message"<br/>}</p><div class='titre2' id='t7'>Liste des objets disponibles</div><p>Tous les objets sont identifiés par un champ [id]</p><p>Tous les champs commençant par 'apilnk_' sont l'adresse de l'api permettant d'accéder à un objet lié (par exemple le détail de la prestation d'un rendez-vous (objet pdo_events) : apilnk_presta_id)</p><div class='classeobjet'><div id='t7-champ_perso' class='classeobjettitle'>Objet champ_perso<br/></div><div class='objettitle'>Champs personnalisés des fiches client et rendez-vous. Ces champs sont en lecture et modifiable uniquement par notre équipe</div><div class='methodeobj'>Méthodes supportées : <span class='methodehtml'>GET</span></div><div class='tableobjet'><table style='border:solid 1px;border:none;'><tr><td class='entete' style='width:200px;text-align:center;border:none;'>Champ</td><td class='entete' style='width:150px;text-align:center;border:none;'>Type</td><td class='entete' style='width:500px;text-align:center;border:none;'>Description</td></tr><tr><td>key</td><td>varchar 255</td><td>Champs RDV : c1 à c10, text (commentaire fiche rdv), encaisse (salle d'attente)<br/>
+											Champs CLIENT : cc1 à cc10<br/>
+											Champs INTERNE : client_nom, client_prenom, client_sexe, client_mail, client_telephone, client_portable, client_adresse, client_code_postal, client_ville, client_date_naissance, client_infos</td></tr><tr><td>label</td><td>varchar 255</td><td>Libellé sur l'agenda</td></tr><tr><td>desc</td><td>varchar 255</td><td>Description du champ</td></tr><tr><td>type</td><td>varchar 255</td><td>TEXTC : Texte court<br/>
+											TEXTL : Texte long<br/>
+											LISTE : Liste déroulante (options séparées par des # dans valeur)<br/>
+											SEARCH : Liste déroulante avec recherche (options séparées par des # dans valeur)<br/>
+											CHECKLIST : Liste de cases à cocher (options séparées par des # dans valeur)<br/>
+											DATE : Date<br/>
+											CHECK : Case à cocher (O dans valeur)<br/>
+											PRESTA : Prestation limitée (si catégorie limitée mettre C[id de la catégorie])<br/>
+											EMPLOYE : Employe limité<br/>
+											LINK : Lien<br/>
+											UTM : Tracking de prise de RDV (utm_c1 à utm_c10 dans KEY)<br/>
+											MESSAGE : Message affiché lors de la prise de rendez-vous<br/>
+											GROUPEMENT : Groupement<br/>
+											</td></tr><tr><td>valeur</td><td>text </td><td>Pour les types LISTE / CHECKLIST / SEARCH : options séparées par des #. Commence par # indique que le premier choix est vide</td></tr><tr><td>obligatoire</td><td>varchar 255</td><td>O/N</td></tr><tr><td>classe</td><td>varchar 255</td><td>classe de validation ('mail' ou vide)</td></tr><tr><td>nblignes</td><td>varchar 255</td><td>Nb de lignes pour les TEXTL</td></tr><tr><td>affiche_site_particulier</td><td>varchar 255</td><td>O/N : Afficher sur le site de prise de RDV pour les particuliers</td></tr><tr><td>libelle_site_particulier</td><td>varchar 255</td><td>Libellé affiché sur le site de prise de RDV pour les particuliers</td></tr><tr><td>obligatoire_site_particulier</td><td>varchar 255</td><td>O/N : Obligatoire sur le site de prise de rendez-vous particuliers</td></tr><tr><td>affiche_site_pro</td><td>varchar 255</td><td>O/N : Afficher sur le site de prise de RDV pour les pros</td></tr><tr><td>libelle_site_pro</td><td>varchar 255</td><td>Libellé affiché sur le site de prise de RDV pour les pros</td></tr><tr><td>obligatoire_site_pro</td><td>varchar 255</td><td>O/N : Obligatoire sur le site de prise de rendez-vous pros</td></tr><tr><td>ordre</td><td>int </td><td>Ordre d'affichage (après les champs internes)</td></tr><tr><td>localisation</td><td>varchar 255</td><td>RDV : Fiche RDV<br/>COURS : Cours collectif<br/>CLIENT : Fiche client<br/>INTERNE_CLIENT : Fiche client, champ non personnalisés<br/>DIVERS : Pour les messages affichés sur le site</td></tr><tr><td>affiche_agenda</td><td>varchar 255</td><td>O/N Afficher sur l'agenda</td></tr><tr><td>imprime</td><td>varchar 255</td><td>O/N Imprime sur la fiche client / rdv</td></tr><tr><td>lecture_seule_site_pro</td><td>varchar 255</td><td>O/N Lecture seule sur le site en mode PRO</td></tr><tr><td>lecture_seule_site_particulier</td><td>varchar 255</td><td> Lecture seule sur le site en mode PARTICULIER</td></tr><tr><td>lecture_seule_agenda</td><td>varchar 255</td><td></td></tr><tr><td>id</td><td>int </td><td></td></tr></table></div><div>Exemple <strong>champ_perso</strong> en json</div><div><textarea class='obj-example'>{
+&nbsp;&nbsp;"key":"",
+&nbsp;&nbsp;"label":"",
+&nbsp;&nbsp;"desc":"",
+&nbsp;&nbsp;"type":"",
+&nbsp;&nbsp;"valeur":"",
+&nbsp;&nbsp;"obligatoire":"",
+&nbsp;&nbsp;"classe":"",
+&nbsp;&nbsp;"nblignes":"",
+&nbsp;&nbsp;"affiche_site_particulier":"",
+&nbsp;&nbsp;"libelle_site_particulier":"",
+&nbsp;&nbsp;"obligatoire_site_particulier":"",
+&nbsp;&nbsp;"affiche_site_pro":"",
+&nbsp;&nbsp;"libelle_site_pro":"",
+&nbsp;&nbsp;"obligatoire_site_pro":"",
+&nbsp;&nbsp;"ordre":"",
+&nbsp;&nbsp;"localisation":"",
+&nbsp;&nbsp;"affiche_agenda":"",
+&nbsp;&nbsp;"imprime":"",
+&nbsp;&nbsp;"lecture_seule_site_pro":"",
+&nbsp;&nbsp;"lecture_seule_site_particulier":"",
+&nbsp;&nbsp;"lecture_seule_agenda":"",
+&nbsp;&nbsp;"id":""
+}</textarea></div></div><div class='classeobjet'><div id='t7-pdo_agenda' class='classeobjettitle'>Objet pdo_agenda<br/></div><div class='objettitle'>Un agenda correspond à un utilisateur avec une colonne associée ou un accès sans colonne</div><div class='methodeobj'>Méthodes supportées : <span class='methodehtml'>GET</span><span class='methodehtml'>POST</span><span class='methodehtml'>PUT</span><span class='methodehtml'>DELETE</span></div><div class='tableobjet'><table style='border:solid 1px;border:none;'><tr><td class='entete' style='width:200px;text-align:center;border:none;'>Champ</td><td class='entete' style='width:150px;text-align:center;border:none;'>Type</td><td class='entete' style='width:500px;text-align:center;border:none;'>Description</td></tr><tr><td>nom <span style='color:red'>(requis)</span></td><td>varchar 255</td><td>Nom de la colonne dans l'agenda</td></tr><tr><td>id_profil</td><td>int </td><td>1 - Admin<br/>2 - Tout agenda mais pas d'accès backoffice<br/>3 - Limité (accès à un sous ensemble de colonne (agenda_autorises)<br/>4 - Accès externe uniquement au site en mode PRO (avec accès base client)<br/>5 - Accès externe uniquement au site en mode PRO (sans accès base client)</td></tr><tr><td>type</td><td>varchar 255</td><td>LectureSeule pour limiter l'accès en lecture à l'agenda</td></tr><tr><td>couleur</td><td>varchar 255</td><td>1 - 255</td></tr><tr><td>mail</td><td>varchar 255</td><td>Mail</td></tr><tr><td>portable</td><td>varchar 255</td><td>Numéro de portable</td></tr><tr><td>login <span style='color:red'>(requis)</span></td><td>varchar 255</td><td>Identifiant de connexion</td></tr><tr><td>ordre</td><td>int </td><td>Ordre permettant de classer les agendas affichés</td></tr><tr><td>agendas_autorises</td><td>varchar 255</td><td>Pour les profils autres que admin et tout agenda : liste des identifiants d'agendas autorisés séparés par des virgules '1,2,3' ou '*' pour tous</td></tr><tr><td>affiche_agenda</td><td>varchar 255</td><td>O : Utilisateur avec colonne associée, N : Accès sans colonne associée</td></tr><tr><td>prenom</td><td>varchar 255</td><td>Prénom de l'utilisateur</td></tr><tr><td>nom_complet</td><td>varchar 255</td><td>Nom de l'utilisateur</td></tr><tr><td>id_groupement</td><td>int </td><td>Identifiant du groupement dans lequel est l'utilisateur</td></tr><tr><td>perso1</td><td>varchar 2048</td><td>Champ personnalisé 1</td></tr><tr><td>perso2</td><td>varchar 2048</td><td>Champ personnalisé 2</td></tr><tr><td>perso3</td><td>varchar 2048</td><td>Champ personnalisé 3</td></tr><tr><td>telephone</td><td>varchar 255</td><td>Téléphone fixe</td></tr><tr><td>desactive</td><td>varchar 255</td><td>O : Compte désactivé / N : Compte actif</td></tr><tr><td>planification_activite_interdite</td><td>varchar 255</td><td>O : Pas d'accès à la planification d'activité / N : Accès à la planification d'activité</td></tr><tr><td>timezone</td><td>varchar 255</td><td>Code de la timezone en mode multitimezone (nous contacter)</td></tr><tr><td>id</td><td>int </td><td></td></tr><tr><td>password</td><td>varchar 255</td><td>Mot de passe pour création ou mise à jour, le mot de passe est crypté et n'est jamais renvoyé</td></tr></table></div><div>Exemple <strong>pdo_agenda</strong> en json</div><div><textarea class='obj-example'>{
+&nbsp;&nbsp;"nom":"",
+&nbsp;&nbsp;"id_profil":"",
+&nbsp;&nbsp;"type":"",
+&nbsp;&nbsp;"couleur":"",
+&nbsp;&nbsp;"mail":"",
+&nbsp;&nbsp;"portable":"",
+&nbsp;&nbsp;"login":"",
+&nbsp;&nbsp;"ordre":"",
+&nbsp;&nbsp;"agendas_autorises":"",
+&nbsp;&nbsp;"affiche_agenda":"",
+&nbsp;&nbsp;"prenom":"",
+&nbsp;&nbsp;"nom_complet":"",
+&nbsp;&nbsp;"id_groupement":"",
+&nbsp;&nbsp;"perso1":"",
+&nbsp;&nbsp;"perso2":"",
+&nbsp;&nbsp;"perso3":"",
+&nbsp;&nbsp;"telephone":"",
+&nbsp;&nbsp;"desactive":"",
+&nbsp;&nbsp;"planification_activite_interdite":"",
+&nbsp;&nbsp;"timezone":"",
+&nbsp;&nbsp;"id":""
+}</textarea></div></div><div class='classeobjet'><div id='t7-pdo_agenda_type_rdv' class='classeobjettitle'>Objet pdo_agenda_type_rdv<br/></div><div class='objettitle'>Association entre un agenda et une prestation.<br/>Pour rendre disponible une prestation sur internet pour un agenda donné, le champ internet doit être à O sinon N.<br/></div><div class='methodeobj'>Méthodes supportées : <span class='methodehtml'>GET</span><span class='methodehtml'>POST</span><span class='methodehtml'>PUT</span><span class='methodehtml'>DELETE</span></div><div class='tableobjet'><table style='border:solid 1px;border:none;'><tr><td class='entete' style='width:200px;text-align:center;border:none;'>Champ</td><td class='entete' style='width:150px;text-align:center;border:none;'>Type</td><td class='entete' style='width:500px;text-align:center;border:none;'>Description</td></tr><tr><td>id_agenda <span style='color:red'>(requis)</span></td><td>int </td><td>Identifiant le l'agenda</td></tr><tr><td>id_type_rdv <span style='color:red'>(requis)</span></td><td>int </td><td>Identifiant de la prestation</td></tr><tr><td>internet <span style='color:red'>(requis)</span></td><td>varchar 255</td><td>O/N Indique si la prestation est disponible sur internet pour cet agenda</td></tr><tr><td>id</td><td>int </td><td></td></tr></table></div><div>Exemple <strong>pdo_agenda_type_rdv</strong> en json</div><div><textarea class='obj-example'>{
+&nbsp;&nbsp;"id_agenda":"",
+&nbsp;&nbsp;"id_type_rdv":"",
+&nbsp;&nbsp;"internet":"",
+&nbsp;&nbsp;"id":""
+}</textarea></div></div><div class='classeobjet'><div id='t7-pdo_client' class='classeobjettitle'>Objet pdo_client<br/></div><div class='objettitle'>Client ou Patient</div><div class='methodeobj'>Méthodes supportées : <span class='methodehtml'>GET</span><span class='methodehtml'>POST</span><span class='methodehtml'>PUT</span><span class='methodehtml'>DELETE</span></div><div class='tableobjet'><table style='border:solid 1px;border:none;'><tr><td class='entete' style='width:200px;text-align:center;border:none;'>Champ</td><td class='entete' style='width:150px;text-align:center;border:none;'>Type</td><td class='entete' style='width:500px;text-align:center;border:none;'>Description</td></tr><tr><td>pwd</td><td>varchar 255</td><td>Mot de passe</td></tr><tr><td>mail</td><td>varchar 255</td><td>Mail et identifiant de connexion</td></tr><tr><td>nom</td><td>varchar 255</td><td></td></tr><tr><td>prenom</td><td>varchar 255</td><td></td></tr><tr><td>adresse</td><td>varchar 255</td><td></td></tr><tr><td>code_postal</td><td>varchar 255</td><td></td></tr><tr><td>ville</td><td>varchar 255</td><td></td></tr><tr><td>telephone</td><td>varchar 255</td><td></td></tr><tr><td>portable</td><td>varchar 255</td><td></td></tr><tr><td>date_creation</td><td>timestamp </td><td>Date de création du client</td></tr><tr><td>guid</td><td>varchar 255</td><td></td></tr><tr><td>sexe</td><td>varchar 255</td><td>M / F</td></tr><tr><td>date_naissance</td><td>varchar 255</td><td>Au format DD/MM/YYYY</td></tr><tr><td>infos</td><td>varchar 255</td><td></td></tr><tr><td>sms_actif</td><td>varchar 255</td><td>O/N</td></tr><tr><td>mail_actif</td><td>varchar 255</td><td>O/N</td></tr><tr><td>cc1</td><td>varchar 255</td><td>Champ personnalisable 1</td></tr><tr><td>cc2</td><td>varchar 255</td><td>Champ personnalisable 2</td></tr><tr><td>cc3</td><td>varchar 255</td><td>Champ personnalisable 3</td></tr><tr><td>cc4</td><td>varchar 255</td><td>Champ personnalisable 4</td></tr><tr><td>cc5</td><td>varchar 255</td><td>Champ personnalisable 5</td></tr><tr><td>cc6</td><td>varchar 255</td><td>Champ personnalisable 6</td></tr><tr><td>cc7</td><td>varchar 255</td><td>Champ personnalisable 7</td></tr><tr><td>cc8</td><td>varchar 255</td><td>Champ personnalisable 8</td></tr><tr><td>cc9</td><td>varchar 255</td><td>Champ personnalisable 9</td></tr><tr><td>cc10</td><td>text </td><td>Champ personnalisable 10</td></tr><tr><td>tmp_guid</td><td>varchar 255</td><td></td></tr><tr><td>id</td><td>int </td><td></td></tr></table></div><div>Exemple <strong>pdo_client</strong> en json</div><div><textarea class='obj-example'>{
+&nbsp;&nbsp;"pwd":"",
+&nbsp;&nbsp;"mail":"",
+&nbsp;&nbsp;"nom":"",
+&nbsp;&nbsp;"prenom":"",
+&nbsp;&nbsp;"adresse":"",
+&nbsp;&nbsp;"code_postal":"",
+&nbsp;&nbsp;"ville":"",
+&nbsp;&nbsp;"telephone":"",
+&nbsp;&nbsp;"portable":"",
+&nbsp;&nbsp;"date_creation":"",
+&nbsp;&nbsp;"guid":"",
+&nbsp;&nbsp;"sexe":"",
+&nbsp;&nbsp;"date_naissance":"",
+&nbsp;&nbsp;"infos":"",
+&nbsp;&nbsp;"sms_actif":"",
+&nbsp;&nbsp;"mail_actif":"",
+&nbsp;&nbsp;"cc1":"",
+&nbsp;&nbsp;"cc2":"",
+&nbsp;&nbsp;"cc3":"",
+&nbsp;&nbsp;"cc4":"",
+&nbsp;&nbsp;"cc5":"",
+&nbsp;&nbsp;"cc6":"",
+&nbsp;&nbsp;"cc7":"",
+&nbsp;&nbsp;"cc8":"",
+&nbsp;&nbsp;"cc9":"",
+&nbsp;&nbsp;"cc10":"",
+&nbsp;&nbsp;"tmp_guid":"",
+&nbsp;&nbsp;"id":""
+}</textarea></div></div><div class='classeobjet'><div id='t7-pdo_enquete' class='classeobjettitle'>Objet pdo_enquete<br/></div><div class='objettitle'>Enquête de satisfaction envoyée après le RDV.<br/>Elle est composée de 10 questions et un commentaire optionnel. Elle peut être envoyée par mail et/ou SMS</div><div class='methodeobj'>Méthodes supportées : <span class='methodehtml'>GET</span><span class='methodehtml'>POST</span><span class='methodehtml'>PUT</span><span class='methodehtml'>DELETE</span></div><div class='tableobjet'><table style='border:solid 1px;border:none;'><tr><td class='entete' style='width:200px;text-align:center;border:none;'>Champ</td><td class='entete' style='width:150px;text-align:center;border:none;'>Type</td><td class='entete' style='width:500px;text-align:center;border:none;'>Description</td></tr><tr><td>libelle</td><td>text </td><td></td></tr><tr><td>description</td><td>text </td><td>Description de l'enquête</td></tr><tr><td>mail_actif</td><td>varchar 255</td><td>O/N : Envoi du mail activé ou non</td></tr><tr><td>nb_jours_apres_rdv</td><td>varchar 255</td><td>Nombre de jours après le RDV pour envoyer le mail/SMS</td></tr><tr><td>mail_objet</td><td>text </td><td>Objet du mail</td></tr><tr><td>mail_contenu</td><td>text </td><td>Contenu du mail</td></tr><tr><td>prestations</td><td>text </td><td>Liste des prestations concernées par cette enquête. Les éléments de la liste sont des identifiants de prestations (pdo_type_rdv) séparés par des virgules et chaque identifiant est encadré par ## : Exemple pour les prestations 12 et 25 : #12#,#25#</td></tr><tr><td>q1</td><td>text </td><td>Libellé de la question n°1</td></tr><tr><td>desc1</td><td>text </td><td>Champ descriptif de la question n°1</td></tr><tr><td>q2</td><td>text </td><td>Libellé de la question n°2</td></tr><tr><td>desc2</td><td>text </td><td>Champ descriptif de la question n°2</td></tr><tr><td>q3</td><td>text </td><td>Libellé de la question n°3</td></tr><tr><td>desc3</td><td>text </td><td>Champ descriptif de la question n°3</td></tr><tr><td>q4</td><td>text </td><td>Libellé de la question n°4</td></tr><tr><td>desc4</td><td>text </td><td>Champ descriptif de la question n°4</td></tr><tr><td>q5</td><td>text </td><td>Libellé de la question n°5</td></tr><tr><td>desc5</td><td>text </td><td>Champ descriptif de la question n°5</td></tr><tr><td>q6</td><td>text </td><td>Libellé de la question n°6</td></tr><tr><td>desc6</td><td>text </td><td>Champ descriptif de la question n°6</td></tr><tr><td>q7</td><td>text </td><td>Libellé de la question n°7</td></tr><tr><td>desc7</td><td>text </td><td>Champ descriptif de la question n°7</td></tr><tr><td>q8</td><td>text </td><td>Libellé de la question n°8</td></tr><tr><td>desc8</td><td>text </td><td>Champ descriptif de la question n°8</td></tr><tr><td>q9</td><td>text </td><td>Libellé de la question n°9</td></tr><tr><td>desc9</td><td>text </td><td>Champ descriptif de la question n°9</td></tr><tr><td>q10</td><td>text </td><td>Libellé de la question n°10</td></tr><tr><td>desc10</td><td>text </td><td>Champ descriptif de la question n°10</td></tr><tr><td>qcommentaire</td><td>text </td><td>Libellé de la question commentaire</td></tr><tr><td>desccommentaire</td><td>text </td><td>Champ descriptif de la question commentaire</td></tr><tr><td>sms_contenu</td><td>text </td><td>Contenu du SMS</td></tr><tr><td>sms_actif</td><td>varchar 255</td><td>O/N : Activé ou non l'envoi du SMS</td></tr><tr><td>commentaire_actif</td><td>varchar 255</td><td>O/N : Activé la question commentaire</td></tr><tr><td>heure_envoi</td><td>int </td><td>Heure d'envoi : Exemple pour 13h : 13</td></tr><tr><td>avis_externe_actif</td><td>varchar 255</td><td></td></tr><tr><td>url_avis_externe</td><td>varchar 500</td><td></td></tr><tr><td>note_min_avis_externe</td><td>float </td><td></td></tr><tr><td>texte_avis_externe</td><td>text </td><td></td></tr><tr><td>texte_btn_avis_externe</td><td>varchar 255</td><td></td></tr><tr><td>id</td><td>int </td><td></td></tr></table></div><div>Exemple <strong>pdo_enquete</strong> en json</div><div><textarea class='obj-example'>{
+&nbsp;&nbsp;"libelle":"",
+&nbsp;&nbsp;"description":"",
+&nbsp;&nbsp;"mail_actif":"",
+&nbsp;&nbsp;"nb_jours_apres_rdv":"",
+&nbsp;&nbsp;"mail_objet":"",
+&nbsp;&nbsp;"mail_contenu":"",
+&nbsp;&nbsp;"prestations":"",
+&nbsp;&nbsp;"q1":"",
+&nbsp;&nbsp;"desc1":"",
+&nbsp;&nbsp;"q2":"",
+&nbsp;&nbsp;"desc2":"",
+&nbsp;&nbsp;"q3":"",
+&nbsp;&nbsp;"desc3":"",
+&nbsp;&nbsp;"q4":"",
+&nbsp;&nbsp;"desc4":"",
+&nbsp;&nbsp;"q5":"",
+&nbsp;&nbsp;"desc5":"",
+&nbsp;&nbsp;"q6":"",
+&nbsp;&nbsp;"desc6":"",
+&nbsp;&nbsp;"q7":"",
+&nbsp;&nbsp;"desc7":"",
+&nbsp;&nbsp;"q8":"",
+&nbsp;&nbsp;"desc8":"",
+&nbsp;&nbsp;"q9":"",
+&nbsp;&nbsp;"desc9":"",
+&nbsp;&nbsp;"q10":"",
+&nbsp;&nbsp;"desc10":"",
+&nbsp;&nbsp;"qcommentaire":"",
+&nbsp;&nbsp;"desccommentaire":"",
+&nbsp;&nbsp;"sms_contenu":"",
+&nbsp;&nbsp;"sms_actif":"",
+&nbsp;&nbsp;"commentaire_actif":"",
+&nbsp;&nbsp;"heure_envoi":"",
+&nbsp;&nbsp;"avis_externe_actif":"",
+&nbsp;&nbsp;"url_avis_externe":"",
+&nbsp;&nbsp;"note_min_avis_externe":"",
+&nbsp;&nbsp;"texte_avis_externe":"",
+&nbsp;&nbsp;"texte_btn_avis_externe":"",
+&nbsp;&nbsp;"id":""
+}</textarea></div></div><div class='classeobjet'><div id='t7-pdo_enquete_reponse' class='classeobjettitle'>Objet pdo_enquete_reponse<br/></div><div class='objettitle'>Réponse donnée aux enquêtes</div><div class='methodeobj'>Méthodes supportées : <span class='methodehtml'>GET</span><span class='methodehtml'>DELETE</span></div><div class='tableobjet'><table style='border:solid 1px;border:none;'><tr><td class='entete' style='width:200px;text-align:center;border:none;'>Champ</td><td class='entete' style='width:150px;text-align:center;border:none;'>Type</td><td class='entete' style='width:500px;text-align:center;border:none;'>Description</td></tr><tr><td>id_enquete</td><td>int </td><td>Identifiant de l'enquête (pdo_enquete)</td></tr><tr><td>dt_reponse</td><td>datetime </td><td>Horodate de réponse au format YYYY-MM-DD HH:MI:SS</td></tr><tr><td>id_rdv</td><td>int </td><td>Identifiant du RDV concerné (pdo_events)</td></tr><tr><td>r1</td><td>varchar 255</td><td>Réponse à la question 1</td></tr><tr><td>r2</td><td>varchar 255</td><td>Réponse à la question 2</td></tr><tr><td>r3</td><td>varchar 255</td><td>Réponse à la question 3</td></tr><tr><td>r4</td><td>varchar 255</td><td>Réponse à la question 4</td></tr><tr><td>r5</td><td>varchar 255</td><td>Réponse à la question 5</td></tr><tr><td>r6</td><td>varchar 255</td><td>Réponse à la question 6</td></tr><tr><td>r7</td><td>varchar 255</td><td>Réponse à la question 7</td></tr><tr><td>r8</td><td>varchar 255</td><td>Réponse à la question 8</td></tr><tr><td>r9</td><td>varchar 255</td><td>Réponse à la question 9</td></tr><tr><td>r10</td><td>varchar 255</td><td>Réponse à la question 10</td></tr><tr><td>commentaire</td><td>text </td><td>Commentaire</td></tr><tr><td>note_globale</td><td>varchar 255</td><td>1 à 5</td></tr><tr><td>id</td><td>int </td><td></td></tr><tr><td>apilnk_enquete_id</td><td> </td><td></td></tr><tr><td>apilnk_rdv_id</td><td> </td><td></td></tr></table></div><div>Exemple <strong>pdo_enquete_reponse</strong> en json</div><div><textarea class='obj-example'>{
+&nbsp;&nbsp;"id_enquete":"",
+&nbsp;&nbsp;"dt_reponse":"",
+&nbsp;&nbsp;"id_rdv":"",
+&nbsp;&nbsp;"r1":"",
+&nbsp;&nbsp;"r2":"",
+&nbsp;&nbsp;"r3":"",
+&nbsp;&nbsp;"r4":"",
+&nbsp;&nbsp;"r5":"",
+&nbsp;&nbsp;"r6":"",
+&nbsp;&nbsp;"r7":"",
+&nbsp;&nbsp;"r8":"",
+&nbsp;&nbsp;"r9":"",
+&nbsp;&nbsp;"r10":"",
+&nbsp;&nbsp;"commentaire":"",
+&nbsp;&nbsp;"note_globale":"",
+&nbsp;&nbsp;"id":"",
+&nbsp;&nbsp;"apilnk_enquete_id":"pdo_enquete\/",
+&nbsp;&nbsp;"apilnk_rdv_id":"pdo_events\/"
+}</textarea></div></div><div class='classeobjet'><div id='t7-pdo_envoi' class='classeobjettitle'>Objet pdo_envoi<br/></div><div class='objettitle'>Messages mail/SMS envoyés à destination des clients ou des colonnes</div><div class='methodeobj'>Méthodes supportées : <span class='methodehtml'>GET</span></div><div class='tableobjet'><table style='border:solid 1px;border:none;'><tr><td class='entete' style='width:200px;text-align:center;border:none;'>Champ</td><td class='entete' style='width:150px;text-align:center;border:none;'>Type</td><td class='entete' style='width:500px;text-align:center;border:none;'>Description</td></tr><tr><td>date_envoi</td><td>timestamp </td><td>Date de l'envoi</td></tr><tr><td>raison</td><td>varchar 255</td><td>Raison de l'envoi</td></tr><tr><td>type</td><td>char 5</td><td>MAIL / SMS</td></tr><tr><td>destinataire</td><td>varchar 255</td><td>Adresse mail ou numéro de téléphone pour les SMS</td></tr><tr><td>message</td><td>varchar 255</td><td>Message envoyé</td></tr><tr><td>client_id</td><td>int </td><td>Identifiant du client concerné</td></tr><tr><td>id_agenda_connecte</td><td>int </td><td>Identifiant de l'utilisateur connecté (pdo_agenda) (ce champ n'est pas toujours renseigné, par exemple dans le cas d'envoi de mail de rappel automatique il n'y a pas d'utilisateur connecté)</td></tr><tr><td>nb</td><td>int </td><td>Nb de SMS concaténés</td></tr><tr><td>id</td><td>int </td><td></td></tr><tr><td>apilnk_client_id</td><td> </td><td></td></tr></table></div><div>Exemple <strong>pdo_envoi</strong> en json</div><div><textarea class='obj-example'>{
+&nbsp;&nbsp;"date_envoi":"",
+&nbsp;&nbsp;"raison":"",
+&nbsp;&nbsp;"type":"",
+&nbsp;&nbsp;"destinataire":"",
+&nbsp;&nbsp;"message":"",
+&nbsp;&nbsp;"client_id":"",
+&nbsp;&nbsp;"id_agenda_connecte":"",
+&nbsp;&nbsp;"nb":"",
+&nbsp;&nbsp;"id":"",
+&nbsp;&nbsp;"apilnk_client_id":"pdo_client\/"
+}</textarea></div></div><div class='classeobjet'><div id='t7-pdo_events' class='classeobjettitle'>Objet pdo_events<br/></div><div class='objettitle'>Rendez-vous ou plage</div><div class='methodeobj'>Méthodes supportées : <span class='methodehtml'>GET</span><span class='methodehtml'>POST</span><span class='methodehtml'>PUT</span><span class='methodehtml'>DELETE</span></div><div class='tableobjet'><table style='border:solid 1px;border:none;'><tr><td class='entete' style='width:200px;text-align:center;border:none;'>Champ</td><td class='entete' style='width:150px;text-align:center;border:none;'>Type</td><td class='entete' style='width:500px;text-align:center;border:none;'>Description</td></tr><tr><td>start_date <span style='color:red'>(requis)</span></td><td>datetime </td><td>Horodate du début YYYY-MM-DD HH:MI:00</td></tr><tr><td>end_date <span style='color:red'>(requis)</span></td><td>datetime </td><td>Horodate de fin YYYY-MM-DD HH:MI:00</td></tr><tr><td>text</td><td>varchar 255</td><td>Contenu textuel du rendez-vous</td></tr><tr><td>rec_type</td><td>varchar 255</td><td>Utilisé pour la récurrence de plage</td></tr><tr><td>event_pid</td><td>int </td><td>Utilisé pour la récurrence de plage</td></tr><tr><td>event_length</td><td>int </td><td>Utilisé pour la récurrence de plage</td></tr><tr><td>presta_id <span style='color:red'>(requis)</span></td><td>int </td><td>Obligatoire. >0 : Rendez-vous (issu de pdo_type_rdv) <br/>-1 : Plage</td></tr><tr><td>equipe_id <span style='color:red'>(requis)</span></td><td>int </td><td>Obligatoire. Identifiant de la colonne de l'agenda (issu de pdo_agenda)</td></tr><tr><td>ressource_id</td><td>int </td><td>Identifiant de la ressource (issu de pdo_ressource)</td></tr><tr><td>client_id</td><td>int </td><td>Identifiant du client (vide pour création d'un nouveau client)</td></tr><tr><td>venu</td><td>varchar 255</td><td>false si pas venu (vide ou true sinon)</td></tr><tr><td>internet</td><td>varchar 255</td><td>Provenance du rendez-vous (vide: Agenda, O : Site de prise de rendez-vous par le client final, M : Site de prise de rendez-vous par un utilisateur de l'agenda)</td></tr><tr><td>client_montant</td><td>varchar 255</td><td></td></tr><tr><td>couleur</td><td>varchar 255</td><td>1-255</td></tr><tr><td>client_nom</td><td>varchar 255</td><td>Champ obligatoire pour les rendez-vous, inutilisé pour les plages</td></tr><tr><td>client_prenom</td><td>varchar 255</td><td>Ce champ est renseigné avec les infos de la fiche pdo_client</td></tr><tr><td>client_adresse</td><td>varchar 255</td><td>Ce champ est renseigné avec les infos de la fiche pdo_client</td></tr><tr><td>client_telephone</td><td>varchar 255</td><td>Ce champ est renseigné avec les infos de la fiche pdo_client</td></tr><tr><td>client_portable</td><td>varchar 255</td><td>Ce champ est renseigné avec les infos de la fiche pdo_client</td></tr><tr><td>client_mail</td><td>varchar 255</td><td>Ce champ est renseigné avec les infos de la fiche pdo_client</td></tr><tr><td>client_date_naissance</td><td>varchar 255</td><td>Ce champ est renseigné avec les infos de la fiche pdo_client</td></tr><tr><td>client_infos</td><td>varchar 255</td><td>Ce champ est renseigné avec les infos de la fiche pdo_client</td></tr><tr><td>client_sexe</td><td>varchar 255</td><td>Ce champ est renseigné avec les infos de la fiche pdo_client</td></tr><tr><td>date_modification_date</td><td>datetime </td><td>Dernière modification de la date du rendez-vous</td></tr><tr><td>date_creation</td><td>datetime </td><td>Date de création du rendez-vous</td></tr><tr><td>date_maj</td><td>timestamp </td><td>Dernière modification du rendez-vous</td></tr><tr><td>client_code_postal</td><td>varchar 255</td><td>Ce champ est renseigné avec les infos de la fiche pdo_client</td></tr><tr><td>client_ville</td><td>varchar 255</td><td>Ce champ doit est renseigné avec les infos de la fiche pdo_client</td></tr><tr><td>montant_presta</td><td>decimal 10,2</td><td></td></tr><tr><td>montant_produit</td><td>decimal 10,2</td><td></td></tr><tr><td>c1</td><td>varchar 255</td><td>Champ personnalisé rendez-vous</td></tr><tr><td>c2</td><td>varchar 255</td><td>Champ personnalisé rendez-vous<br />Pour les cours collectifs : requis, contient l'id prestation (pdo_type_rdv)</td></tr><tr><td>c3</td><td>varchar 255</td><td>Champ personnalisé rendez-vous<br />Pour les cours collectifs : requis, contient le nombre de places</td></tr><tr><td>c4</td><td>varchar 255</td><td>Champ personnalisé rendez-vous</td></tr><tr><td>c5</td><td>varchar 255</td><td>Champ personnalisé rendez-vous</td></tr><tr><td>c6</td><td>varchar 255</td><td>Champ personnalisé rendez-vous</td></tr><tr><td>c7</td><td>varchar 255</td><td>Champ personnalisé rendez-vous</td></tr><tr><td>c8</td><td>varchar 255</td><td>Champ personnalisé rendez-vous</td></tr><tr><td>c9</td><td>varchar 255</td><td>Champ personnalisé rendez-vous</td></tr><tr><td>c10</td><td>text </td><td>Champ personnalisé rendez-vous</td></tr><tr><td>cc1</td><td>varchar 255</td><td>Champ personnalisé repris de la fiche pdo_client</td></tr><tr><td>cc2</td><td>varchar 255</td><td>Champ personnalisé repris de la fiche pdo_client</td></tr><tr><td>cc3</td><td>varchar 255</td><td>Champ personnalisé repris de la fiche pdo_client</td></tr><tr><td>cc4</td><td>varchar 255</td><td>Champ personnalisé repris de la fiche pdo_client</td></tr><tr><td>cc5</td><td>varchar 255</td><td>Champ personnalisé repris de la fiche pdo_client</td></tr><tr><td>cc6</td><td>varchar 255</td><td>Champ personnalisé repris de la fiche pdo_client</td></tr><tr><td>cc7</td><td>varchar 255</td><td>Champ personnalisé repris de la fiche pdo_client</td></tr><tr><td>cc8</td><td>varchar 255</td><td>Champ personnalisé repris de la fiche pdo_client</td></tr><tr><td>cc9</td><td>varchar 255</td><td>Champ personnalisé repris de la fiche pdo_client</td></tr><tr><td>cc10</td><td>text </td><td>Champ personnalisé repris de la fiche pdo_client</td></tr><tr><td>liste_attente</td><td>varchar 255</td><td>true si le rendez-vous est sur la liste d'attente</td></tr><tr><td>id</td><td>int </td><td></td></tr><tr><td>champs</td><td> </td><td>Liste des champs de formulaire<br/>Retour pour le GET : [<br/>{<br/>"id_form_champ":"identifiant du champ du formulaire à retrouver dans le backoffice formulaire",<br/>"valeur":"Valeur du champ",<br/>"dt":"Horodatage de la valeur",<br/>"libelle":"Libellé du champ",<br/>"id_externe":"Identifiant externe",<br/>"id_form":"Identifiant du formulaire père"<br/>},<br/>{ ... }<br/>]<br><hr>Pour modifier les champs de formulaires associés à un événement avec POST ou PUT : envoyer uniquement "id_form_champ" et "valeur", inutile de renvoyer le reste des champs. </td></tr><tr><td>apilnk_presta_id</td><td> </td><td></td></tr><tr><td>apilnk_client_id</td><td> </td><td></td></tr><tr><td>apilnk_equipe_id</td><td> </td><td></td></tr><tr><td>apilnk_ressource_id</td><td> </td><td></td></tr></table></div><div>Exemple <strong>pdo_events</strong> en json</div><div><textarea class='obj-example'>{
+&nbsp;&nbsp;"start_date":"",
+&nbsp;&nbsp;"end_date":"",
+&nbsp;&nbsp;"text":"",
+&nbsp;&nbsp;"rec_type":"",
+&nbsp;&nbsp;"event_pid":"",
+&nbsp;&nbsp;"event_length":"",
+&nbsp;&nbsp;"presta_id":"",
+&nbsp;&nbsp;"equipe_id":"",
+&nbsp;&nbsp;"ressource_id":"",
+&nbsp;&nbsp;"client_id":"",
+&nbsp;&nbsp;"venu":"",
+&nbsp;&nbsp;"internet":"",
+&nbsp;&nbsp;"client_montant":"",
+&nbsp;&nbsp;"couleur":"",
+&nbsp;&nbsp;"client_nom":"",
+&nbsp;&nbsp;"client_prenom":"",
+&nbsp;&nbsp;"client_adresse":"",
+&nbsp;&nbsp;"client_telephone":"",
+&nbsp;&nbsp;"client_portable":"",
+&nbsp;&nbsp;"client_mail":"",
+&nbsp;&nbsp;"client_date_naissance":"",
+&nbsp;&nbsp;"client_infos":"",
+&nbsp;&nbsp;"client_sexe":"",
+&nbsp;&nbsp;"date_modification_date":"",
+&nbsp;&nbsp;"date_creation":"",
+&nbsp;&nbsp;"date_maj":"",
+&nbsp;&nbsp;"client_code_postal":"",
+&nbsp;&nbsp;"client_ville":"",
+&nbsp;&nbsp;"montant_presta":"",
+&nbsp;&nbsp;"montant_produit":"",
+&nbsp;&nbsp;"c1":"",
+&nbsp;&nbsp;"c2":"",
+&nbsp;&nbsp;"c3":"",
+&nbsp;&nbsp;"c4":"",
+&nbsp;&nbsp;"c5":"",
+&nbsp;&nbsp;"c6":"",
+&nbsp;&nbsp;"c7":"",
+&nbsp;&nbsp;"c8":"",
+&nbsp;&nbsp;"c9":"",
+&nbsp;&nbsp;"c10":"",
+&nbsp;&nbsp;"cc1":"",
+&nbsp;&nbsp;"cc2":"",
+&nbsp;&nbsp;"cc3":"",
+&nbsp;&nbsp;"cc4":"",
+&nbsp;&nbsp;"cc5":"",
+&nbsp;&nbsp;"cc6":"",
+&nbsp;&nbsp;"cc7":"",
+&nbsp;&nbsp;"cc8":"",
+&nbsp;&nbsp;"cc9":"",
+&nbsp;&nbsp;"cc10":"",
+&nbsp;&nbsp;"liste_attente":"",
+&nbsp;&nbsp;"id":"",
+&nbsp;&nbsp;"champs":"",
+&nbsp;&nbsp;"apilnk_presta_id":"pdo_type_rdv\/",
+&nbsp;&nbsp;"apilnk_client_id":"pdo_client\/",
+&nbsp;&nbsp;"apilnk_equipe_id":"pdo_agenda\/",
+&nbsp;&nbsp;"apilnk_ressource_id":"pdo_ressource\/"
+}</textarea></div></div><div class='classeobjet'><div id='t7-pdo_events_ouverture' class='classeobjettitle'>Objet pdo_events_ouverture<br/></div><div class='objettitle'>Plage d'activité</div><div class='methodeobj'>Méthodes supportées : <span class='methodehtml'>GET</span><span class='methodehtml'>POST</span><span class='methodehtml'>PUT</span><span class='methodehtml'>DELETE</span></div><div class='tableobjet'><table style='border:solid 1px;border:none;'><tr><td class='entete' style='width:200px;text-align:center;border:none;'>Champ</td><td class='entete' style='width:150px;text-align:center;border:none;'>Type</td><td class='entete' style='width:500px;text-align:center;border:none;'>Description</td></tr><tr><td>start_date <span style='color:red'>(requis)</span></td><td>datetime </td><td>Horodate du début YYYY-MM-DD HH:MI:00</td></tr><tr><td>end_date <span style='color:red'>(requis)</span></td><td>datetime </td><td>Horodate de fin YYYY-MM-DD HH:MI:00</td></tr><tr><td>text</td><td>varchar 255</td><td></td></tr><tr><td>rec_type</td><td>varchar 255</td><td>Utilisé pour la récurrence de plage</td></tr><tr><td>event_pid</td><td>int </td><td>Utilisé pour la récurrence de plage</td></tr><tr><td>event_length</td><td>int </td><td>Utilisé pour la récurrence de plage</td></tr><tr><td>presta_id</td><td>int </td><td>Forcé à -2 : Plage d'activité</td></tr><tr><td>equipe_id <span style='color:red'>(requis)</span></td><td>int </td><td>Obligatoire. Identifiant de la colonne de l'agenda (issu de pdo_agenda)</td></tr><tr><td>date_maj</td><td>timestamp </td><td>Dernière modification de la plage</td></tr><tr><td>couleur</td><td>varchar 10</td><td>1 - 255</td></tr><tr><td>prestaouverte</td><td>varchar 6000</td><td>Indique la liste des prestations ouvertes de la forme<br/>
+	(séparées par des ,) :<br/>TOUS pour toutes,<br/>C[num de catégorie de prestation]C pour toutes les prestations de la catégorie [num catégorie],<br/>P[num de la prestation]P pour une prestation en particulier.<br/><br/>Exemple : <br/>Toutes les prestations des catégories 2 et 3 et la prestation 4 : C2C,C3C,P4P</td></tr><tr><td>id</td><td>int </td><td></td></tr><tr><td>apilnk_presta_id</td><td> </td><td></td></tr><tr><td>apilnk_equipe_id</td><td> </td><td></td></tr></table></div><div>Exemple <strong>pdo_events_ouverture</strong> en json</div><div><textarea class='obj-example'>{
+&nbsp;&nbsp;"start_date":"",
+&nbsp;&nbsp;"end_date":"",
+&nbsp;&nbsp;"text":"",
+&nbsp;&nbsp;"rec_type":"",
+&nbsp;&nbsp;"event_pid":"",
+&nbsp;&nbsp;"event_length":"",
+&nbsp;&nbsp;"presta_id":"",
+&nbsp;&nbsp;"equipe_id":"",
+&nbsp;&nbsp;"date_maj":"",
+&nbsp;&nbsp;"couleur":"",
+&nbsp;&nbsp;"prestaouverte":"",
+&nbsp;&nbsp;"id":"",
+&nbsp;&nbsp;"apilnk_presta_id":"pdo_type_rdv\/",
+&nbsp;&nbsp;"apilnk_equipe_id":"pdo_agenda\/"
+}</textarea></div></div><div class='classeobjet'><div id='t7-pdo_events_supprime' class='classeobjettitle'>Objet pdo_events_supprime<br/></div><div class='objettitle'>Rendez-vous ou plage supprimé (identique à la description de pdo_events)</div><div class='methodeobj'>Méthodes supportées : <span class='methodehtml'>GET</span></div><div class='tableobjet'><table style='border:solid 1px;border:none;'><tr><td class='entete' style='width:200px;text-align:center;border:none;'>Champ</td><td class='entete' style='width:150px;text-align:center;border:none;'>Type</td><td class='entete' style='width:500px;text-align:center;border:none;'>Description</td></tr><tr><td>start_date</td><td>datetime </td><td></td></tr><tr><td>end_date</td><td>datetime </td><td></td></tr><tr><td>text</td><td>varchar 255</td><td></td></tr><tr><td>rec_type</td><td>varchar 255</td><td></td></tr><tr><td>event_pid</td><td>int </td><td></td></tr><tr><td>event_length</td><td>int </td><td></td></tr><tr><td>presta_id</td><td>int </td><td></td></tr><tr><td>equipe_id</td><td>int </td><td></td></tr><tr><td>ressource_id</td><td>int </td><td></td></tr><tr><td>client_id</td><td>int </td><td></td></tr><tr><td>venu</td><td>varchar 255</td><td></td></tr><tr><td>internet</td><td>varchar 255</td><td></td></tr><tr><td>client_montant</td><td>varchar 255</td><td></td></tr><tr><td>client_nom</td><td>varchar 255</td><td></td></tr><tr><td>client_prenom</td><td>varchar 255</td><td></td></tr><tr><td>client_adresse</td><td>varchar 255</td><td></td></tr><tr><td>client_telephone</td><td>varchar 255</td><td></td></tr><tr><td>client_portable</td><td>varchar 255</td><td></td></tr><tr><td>client_mail</td><td>varchar 255</td><td></td></tr><tr><td>client_date_naissance</td><td>varchar 255</td><td></td></tr><tr><td>client_infos</td><td>varchar 255</td><td></td></tr><tr><td>client_sexe</td><td>varchar 255</td><td></td></tr><tr><td>date_modification_date</td><td>datetime </td><td></td></tr><tr><td>date_creation</td><td>datetime </td><td></td></tr><tr><td>date_suppression</td><td>datetime </td><td>Date de suppression</td></tr><tr><td>date_maj</td><td>timestamp </td><td></td></tr><tr><td>client_code_postal</td><td>varchar 255</td><td></td></tr><tr><td>client_ville</td><td>varchar 255</td><td></td></tr><tr><td>montant_presta</td><td>decimal 10,2</td><td></td></tr><tr><td>montant_produit</td><td>decimal 10,2</td><td></td></tr><tr><td>c1</td><td>varchar 255</td><td></td></tr><tr><td>c2</td><td>varchar 255</td><td></td></tr><tr><td>c3</td><td>varchar 255</td><td></td></tr><tr><td>c4</td><td>varchar 255</td><td></td></tr><tr><td>c5</td><td>varchar 255</td><td></td></tr><tr><td>c6</td><td>varchar 255</td><td></td></tr><tr><td>c7</td><td>varchar 255</td><td></td></tr><tr><td>c8</td><td>varchar 255</td><td></td></tr><tr><td>c9</td><td>varchar 255</td><td></td></tr><tr><td>c10</td><td>text </td><td></td></tr><tr><td>cc1</td><td>varchar 255</td><td></td></tr><tr><td>cc2</td><td>varchar 255</td><td></td></tr><tr><td>cc3</td><td>varchar 255</td><td></td></tr><tr><td>cc4</td><td>varchar 255</td><td></td></tr><tr><td>cc5</td><td>varchar 255</td><td></td></tr><tr><td>cc6</td><td>varchar 255</td><td></td></tr><tr><td>cc7</td><td>varchar 255</td><td></td></tr><tr><td>cc8</td><td>varchar 255</td><td></td></tr><tr><td>cc9</td><td>varchar 255</td><td></td></tr><tr><td>cc10</td><td>text </td><td></td></tr><tr><td>id</td><td>int </td><td></td></tr><tr><td>champs</td><td> </td><td></td></tr><tr><td>apilnk_presta_id</td><td> </td><td></td></tr><tr><td>apilnk_client_id</td><td> </td><td></td></tr><tr><td>apilnk_equipe_id</td><td> </td><td></td></tr><tr><td>apilnk_ressource_id</td><td> </td><td></td></tr></table></div><div>Exemple <strong>pdo_events_supprime</strong> en json</div><div><textarea class='obj-example'>{
+&nbsp;&nbsp;"start_date":"",
+&nbsp;&nbsp;"end_date":"",
+&nbsp;&nbsp;"text":"",
+&nbsp;&nbsp;"rec_type":"",
+&nbsp;&nbsp;"event_pid":"",
+&nbsp;&nbsp;"event_length":"",
+&nbsp;&nbsp;"presta_id":"",
+&nbsp;&nbsp;"equipe_id":"",
+&nbsp;&nbsp;"ressource_id":"",
+&nbsp;&nbsp;"client_id":"",
+&nbsp;&nbsp;"venu":"",
+&nbsp;&nbsp;"internet":"",
+&nbsp;&nbsp;"client_montant":"",
+&nbsp;&nbsp;"client_nom":"",
+&nbsp;&nbsp;"client_prenom":"",
+&nbsp;&nbsp;"client_adresse":"",
+&nbsp;&nbsp;"client_telephone":"",
+&nbsp;&nbsp;"client_portable":"",
+&nbsp;&nbsp;"client_mail":"",
+&nbsp;&nbsp;"client_date_naissance":"",
+&nbsp;&nbsp;"client_infos":"",
+&nbsp;&nbsp;"client_sexe":"",
+&nbsp;&nbsp;"date_modification_date":"",
+&nbsp;&nbsp;"date_creation":"",
+&nbsp;&nbsp;"date_suppression":"",
+&nbsp;&nbsp;"date_maj":"",
+&nbsp;&nbsp;"client_code_postal":"",
+&nbsp;&nbsp;"client_ville":"",
+&nbsp;&nbsp;"montant_presta":"",
+&nbsp;&nbsp;"montant_produit":"",
+&nbsp;&nbsp;"c1":"",
+&nbsp;&nbsp;"c2":"",
+&nbsp;&nbsp;"c3":"",
+&nbsp;&nbsp;"c4":"",
+&nbsp;&nbsp;"c5":"",
+&nbsp;&nbsp;"c6":"",
+&nbsp;&nbsp;"c7":"",
+&nbsp;&nbsp;"c8":"",
+&nbsp;&nbsp;"c9":"",
+&nbsp;&nbsp;"c10":"",
+&nbsp;&nbsp;"cc1":"",
+&nbsp;&nbsp;"cc2":"",
+&nbsp;&nbsp;"cc3":"",
+&nbsp;&nbsp;"cc4":"",
+&nbsp;&nbsp;"cc5":"",
+&nbsp;&nbsp;"cc6":"",
+&nbsp;&nbsp;"cc7":"",
+&nbsp;&nbsp;"cc8":"",
+&nbsp;&nbsp;"cc9":"",
+&nbsp;&nbsp;"cc10":"",
+&nbsp;&nbsp;"id":"",
+&nbsp;&nbsp;"champs":[{
+&nbsp;&nbsp;"id_form_champ":"",
+&nbsp;&nbsp;"valeur":"",
+&nbsp;&nbsp;"dt":"",
+&nbsp;&nbsp;"libelle":"",
+&nbsp;&nbsp;"libelle_client":"",
+&nbsp;&nbsp;"id_externe":""
+},
+&nbsp;&nbsp;{
+&nbsp;&nbsp;"id_form_champ":"",
+&nbsp;&nbsp;"valeur":"",
+&nbsp;&nbsp;"dt":"",
+&nbsp;&nbsp;"libelle":"",
+&nbsp;&nbsp;"libelle_client":"",
+&nbsp;&nbsp;"id_externe":""
+}],
+&nbsp;&nbsp;"apilnk_presta_id":"pdo_type_rdv\/",
+&nbsp;&nbsp;"apilnk_client_id":"pdo_client\/",
+&nbsp;&nbsp;"apilnk_equipe_id":"pdo_agenda\/",
+&nbsp;&nbsp;"apilnk_ressource_id":"pdo_ressource\/"
+}</textarea></div></div><div class='classeobjet'><div id='t7-pdo_form' class='classeobjettitle'>Objet pdo_form<br/></div><div class='objettitle'>Liste des formulaires</div><div class='methodeobj'>Méthodes supportées : <span class='methodehtml'>GET</span></div><div class='tableobjet'><table style='border:solid 1px;border:none;'><tr><td class='entete' style='width:200px;text-align:center;border:none;'>Champ</td><td class='entete' style='width:150px;text-align:center;border:none;'>Type</td><td class='entete' style='width:500px;text-align:center;border:none;'>Description</td></tr><tr><td>libelle</td><td>varchar 255</td><td>Libellé</td></tr><tr><td>actif</td><td>varchar 255</td><td>O/N</td></tr><tr><td>ordre</td><td>int </td><td></td></tr><tr><td>id</td><td>int </td><td></td></tr></table></div><div>Exemple <strong>pdo_form</strong> en json</div><div><textarea class='obj-example'>{
+&nbsp;&nbsp;"libelle":"",
+&nbsp;&nbsp;"actif":"",
+&nbsp;&nbsp;"ordre":"",
+&nbsp;&nbsp;"id":""
+}</textarea></div></div><div class='classeobjet'><div id='t7-pdo_form_champ' class='classeobjettitle'>Objet pdo_form_champ<br/></div><div class='objettitle'>Liste des champs de formulaire</div><div class='methodeobj'>Méthodes supportées : <span class='methodehtml'>GET</span><span class='methodehtml'>POST</span><span class='methodehtml'>PUT</span><span class='methodehtml'>DELETE</span></div><div class='tableobjet'><table style='border:solid 1px;border:none;'><tr><td class='entete' style='width:200px;text-align:center;border:none;'>Champ</td><td class='entete' style='width:150px;text-align:center;border:none;'>Type</td><td class='entete' style='width:500px;text-align:center;border:none;'>Description</td></tr><tr><td>id_form</td><td>int </td><td>Identifiant du formulaire parent (pdo_form)</td></tr><tr><td>libelle</td><td>varchar 255</td><td>Libellé du champ dans l'agenda</td></tr><tr><td>description</td><td>text </td><td>Description affichée à l'utilisateur sur le site de prise de RDV</td></tr><tr><td>obligatoire</td><td>varchar 255</td><td>O/N Obligatoire dans l'agenda</td></tr><tr><td>affiche_site_client</td><td>varchar 255</td><td>O/N Affiche sur le site RDV en mode CLIENT</td></tr><tr><td>affiche_site_pro</td><td>varchar 255</td><td>O/N Affiche sur le site RDV en mode PRO</td></tr><tr><td>libelle_site_client</td><td>varchar 255</td><td>Libellé affiché au client sur le site RDV</td></tr><tr><td>libelle_site_pro</td><td>varchar 255</td><td>Libellé affiché au PRO sur le site RDV</td></tr><tr><td>type</td><td>varchar 255</td><td>TEXTC : texte court, TEXTL : texte long (textarea), LISTE : liste de sélection,SEARCH : liste avec recherche, CHECKLIST : liste de cases à cocher, CHECK : case à cocher</td></tr><tr><td>options</td><td>text </td><td>Pour LISTE et CHECKLIST : valeurs possbles séparées par des #</td></tr><tr><td>ordre</td><td>int </td><td>Ordre d'affichage</td></tr><tr><td>class_validate</td><td>varchar 255</td><td>inutilisé</td></tr><tr><td>obligatoire_site_client</td><td>varchar 255</td><td>O/N Obligatoire sur le site de prise de RDV en mode CLIENT</td></tr><tr><td>obligatoire_site_pro</td><td>varchar 255</td><td>O/N Obligatoire sur le site de prise de RDV en mode PRO</td></tr><tr><td>imprimer</td><td>varchar 255</td><td></td></tr><tr><td>id_externe</td><td>varchar 255</td><td></td></tr><tr><td>conditionne</td><td>char 1</td><td></td></tr><tr><td>id_question_conditionnante</td><td>int </td><td></td></tr><tr><td>comparateur_question_conditionnante</td><td>varchar 10</td><td></td></tr><tr><td>valeur_conditionnante</td><td>varchar 255</td><td></td></tr><tr><td>id</td><td>int </td><td></td></tr><tr><td>apilnk_id_form</td><td> </td><td></td></tr></table></div><div>Exemple <strong>pdo_form_champ</strong> en json</div><div><textarea class='obj-example'>{
+&nbsp;&nbsp;"id_form":"",
+&nbsp;&nbsp;"libelle":"",
+&nbsp;&nbsp;"description":"",
+&nbsp;&nbsp;"obligatoire":"",
+&nbsp;&nbsp;"affiche_site_client":"",
+&nbsp;&nbsp;"affiche_site_pro":"",
+&nbsp;&nbsp;"libelle_site_client":"",
+&nbsp;&nbsp;"libelle_site_pro":"",
+&nbsp;&nbsp;"type":"",
+&nbsp;&nbsp;"options":"",
+&nbsp;&nbsp;"ordre":"",
+&nbsp;&nbsp;"class_validate":"",
+&nbsp;&nbsp;"obligatoire_site_client":"",
+&nbsp;&nbsp;"obligatoire_site_pro":"",
+&nbsp;&nbsp;"imprimer":"",
+&nbsp;&nbsp;"id_externe":"",
+&nbsp;&nbsp;"conditionne":"",
+&nbsp;&nbsp;"id_question_conditionnante":"",
+&nbsp;&nbsp;"comparateur_question_conditionnante":"",
+&nbsp;&nbsp;"valeur_conditionnante":"",
+&nbsp;&nbsp;"id":"",
+&nbsp;&nbsp;"apilnk_id_form":"pdo_form\/"
+}</textarea></div></div><div class='classeobjet'><div id='t7-pdo_form_type_rdv' class='classeobjettitle'>Objet pdo_form_type_rdv<br/></div><div class='objettitle'>Association d'un formulaire à une prestations</div><div class='methodeobj'>Méthodes supportées : <span class='methodehtml'>GET</span></div><div class='tableobjet'><table style='border:solid 1px;border:none;'><tr><td class='entete' style='width:200px;text-align:center;border:none;'>Champ</td><td class='entete' style='width:150px;text-align:center;border:none;'>Type</td><td class='entete' style='width:500px;text-align:center;border:none;'>Description</td></tr><tr><td>id_form</td><td>int </td><td>Identifiant du formulaire</td></tr><tr><td>id_type_rdv</td><td>int </td><td>Identifiant du type de rdv</td></tr><tr><td>id</td><td>int </td><td></td></tr><tr><td>apilnk_id_form</td><td> </td><td></td></tr><tr><td>apilnk_id_type_rdv</td><td> </td><td></td></tr></table></div><div>Exemple <strong>pdo_form_type_rdv</strong> en json</div><div><textarea class='obj-example'>{
+&nbsp;&nbsp;"id_form":"",
+&nbsp;&nbsp;"id_type_rdv":"",
+&nbsp;&nbsp;"id":"",
+&nbsp;&nbsp;"apilnk_id_form":"pdo_form\/",
+&nbsp;&nbsp;"apilnk_id_type_rdv":"pdo_type_rdv\/"
+}</textarea></div></div><div class='classeobjet'><div id='t7-pdo_groupe' class='classeobjettitle'>Objet pdo_groupe<br/></div><div class='objettitle'>Groupe de prestations.<br>Les prestations peuvent être regrougées par 'groupe'</div><div class='methodeobj'>Méthodes supportées : <span class='methodehtml'>GET</span><span class='methodehtml'>POST</span><span class='methodehtml'>PUT</span></div><div class='tableobjet'><table style='border:solid 1px;border:none;'><tr><td class='entete' style='width:200px;text-align:center;border:none;'>Champ</td><td class='entete' style='width:150px;text-align:center;border:none;'>Type</td><td class='entete' style='width:500px;text-align:center;border:none;'>Description</td></tr><tr><td>libelle <span style='color:red'>(requis)</span></td><td>varchar 255</td><td>Libellé du groupe</td></tr><tr><td>ordre</td><td>tinyint </td><td>Permet d'ordonner les groupes dans l'IHM</td></tr><tr><td>etat</td><td>varchar 255</td><td>Mettre la valeur S pour supprimer, l'opération DELETE est interdite</td></tr><tr><td>image</td><td>varchar 1024</td><td></td></tr><tr><td>perso1</td><td>text </td><td></td></tr><tr><td>perso2</td><td>text </td><td></td></tr><tr><td>perso3</td><td>text </td><td></td></tr><tr><td>description</td><td>text </td><td></td></tr><tr><td>id</td><td>int </td><td></td></tr><tr><td>link_rdv</td><td> </td><td></td></tr></table></div><div>Exemple <strong>pdo_groupe</strong> en json</div><div><textarea class='obj-example'>{
+&nbsp;&nbsp;"libelle":"",
+&nbsp;&nbsp;"ordre":"",
+&nbsp;&nbsp;"etat":"",
+&nbsp;&nbsp;"image":"",
+&nbsp;&nbsp;"perso1":"",
+&nbsp;&nbsp;"perso2":"",
+&nbsp;&nbsp;"perso3":"",
+&nbsp;&nbsp;"description":"",
+&nbsp;&nbsp;"id":"",
+&nbsp;&nbsp;"link_rdv":"https:\/\/www.smartagenda.fr\/pro\/laserostop-esh\/rendez-vous\/?affrdv&tkaction=54648--21173-716dbc3f459ba"
+}</textarea></div></div><div class='classeobjet'><div id='t7-pdo_journal' class='classeobjettitle'>Objet pdo_journal<br/></div><div class='objettitle'>Journal des actions effectuées sur les RDV</div><div class='methodeobj'>Méthodes supportées : <span class='methodehtml'>GET</span></div><div class='tableobjet'><table style='border:solid 1px;border:none;'><tr><td class='entete' style='width:200px;text-align:center;border:none;'>Champ</td><td class='entete' style='width:150px;text-align:center;border:none;'>Type</td><td class='entete' style='width:500px;text-align:center;border:none;'>Description</td></tr><tr><td>objet_type</td><td>varchar 255</td><td>Type d'objet : exemple pour les RDV pdo_events</td></tr><tr><td>objet_id</td><td>int </td><td>Identifiant de l'objet</td></tr><tr><td>user_id</td><td>varchar 255</td><td>Identifiant de l'utilisateur si interne : pdo_agenda</td></tr><tr><td>user_name</td><td>varchar 255</td><td>Nom de l'utilisateur</td></tr><tr><td>user_mail</td><td>varchar 255</td><td>Mail de l'utilisateur</td></tr><tr><td>user_telephone</td><td>varchar 255</td><td>Téléphone de l'utilisateur</td></tr><tr><td>user_type</td><td>varchar 255</td><td>AGENDA / CLIENT</td></tr><tr><td>origine</td><td>varchar 255</td><td>AGENDA / SITE / BACKOFFICE</td></tr><tr><td>dt</td><td>datetime </td><td>Horodate de l'action au format YYYY-MM-DD HH:MI:SS</td></tr><tr><td>action</td><td>varchar 255</td><td>insert / update / delete</td></tr><tr><td>message</td><td>text </td><td>Pour une action update, contient les modifications effectuées au format suivant : nom du champ1#valeur avant#valeur après;nom du champ2#valeur avant#valeur après;etc ...</td></tr><tr><td>objet_json</td><td>text </td><td></td></tr><tr><td>ip</td><td>varchar 255</td><td></td></tr><tr><td>id</td><td>int </td><td></td></tr></table></div><div>Exemple <strong>pdo_journal</strong> en json</div><div><textarea class='obj-example'>{
+&nbsp;&nbsp;"objet_type":"",
+&nbsp;&nbsp;"objet_id":"",
+&nbsp;&nbsp;"user_id":"",
+&nbsp;&nbsp;"user_name":"",
+&nbsp;&nbsp;"user_mail":"",
+&nbsp;&nbsp;"user_telephone":"",
+&nbsp;&nbsp;"user_type":"",
+&nbsp;&nbsp;"origine":"",
+&nbsp;&nbsp;"dt":"",
+&nbsp;&nbsp;"action":"",
+&nbsp;&nbsp;"message":"",
+&nbsp;&nbsp;"objet_json":"",
+&nbsp;&nbsp;"ip":"",
+&nbsp;&nbsp;"id":""
+}</textarea></div></div><div class='classeobjet'><div id='t7-pdo_ressource' class='classeobjettitle'>Objet pdo_ressource<br/></div><div class='objettitle'>Ressource utilisable pour un rendez-vous</div><div class='methodeobj'>Méthodes supportées : <span class='methodehtml'>GET</span><span class='methodehtml'>POST</span><span class='methodehtml'>PUT</span></div><div class='tableobjet'><table style='border:solid 1px;border:none;'><tr><td class='entete' style='width:200px;text-align:center;border:none;'>Champ</td><td class='entete' style='width:150px;text-align:center;border:none;'>Type</td><td class='entete' style='width:500px;text-align:center;border:none;'>Description</td></tr><tr><td>nom</td><td>varchar 255</td><td></td></tr><tr><td>priorite</td><td>int </td><td></td></tr><tr><td>etat</td><td>varchar 255</td><td></td></tr><tr><td>couleur</td><td>varchar 255</td><td></td></tr><tr><td>id</td><td>int </td><td></td></tr></table></div><div>Exemple <strong>pdo_ressource</strong> en json</div><div><textarea class='obj-example'>{
+&nbsp;&nbsp;"nom":"",
+&nbsp;&nbsp;"priorite":"",
+&nbsp;&nbsp;"etat":"",
+&nbsp;&nbsp;"couleur":"",
+&nbsp;&nbsp;"id":""
+}</textarea></div></div><div class='classeobjet'><div id='t7-pdo_surveillance' class='classeobjettitle'>Objet pdo_surveillance<br/></div><div class='objettitle'>Contient les identifiants d'objets créés, modifiés ou supprimés.<br/>En scrutant cette table régulièrement, vous pouvez voir quels sont les événements qui ont été créés, modifiées ou supprimés.<br/>Reportez-vous à la rubrique <a href='?#t6'>Notification des changements</a> pour être notifié en temps réel, ce qui évite de scruter cette table.</div><div class='methodeobj'>Méthodes supportées : <span class='methodehtml'>GET</span></div><div class='tableobjet'><table style='border:solid 1px;border:none;'><tr><td class='entete' style='width:200px;text-align:center;border:none;'>Champ</td><td class='entete' style='width:150px;text-align:center;border:none;'>Type</td><td class='entete' style='width:500px;text-align:center;border:none;'>Description</td></tr><tr><td>action</td><td>varchar 255</td><td>INSERT / UPDATE / DELETE</td></tr><tr><td>objet</td><td>varchar 255</td><td>classe de l'objet (pdo_events ou pdo_events_ouverture)</td></tr><tr><td>id_objet</td><td>int </td><td>Identifiant de l'objet concerné par la création / modification / suppression</td></tr><tr><td>dt_action</td><td>datetime </td><td>Date de la modification</td></tr><tr><td>id</td><td>int </td><td></td></tr></table></div><div>Exemple <strong>pdo_surveillance</strong> en json</div><div><textarea class='obj-example'>{
+&nbsp;&nbsp;"action":"",
+&nbsp;&nbsp;"objet":"",
+&nbsp;&nbsp;"id_objet":"",
+&nbsp;&nbsp;"dt_action":"",
+&nbsp;&nbsp;"id":""
+}</textarea></div></div><div class='classeobjet'><div id='t7-pdo_type_indispo' class='classeobjettitle'>Objet pdo_type_indispo<br/></div><div class='objettitle'>Type d'indisponibilités</div><div class='methodeobj'>Méthodes supportées : <span class='methodehtml'>GET</span><span class='methodehtml'>POST</span><span class='methodehtml'>PUT</span></div><div class='tableobjet'><table style='border:solid 1px;border:none;'><tr><td class='entete' style='width:200px;text-align:center;border:none;'>Champ</td><td class='entete' style='width:150px;text-align:center;border:none;'>Type</td><td class='entete' style='width:500px;text-align:center;border:none;'>Description</td></tr><tr><td>libelle</td><td>varchar 255</td><td>Libellé de l'indispo</td></tr><tr><td>couleur</td><td>varchar 255</td><td>1-255</td></tr><tr><td>duree</td><td>int </td><td>Durée par défaut en minutes</td></tr><tr><td>etat</td><td>varchar 255</td><td>A actif, S : supprimé</td></tr><tr><td>ordre</td><td>int </td><td>Permet d'ordonner les indispos dans l'IHM</td></tr><tr><td>id</td><td>int </td><td></td></tr></table></div><div>Exemple <strong>pdo_type_indispo</strong> en json</div><div><textarea class='obj-example'>{
+&nbsp;&nbsp;"libelle":"",
+&nbsp;&nbsp;"couleur":"",
+&nbsp;&nbsp;"duree":"",
+&nbsp;&nbsp;"etat":"",
+&nbsp;&nbsp;"ordre":"",
+&nbsp;&nbsp;"id":""
+}</textarea></div></div><div class='classeobjet'><div id='t7-pdo_type_rdv' class='classeobjettitle'>Objet pdo_type_rdv<br/></div><div class='objettitle'>Prestations</div><div class='methodeobj'>Méthodes supportées : <span class='methodehtml'>GET</span><span class='methodehtml'>POST</span><span class='methodehtml'>PUT</span></div><div class='tableobjet'><table style='border:solid 1px;border:none;'><tr><td class='entete' style='width:200px;text-align:center;border:none;'>Champ</td><td class='entete' style='width:150px;text-align:center;border:none;'>Type</td><td class='entete' style='width:500px;text-align:center;border:none;'>Description</td></tr><tr><td>nom <span style='color:red'>(requis)</span></td><td>varchar 255</td><td>Nom de la prestation</td></tr><tr><td>code</td><td>varchar 255</td><td>Code pouvant être utilisé pour des fonctionnements spécifiques (expert)</td></tr><tr><td>duree <span style='color:red'>(requis)</span></td><td>tinyint </td><td>En mn (multiple de 30 mn)</td></tr><tr><td>prix</td><td>float </td><td>Prix HT</td></tr><tr><td>couleur</td><td>char 7</td><td>1-255</td></tr><tr><td>id_groupe</td><td>tinyint </td><td>Identifiant du groupe</td></tr><tr><td>ordre</td><td>tinyint </td><td>Permet d'ordonner les prestations dans l'IHM</td></tr><tr><td>etat <span style='color:red'>(requis)</span></td><td>varchar 255</td><td>A actif, D : désactivé, S : supprimé</td></tr><tr><td>prix_ttc</td><td>decimal 10,2</td><td>Prix TTC</td></tr><tr><td>description</td><td>text </td><td>Description de la prestation</td></tr><tr><td>acompte</td><td>decimal 10,2</td><td>Montant de l'acompte si paiement en ligne</td></tr><tr><td>perso1</td><td>text </td><td>Champ personnalisé de la prestation</td></tr><tr><td>perso2</td><td>text </td><td>Champ personnalisé de la prestation</td></tr><tr><td>perso3</td><td>text </td><td>Champ personnalisé de la prestation</td></tr><tr><td>tps_avant</td><td>tinyint </td><td>Durée en minute devant être bloquée avant le RDV (l'option doit être activée)</td></tr><tr><td>tps_apres</td><td>tinyint </td><td>Durée en minute devant être bloquée après le RDV (l'option doit être activée)</td></tr><tr><td>collectif</td><td>varchar 255</td><td>O/N : Indique que la prestation est un cours collectif</td></tr><tr><td>visio</td><td>varchar 255</td><td>O/N : Indique que la prestation est en visio</td></tr><tr><td>afficher_site</td><td>varchar 255</td><td>O/N : Indique que la prestation doit être affichée sur le site</td></tr><tr><td>reservable</td><td>varchar 255</td><td>O/N : Indique que la prestation réservable sur le site</td></tr><tr><td>keyword</td><td>text </td><td>Mots clés utilisés dans le module de recherche de prestation</td></tr><tr><td>id</td><td>int </td><td></td></tr><tr><td>link_rdv</td><td> </td><td></td></tr><tr><td>apilnk_groupe</td><td> </td><td></td></tr></table></div><div>Exemple <strong>pdo_type_rdv</strong> en json</div><div><textarea class='obj-example'>{
+&nbsp;&nbsp;"nom":"",
+&nbsp;&nbsp;"code":"",
+&nbsp;&nbsp;"duree":"",
+&nbsp;&nbsp;"prix":"",
+&nbsp;&nbsp;"couleur":"",
+&nbsp;&nbsp;"id_groupe":"",
+&nbsp;&nbsp;"ordre":"",
+&nbsp;&nbsp;"etat":"",
+&nbsp;&nbsp;"prix_ttc":"",
+&nbsp;&nbsp;"description":"",
+&nbsp;&nbsp;"acompte":"",
+&nbsp;&nbsp;"perso1":"",
+&nbsp;&nbsp;"perso2":"",
+&nbsp;&nbsp;"perso3":"",
+&nbsp;&nbsp;"tps_avant":"",
+&nbsp;&nbsp;"tps_apres":"",
+&nbsp;&nbsp;"collectif":"",
+&nbsp;&nbsp;"visio":"",
+&nbsp;&nbsp;"afficher_site":"",
+&nbsp;&nbsp;"reservable":"",
+&nbsp;&nbsp;"keyword":"",
+&nbsp;&nbsp;"id":"",
+&nbsp;&nbsp;"link_rdv":"https:\/\/www.smartagenda.fr\/pro\/laserostop-esh\/rendez-vous\/?affrdv&tkaction=54649--23194-72305151bcd73",
+&nbsp;&nbsp;"apilnk_groupe":"pdo_groupe\/"
+}</textarea></div></div><div class='titre2'  id='t8'>Gestion de la récurrence des plages</div><p>Les événements de type plage (presta_id = -1) peuvent être récurrents.</p><div class='titre3' id='t8-1'>Champs utilisés</div><p>Les champs utilisés par la récurrence sont les suivants : <ul>
+			<li>rec_type : décrit la récurrence</li>
+			<li>event_pid: l'identifiant du parent d'une série d'occurrences</li>
+			<li>event_length : durée de l'evt en secondes</li>
+			<li>start_date : Date de début de récurrence</li>
+			<li>end_date : Date de fin de la récurrence</li>
+			</ul></p><p>
+			Description du champ rec_type : [type]_[count]_[day]_[count2]_[days]#[fin] : <ul>
+			<li>type - type de répétition : 'week','month'</li>
+			<li>count - interval de répétition du “type”</li>
+			<li>day and count2 - defini un jour du mois pour le type de répétition 'month' (exemple 1er mercredi : 3_1)</li>
+			<li>days - Liste des jours de la semaine séparés par une virgule avec 0 pour dimanche, 1 pour lundi ...</li>
+			<li>fin - Vide si la récurrence à une fin, 'no' si la récurrence n'a pas de fin</li>
+			</ul></p>
+
+			<p>Exemples de rec_type :<ul>
+			<li>month_1_3_1_# - Le premier mercredi de chaque mois</li>
+			<li>week_1___1,5# - Le lundi et le vendredi toutes les semaines</li>
+			<li>week_1___1,5#no - Le lundi et le vendredi toutes les semaines, sans fin</li>			
+			</ul>
+			</p>
+			<p>Pour les 2 premiers exemples, 'end_date' est renseigné à une date, pour le dernier, la date doit être à '9999-01-01'
+			
+			</p><div class='titre3'  id='t8-2'>Gestion des exceptions</div><p>Il est possible de définir des exceptions dans la série d'occurrence. <br/><br/>Par exemple, on définit 
+			une récurrence tous les jours de la semaine du 1er juillet au 31 juillet et on souhaite ne pas appliquer cette plage le 14 juillet.<br/>
+
+
+
+
+
+
+
+
+			<div class='tableobjet'>Avec cet exemple de la récurrence du 1er au 31 juillet, tous les jours de la semaine de 10h à 12h00 : 
+			<br/><br/><table>
+			<tr><td>event_id</td><td>start_date</td><td>end_date</td><td>rec_type</td><td>event_pid</td><td>event_length</td><td>text</td></tr>
+			<tr><td>1</td><td>2013-07-01 10:00:00</td><td>2013-08-01 00:00:00</td><td>week_1___0,1,2,3,4,5,6#</td><td>0</td><td>7200</td><td>Récurrence</td></tr>
+			</table></div>
+			</p><p>Mode assisté :
+			<br/>En appelant le service GetEvents, on reçoit la liste des événements du jour avec un paramètre 'event_id_occurrence' 
+			qui contient un id unique d'une occurrence d'un event recurrent, sous la forme event_id#timestamp du debut de l'occurrence.
+			Pour notre exemple du 14 juillet, on reçoit event_id_occurrence='1#1373788800'.
+			<br/>Pour créer une exception dans la série d'occurence, il faut modifier la plage récurrente (méthode PUT ou DELETE de l'API) en passant
+			le paramètre 'event_id_occurrence' de l'occurence à modifier.
+			<p/><p/>Exemple : envoi d'une requête DELETE sur api/pdo_events/1 avec en form data :
+			<br/>event_id_occurrence: '1#1373788800'
+			<br/>start_date: '2013-07-14 10:00:00'
+			<br/>end_date: '2013-07-14 12:00:00'
+	
+
+			
+			<br/><br/>
+			<br/>Mode manuel :
+			<br/>Au lieu d'utiliser le mode assisté décrit ci-dessus,
+			il est également possible de créer manuellement une plage pour gérer cette exception :
+
+			
+			<div class='tableobjet'>On supprime l'occurence du 14 juillet : 
+			<br/><br/><table>
+			<tr><td>event_id</td><td>start_date</td><td>end_date</td><td>rec_type</td><td>event_pid</td><td>event_length</td><td>text</td></tr>
+			<tr><td>1</td><td>2013-07-01 10:00:00</td><td>2013-08-01 00:00:00</td><td>week_1___0,1,2,3,4,5,6#</td><td>0</td><td>7200</td><td>Récurrence</td></tr>
+			<tr><td>2</td><td>2013-07-14 10:00:00</td><td>2013-07-14 12:00:00</td><td>none</td><td>1</td><td>1373788800</td><td>Suppression du 14 juillet</td></tr>
+			</table><br/>
+			Explication : event_length correspond au timestamp de l'ocurrence si elle avait eu lieu normalement, rec_type = none car suppression</div>
+
+			<div class='tableobjet'>On décale l'occurence du 20 juillet de 15h à 16h: 
+			<br/><br/><table>
+			<tr><td>event_id</td><td>start_date</td><td>end_date</td><td>rec_type</td><td>event_pid</td><td>event_length</td><td>text</td></tr>
+			<tr><td>1</td><td>2013-07-01 10:00:00</td><td>2013-08-01 00:00:00</td><td>week_1___0,1,2,3,4,5,6#</td><td>0</td><td>7200</td><td>Récurrence</td></tr>
+			<tr><td>2</td><td>2013-07-14 10:00:00</td><td>2013-07-14 12:00:00</td><td>none</td><td>1</td><td>1373788800</td><td>Suppression du 14 juillet</td></tr>
+			<tr><td>3</td><td>2013-07-20 15:00:00</td><td>2013-07-20 16:00:00</td><td></td><td>1</td><td>1374307200</td><td>Decalage du 20 juillet de 15h à 16h au lieu de 10h à 12h</td></tr>
+			</table><br/>
+			Explication : event_length correspond au timestamp de l'ocurrence si elle avait eu lieu normalement, start_date et end_date ont été mises à jour</div>
+			
+			</p><div class='titre2'  id='t9'>Service de prise de rendez-vous</div><br/><div class='classeobjettitle'  id='t9-1'>Service : getAvailabilities</div><br/><div class='objettitle'>Ce service renvoie les créneaux disponibles pour une prestation donnée</div><br/><div class='objeturi'>HTTP REQUEST POST : https://www.smartagenda.fr/pro/laserostop-esh/api/service/getAvailabilities</div><br/><div>Paramètres</div><div class='tableservice'>    <table>        <tr><td>Paramètre</td><td>Description</td><td>Exemple valeur</td><tr>       <tr><td>pdo_type_rdv_id</td><td>Identifiant de la prestation pour laquelle on recherche des disponibilités. Issu de l'objet pdo_type_rdv</td><td>2</td><tr>        <tr><td>pdo_agenda_id</td><td>Identifiant de l'agenda pour laquelle on recherche des disponibilités. Issu de l'objet pdo_agenda</td><td>2 (agenda id 2)<br/>0 (pour tous les agendas qui effectuent cette prestation)<br/>1,2,3 (pour les agendas 1, 2 ou 3)<br/></td><tr>        <tr><td>date_a_partir_de</td><td>Date à partir de laquelle on souhaite rechercher des disponibilités</td><td>2025-10-25</td><tr>        <tr><td>date_fin</td><td>La recherche de disponibilités se fera jusqu'à cette date au maximum</td><td>2025-10-25</td><tr>    </table></div><br/><div>Réponse</div><div class='reponseservice'>			<textarea class='obj-reponse'>
+[	// Tableau des jours où il y a des disponibilités
+  {
+	"nj": "Thursday",	// nom du jour
+	"dj": "2020-01-09",	// date au format YYYY-MM-DD
+	"ja": "09/01/20",	// date au format DD/MM/YY
+	"det": [	// Tableau des plages (créneaux disponibles) 
+			{
+			"idp": "16:50",     // horaire de disponibilité
+			"ida": "1",         // identifant de l'agenda (pdo_agenda->id)
+			"idao": "0",        // identifiant de l'agenda demandé lors de la recherche (pdo_agenda->id)
+			"pe": "0",          // identifiant de l'evt père (pour les cours collectifs, il s'agit de l'id du cours pdo_events->id)
+			"idr": "28",        // identifiant de la ressource nécessaire (pdo_ressource->id)
+			"text": "",         // texte de la disponibilité (pour un cours c'est le nombre de places restantes)
+			"idpr": "7",        // identifiant du type de rendez-vous (pdo_type_rdv->id)
+			"nbc": "2",         // nb de colonnes dispos sur ce même créneau (indique que plusieurs colonnes sont disponibles)
+			"conc" : ["1","2"], // tableau des identifiants d'agenda disponibles sur ce créneau
+			"rdvmulti": [       // Si plusieurs prestations sont demandées, une ligne par prestation
+			  {
+					"nj": "Thursday",
+					"dj": "2020-01-09",
+					"ja": "09/01/20",
+					"idp": "16:50",
+					"ida": "1",
+					"idao": "0",
+					"pe": "0",
+					"idr": "28",
+					"text": "test",
+					"idpr": "7"
+			  },
+			  ...
+			]
+			},	// fin de la première plage
+			...
+    ]},		// fin du premier jour de dispo
+	...
+]	// FIN
+			</textarea></div><br/><div class='classeobjettitle'  id='t9-2'>Service : getLinkRdv</div><br/><div class='objettitle'>Ce service renvoie un lien de prise de rendez-vous qui connecte un client et peut prédéfinir la prestation et l'employé</div><br/><div class='objeturi'>HTTP REQUEST POST : https://www.smartagenda.fr/pro/laserostop-esh/api/service/getLinkRdv</div><br/><div>Paramètres</div><div class='tableservice'>    <table>
+                <tr><td>Paramètre</td><td>Description</td><td>Exemple valeur</td><tr>
+                <tr><td>pdo_client_id (obligatoire)</td><td>Identifiant du client que l'on doit connecter (issu de l'objet pdo_client)</td><td>15</td><tr>
+                <tr><td>pdo_type_rdv_id</td><td>Identifiant de la prestation pour laquelle on souhaite prendre rendez-vous. Issu de l'objet pdo_type_rdv (si pas fourni, le lien est valable pour toutes les prestations)</td><td>2</td><tr>
+                <tr><td>pdo_agenda_id</td><td>Identifiant de l'agenda pour lequel on souhaite prendre rendez-vous. Issu de l'objet pdo_agenda (si pas fourni, le lien est valable pour toutes les colonnes)</td><td>2</td><tr>
+                <tr><td>date_fin_validite</td><td>Date de fin de validité du lien (si pas fourni, les valeurs par défaut sont appliquées)</td><td>2025-10-25</td><tr>
+                <tr><td>unique</td><td>Si unique, le lien devient n'est plus valide après la prise d'un rendez-vous (si pas fourni, les valeurs par défaut sont appliquées)</td><td>O ou N</td><tr>
+            </table>
+        </div><br/><div>Réponse</div><div class="reponseservice">
+					<textarea class="obj-example">
+{
+	"code": 200,
+	"message": "Lien",
+	"data": {
+		"link": "https://...",
+		"token": "1234567890"
+	}
+}
+					</textarea>
+        </div><br/><div class='classeobjettitle'  id='t9-3'>Service : getVisioLink</div><br/><div class='objettitle'>Ce service renvoie le lien visio d'un RDV</div><br/><div class='objeturi'>HTTP REQUEST POST : https://www.smartagenda.fr/pro/laserostop-esh/api/service/getVisioLink</div><br/><div>Paramètres</div><div class="tableservice">
+            <table>
+                <tr><td>Paramètre</td><td>Description</td><td>Exemple valeur</td><tr>
+                <tr><td>pdo_events_id (obligatoire)</td><td>Identifiant du RDV (issu de l'objet pdo_events)</td><td>15</td><tr>
+            </table>
+        </div><br/><div>Réponse</div>
+        <div class="reponseservice">
+					<textarea class="obj-example">
+{
+	"code": 200,
+	"message": "Lien visio",
+	"data": {
+		"link": "https://..."
+	}
+}
+					</textarea>
+        </div><br/><div class='classeobjettitle'  id='t9-4'>Service : GetActionLink</div><br/><div class='objettitle'>Ce service renvoie les liens de modification et suppression d'un RDV pour le client</div><br/><div class='objeturi'>HTTP REQUEST POST : https://www.smartagenda.fr/pro/laserostop-esh/api/service/GetActionLink</div><br/><div>Paramètres</div><div class="tableservice">
+            <table>
+                <tr><td>Paramètre</td><td>Description</td><td>Exemple valeur</td><tr>
+                <tr><td>pdo_events_id (obligatoire)</td><td>Identifiant du RDV (issu de l'objet pdo_events)</td><td>15</td><tr>
+            </table>
+        </div><br/><div>Réponse</div>
+        <div class="reponseservice">
+					<textarea class="obj-example">
+{
+	"code": 200,
+	"message": "Liens modification / suppression",
+	"data": {
+		"update_link": "https://...",
+		"delete_link": "https://...",
+		"updatable":   "O/N"
+	}
+}
+					</textarea>
+        </div><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/></div></body></html>
