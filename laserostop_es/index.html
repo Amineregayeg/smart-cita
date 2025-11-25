@@ -959,6 +959,78 @@ Más de 500,000 personas ya lo han conseguido. Reserve su cita hoy y dé el prim
   </span>
 </a>
 
+<!-- Social Proof Notification -->
+<div id="social-proof-notification" class="fixed bottom-6 left-6 z-50 bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-4 max-w-xs transform -translate-x-full opacity-0 transition-all duration-500 ease-out border border-gray-100 dark:border-gray-700">
+  <div class="flex items-start gap-3">
+    <div class="flex-shrink-0 w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+      <span class="material-icons text-primary text-xl">check_circle</span>
+    </div>
+    <div class="flex-1 min-w-0">
+      <p class="text-sm font-medium text-gray-900 dark:text-white" id="social-proof-name">María G.</p>
+      <p class="text-xs text-gray-500 dark:text-gray-400" id="social-proof-message">acaba de reservar una sesión</p>
+      <p class="text-xs text-primary mt-1" id="social-proof-location">Madrid</p>
+    </div>
+    <button onclick="hideSocialProof()" class="flex-shrink-0 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+      <span class="material-icons text-lg">close</span>
+    </button>
+  </div>
+</div>
+
+<script>
+// Social Proof Notification System
+(function() {
+  const names = [
+    'María G.', 'Carlos R.', 'Ana M.', 'Pedro L.', 'Laura S.',
+    'Miguel A.', 'Carmen P.', 'Francisco J.', 'Isabel T.', 'Antonio B.',
+    'Elena V.', 'Javier M.', 'Rosa C.', 'Manuel D.', 'Patricia H.'
+  ];
+
+  const cities = [
+    'Madrid', 'Barcelona', 'Valencia', 'Sevilla', 'San Sebastián de los Reyes',
+    'Majadahonda', 'Torrejón de Ardoz'
+  ];
+
+  const messages = [
+    'acaba de reservar una sesión',
+    'ha reservado su cita',
+    'se ha apuntado para dejar de fumar',
+    'ha dado el primer paso'
+  ];
+
+  const notification = document.getElementById('social-proof-notification');
+  const nameEl = document.getElementById('social-proof-name');
+  const messageEl = document.getElementById('social-proof-message');
+  const locationEl = document.getElementById('social-proof-location');
+
+  function getRandomItem(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+  }
+
+  function showSocialProof() {
+    // Update content with random data
+    nameEl.textContent = getRandomItem(names);
+    messageEl.textContent = getRandomItem(messages);
+    locationEl.textContent = getRandomItem(cities);
+
+    // Show notification
+    notification.classList.remove('-translate-x-full', 'opacity-0');
+    notification.classList.add('translate-x-0', 'opacity-100');
+
+    // Hide after 7 seconds
+    setTimeout(hideSocialProof, 7000);
+  }
+
+  window.hideSocialProof = function() {
+    notification.classList.add('-translate-x-full', 'opacity-0');
+    notification.classList.remove('translate-x-0', 'opacity-100');
+  };
+
+  // Show first notification after 10 seconds, then every 2 minutes
+  setTimeout(showSocialProof, 10000);
+  setInterval(showSocialProof, 120000);
+})();
+</script>
+
 </div>
 
 <!-- Leaflet JS -->
