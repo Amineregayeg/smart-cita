@@ -526,273 +526,96 @@
 </div>
 </div>
 
-<!-- Promotional Popup (Modal) -->
-<div id="promo-popup" class="hidden fixed inset-0 bg-white/40 dark:bg-black/40 backdrop-blur-md flex items-center justify-center z-[60] p-4 animate-fadeIn">
-<div class="relative bg-white dark:bg-gray-900 rounded-lg shadow-2xl overflow-hidden transform transition-all animate-scaleIn" style="border: 3px solid #22A9AF; width: 420px; height: 550px;">
-<!-- Close Button (X in corner) - MUST BE FIRST for absolute positioning -->
-<button
-onclick="closePromoPopup()"
-class="absolute top-3 right-3 w-8 h-8 flex items-center justify-center hover:opacity-70 transition-opacity z-10"
-aria-label="Cerrar"
-style="z-index: 20;">
-<span class="material-icons text-gray-600 dark:text-gray-300 text-lg">close</span>
-</button>
-
-<!-- Centered Content Wrapper -->
-<div class="flex flex-col items-center justify-center" style="height: 100%;">
-<!-- Logo at Top -->
-<div class="flex justify-center bg-white dark:bg-gray-900" style="padding-bottom: 12px;">
-<img src="assets/logolaserostop-bleu.svg" alt="LaserOstop" style="height: 40px;">
-</div>
-
-<!-- Content -->
-<div style="padding-left: 24px; padding-right: 24px;">
-<!-- Big Discount Section -->
-<div class="text-center" style="margin-bottom: 24px;">
-<p class="text-sm font-medium text-gray-600 dark:text-gray-400" style="margin-bottom: 8px;">OFERTA ESPECIAL</p>
-<div class="relative inline-block">
-<div class="text-7xl leading-none" style="color: #22A9AF; font-weight: 900;">
-30%
-</div>
-<div class="absolute bg-red-500 text-white text-xs font-bold rounded transform rotate-12" style="top: -8px; right: -48px; padding: 4px 8px;">
-AHORRO
-</div>
-</div>
-<p class="text-lg font-semibold text-gray-800 dark:text-white" style="margin-top: 8px;">DE DESCUENTO</p>
-</div>
-
-<!-- Sales Highlights -->
-<div class="bg-gradient-to-br from-[#22A9AF]/10 via-[#22A9AF]/5 to-transparent rounded-lg border-l-4 border-[#22A9AF]" style="padding: 16px; margin-bottom: 20px;">
-<div style="display: flex; flex-direction: column; gap: 8px;">
-<div style="display: flex; align-items: center; justify-content: space-between;">
-<span class="text-sm font-medium text-gray-700 dark:text-gray-300">Precio normal</span>
-<span class="text-sm font-bold line-through" style="color: #EF4444;">hasta 280€</span>
-</div>
-<div style="display: flex; align-items: center; justify-content: space-between;">
-<span class="text-sm font-medium text-gray-700 dark:text-gray-300">Precio con descuento</span>
-<span class="text-lg font-bold" style="color: #22A9AF;">desde 200€</span>
-</div>
-</div>
-</div>
-
-<!-- Payment Option Highlight -->
-<div class="bg-[#22A9AF]/5 rounded-lg text-center border border-[#22A9AF]/20" style="padding: 16px;">
-<p class="text-xs font-semibold text-[#22A9AF] uppercase tracking-wide" style="margin-bottom: 4px;">Facilidades de pago</p>
-<p class="text-2xl font-bold text-gray-800 dark:text-white">3 cuotas sin intereses</p>
-<p class="text-xs text-gray-600 dark:text-gray-400" style="margin-top: 4px;">Sin comisiones adicionales</p>
-</div>
-
-<!-- CTA Button -->
-<div class="text-center" style="margin-top: 24px;">
-<button onclick="closePromoAndScroll()" class="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white font-semibold px-8 py-3 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300" style="width: 100%;">
-<span class="material-icons">event_available</span>
-<span>Reservar mi cita</span>
-</button>
-</div>
-</div>
-</div>
-</div>
-</div>
-
 <!-- Payment Options Popup (Modal) -->
-<!-- Payment Popup - Redesigned Nov 2025 -->
-<div id="payment-popup" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-<div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-scaleIn relative">
-<!-- Close X Button -->
-<button onclick="closePaymentPopup()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 z-10">
-<span class="material-icons text-2xl">close</span>
-</button>
-
+<div id="payment-popup" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+<div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
 <div class="p-6 sm:p-8">
 <!-- Header -->
 <div class="text-center mb-6">
-<div class="w-16 h-16 bg-gradient-to-br from-primary to-primary/70 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-<span class="material-icons text-4xl text-white">savings</span>
+<div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+<span class="material-icons text-4xl text-primary">credit_card</span>
 </div>
-<h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">¡Ahorra pagando online!</h3>
-<p class="text-gray-600 dark:text-gray-300">Elige tu método de pago preferido</p>
+<h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">¿Sabías que puedes obtener un descuento?</h3>
+<p class="text-gray-600 dark:text-gray-300">Elige cómo prefieres pagar tu sesión</p>
 </div>
 
 <!-- Payment Options -->
 <div class="space-y-4">
-
-<!-- OPTION 1: Pay Online Now (RECOMMENDED) -->
-<div class="border-2 border-primary bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl p-5 pt-6 relative cursor-pointer hover:shadow-lg transition-all transform hover:scale-[1.01]" onclick="selectPaymentOption(1)">
-<!-- Recommended Badge -->
-<div class="absolute -top-3 left-4">
-<span class="bg-gradient-to-r from-primary to-teal-500 text-white text-xs font-bold px-4 py-1.5 rounded-full shadow-md flex items-center gap-1">
-<span class="material-icons text-sm">star</span>
-OPCIÓN RECOMENDADA
-</span>
+<!-- Option 1: Pay at Center (Default - Already Selected) -->
+<div class="border-2 border-primary bg-primary/5 rounded-xl p-6 relative">
+<div class="absolute top-4 right-4">
+<span class="bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">SELECCIONADO</span>
 </div>
-
-<div class="flex items-start mt-2">
-<div class="w-12 h-12 bg-primary/20 rounded-xl flex items-center justify-center mr-4 flex-shrink-0">
-<span class="material-icons text-primary text-2xl">flash_on</span>
-</div>
-<div class="flex-1">
-<h4 class="font-bold text-lg text-gray-800 dark:text-white mb-1">Pagar online ahora</h4>
-<p class="text-gray-500 dark:text-gray-400 text-sm mb-3">Pago único seguro con descuento exclusivo</p>
-
-<!-- Price Display -->
-<div class="flex items-center flex-wrap gap-2 mb-3">
-<span id="popup-online-price" class="text-3xl font-bold text-primary">€149</span>
-<span id="popup-online-original" class="text-gray-400 line-through text-lg">€250</span>
-<span id="popup-online-savings" class="bg-green-100 text-green-700 text-sm font-bold px-2 py-1 rounded-lg flex items-center gap-1">
-<span class="material-icons text-sm">local_offer</span>
-AHORRA €<span id="popup-savings-amount">101</span>
-</span>
-</div>
-
-<!-- Benefits List -->
-<ul class="text-sm text-gray-600 dark:text-gray-300 space-y-1.5 mb-4">
-<li class="flex items-center gap-2">
-<span class="material-icons text-green-500 text-base">check_circle</span>
-<span>Confirmación inmediata de tu cita</span>
-</li>
-<li class="flex items-center gap-2">
-<span class="material-icons text-green-500 text-base">check_circle</span>
-<span>Pago 100% seguro con encriptación SSL</span>
-</li>
-<li class="flex items-center gap-2">
-<span class="material-icons text-green-500 text-base">check_circle</span>
-<span>Garantía de reembolso si cancelas 24h antes</span>
-</li>
-</ul>
-
-<!-- CTA Button -->
-<button class="w-full bg-gradient-to-r from-primary to-teal-500 hover:from-primary/90 hover:to-teal-500/90 text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2">
-<span class="material-icons">lock</span>
-<span>Pagar €<span id="popup-online-btn-price">149</span> de forma segura</span>
-</button>
-</div>
-</div>
-</div>
-
-<!-- OPTION 2: Pay at Center -->
-<div class="border-2 border-gray-200 dark:border-gray-700 hover:border-gray-300 rounded-xl p-5 cursor-pointer transition-all hover:bg-gray-50 dark:hover:bg-gray-700/50" onclick="selectPaymentOption(2)">
 <div class="flex items-start">
-<div class="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center mr-4 flex-shrink-0">
-<span class="material-icons text-gray-500 dark:text-gray-400 text-2xl">store</span>
-</div>
+<span class="material-icons text-primary text-3xl mr-4">store</span>
 <div class="flex-1">
 <h4 class="font-bold text-lg text-gray-800 dark:text-white mb-1">Pagar en el centro</h4>
-<p class="text-gray-500 dark:text-gray-400 text-sm mb-3">Paga el día de tu cita en efectivo o tarjeta</p>
-
-<!-- Price Display -->
-<div class="flex items-center flex-wrap gap-2 mb-3">
-<span id="popup-center-price" class="text-2xl font-bold text-gray-700 dark:text-gray-300">€190</span>
-<span id="popup-center-old" class="text-gray-400 line-through text-lg hidden">€250</span>
-<span id="popup-center-standard" class="text-gray-400 text-sm">Precio estándar</span>
-</div>
-
-<!-- Warning Message -->
-<div class="bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700 rounded-lg p-3 flex items-start gap-2">
-<span class="material-icons text-amber-500 text-lg flex-shrink-0">info</span>
-<p class="text-xs text-amber-700 dark:text-amber-300">
-<strong>Nota:</strong> Las reservas sin pago anticipado pueden ser canceladas en caso de alta demanda. Recomendamos el pago online para garantizar tu plaza.
-</p>
-</div>
-</div>
-</div>
-</div>
-
-<!-- OPTION 3: Pay in 3 Installments -->
-<div class="border-2 border-gray-200 dark:border-gray-700 hover:border-blue-300 rounded-xl p-5 cursor-pointer transition-all hover:bg-blue-50/50 dark:hover:bg-blue-900/20" onclick="selectPaymentOption(3)">
-<div class="flex items-start">
-<div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/50 rounded-xl flex items-center justify-center mr-4 flex-shrink-0">
-<span class="material-icons text-blue-600 dark:text-blue-400 text-2xl">calendar_month</span>
-</div>
-<div class="flex-1">
-<h4 class="font-bold text-lg text-gray-800 dark:text-white mb-1">Pagar en 3 cuotas</h4>
-<p class="text-gray-500 dark:text-gray-400 text-sm mb-3">Divide el pago en 3 meses sin intereses</p>
-
-<!-- Price Display -->
-<div class="flex items-center flex-wrap gap-3 mb-3">
+<p class="text-gray-600 dark:text-gray-300 text-sm mb-2">Paga el día de tu cita</p>
 <div class="flex items-baseline">
+<span id="popup-center-price" class="text-3xl font-bold text-primary">€190</span>
+<span class="text-gray-500 ml-2 text-sm">Precio estándar</span>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Option 2: Pay Online Once (Discount) -->
+<div class="border-2 border-gray-200 dark:border-gray-700 hover:border-primary rounded-xl p-6 cursor-pointer transition-all" onclick="selectPaymentOption(2)">
+<div class="flex items-start">
+<span class="material-icons text-purple-600 text-3xl mr-4">flash_on</span>
+<div class="flex-1">
+<div class="flex items-center mb-1">
+<h4 class="font-bold text-lg text-gray-800 dark:text-white">Pagar online ahora</h4>
+<span class="ml-2 bg-purple-100 text-purple-700 text-xs font-bold px-2 py-1 rounded">20€ DESCUENTO</span>
+</div>
+<p class="text-gray-600 dark:text-gray-300 text-sm mb-2">Pago único con descuento inmediato</p>
+<div class="flex items-baseline">
+<span id="popup-online-price" class="text-3xl font-bold text-purple-600">€170</span>
+<span id="popup-online-original" class="text-red-500 line-through ml-2 text-lg font-semibold">€190</span>
+<span class="text-green-600 ml-2 text-sm font-semibold">Ahorras €20</span>
+</div>
+<button class="mt-4 w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center">
+<span class="material-icons mr-2">payment</span>
+Pagar €<span id="popup-online-btn-price">170</span> ahora
+</button>
+</div>
+</div>
+</div>
+
+<!-- Option 3: Pay in 3 Installments -->
+<div class="border-2 border-gray-200 dark:border-gray-700 hover:border-primary rounded-xl p-6 cursor-pointer transition-all" onclick="selectPaymentOption(3)">
+<div class="flex items-start">
+<span class="material-icons text-blue-600 text-3xl mr-4">calendar_today</span>
+<div class="flex-1">
+<h4 class="font-bold text-lg text-gray-800 dark:text-white mb-1">Pagar en 3 cuotas mensuales</h4>
+<p class="text-gray-600 dark:text-gray-300 text-sm mb-2">Facilita el pago dividiéndolo en 3 meses</p>
+<div class="flex items-baseline mb-2">
 <span class="text-2xl font-bold text-blue-600">3 ×</span>
-<span id="popup-monthly-price" class="text-3xl font-bold text-blue-600 ml-1">€50</span>
-<span class="text-gray-400 ml-1 text-sm">/mes</span>
+<span id="popup-monthly-price" class="text-3xl font-bold text-blue-600 ml-2">€65</span>
+<span class="text-gray-500 ml-2 text-sm">/mes</span>
 </div>
-<span class="text-gray-400 text-sm">(Total: €<span id="popup-monthly-total">150</span>)</span>
-</div>
-
-<!-- Benefits -->
-<ul class="text-sm text-gray-600 dark:text-gray-300 space-y-1 mb-4">
-<li class="flex items-center gap-2">
-<span class="material-icons text-blue-500 text-base">check_circle</span>
-<span>Reserva confirmada inmediatamente</span>
-</li>
-<li class="flex items-center gap-2">
-<span class="material-icons text-blue-500 text-base">check_circle</span>
-<span>Sin intereses ni comisiones</span>
-</li>
-</ul>
-
-<!-- CTA Button -->
-<button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-xl transition-all flex items-center justify-center gap-2">
-<span class="material-icons">schedule</span>
-<span>Pagar en 3 cuotas de €<span id="popup-monthly-btn-price">50</span></span>
-</button>
-</div>
-</div>
-</div>
-
-</div>
-
-<!-- Security Footer -->
-<div class="mt-6 pt-5 border-t border-gray-200 dark:border-gray-700">
-<div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-<!-- Security Text -->
-<div class="flex items-center gap-2 text-gray-500 dark:text-gray-400 text-sm">
-<span class="material-icons text-green-500">verified_user</span>
-<span>Pago protegido con encriptación SSL de 256-bit</span>
-</div>
-</div>
-<!-- Payment Logos -->
-<div class="flex items-center justify-center gap-4 mt-4 opacity-60">
-<img src="https://cdn.jsdelivr.net/gh/nickytonline/random-images/stripe-logo.svg" alt="Stripe" class="h-6 grayscale hover:grayscale-0 transition-all" onerror="this.style.display='none'">
-<img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" class="h-5 grayscale hover:grayscale-0 transition-all">
-<img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" class="h-8 grayscale hover:grayscale-0 transition-all">
-</div>
-</div>
-
-<!-- Close Link -->
-<div class="mt-4 text-center">
-<button onclick="closePaymentPopup()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-sm font-medium transition-colors">
-Cerrar y pagar en el centro
+<p class="text-gray-500 text-xs mb-4">Total: €<span id="popup-monthly-total">195</span></p>
+<button class="mt-2 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center">
+<span class="material-icons mr-2">schedule</span>
+Pagar en 3 cuotas
 </button>
 </div>
 </div>
 </div>
 </div>
 
-<style>
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.9) translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-}
-
-.animate-fadeIn {
-  animation: fadeIn 0.3s ease-out;
-}
-
-.animate-scaleIn {
-  animation: scaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-</style>
-
+<!-- Close Button -->
+<div class="mt-6 text-center">
+<button onclick="closePaymentPopup()" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 font-medium">
+Cerrar y continuar con pago en centro
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 </section>
 
 <!-- About Section -->
@@ -1580,19 +1403,16 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
         document.getElementById('booking-form').classList.add('hidden');
         document.getElementById('confirmation-message').classList.remove('hidden');
 
-        // Scroll confirmation message to center of viewport
-        setTimeout(() => {
-          document.getElementById('confirmation-message').scrollIntoView({
-            behavior: 'smooth',
-            block: 'center'
-          });
-        }, 100);
+        // Scroll confirmation message to center of viewport - DISABLED
+        // setTimeout(() => {
+        //   document.getElementById('confirmation-message').scrollIntoView({
+        //     behavior: 'smooth',
+        //     block: 'center'
+        //   });
+        // }, 100);
 
         // Show payment options popup after 2 seconds
         setTimeout(() => {
-          console.log('🔔 Attempting to show payment popup...');
-          console.log('📋 Booking state:', bookingState);
-          console.log('🎯 Selected appointment type ID:', bookingState.selectedAppointmentType);
           showPaymentPopup();
         }, 2000);
 
@@ -1612,73 +1432,53 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
      * Show payment options popup
      */
     function showPaymentPopup() {
-      console.log('💳 showPaymentPopup() called');
-
       // Get selected appointment type to determine pricing
       const selectedType = bookingState.appointmentTypes.find(t => t.id === bookingState.selectedAppointmentType);
 
-      console.log('🔍 Looking for appointment type with ID:', bookingState.selectedAppointmentType);
-      console.log('📚 Available appointment types:', bookingState.appointmentTypes);
-      console.log('✅ Found appointment type:', selectedType);
-
       if (!selectedType) {
-        console.warn('❌ No appointment type found for payment popup');
+        console.warn('No appointment type found for payment popup');
         return;
       }
 
       // Prevent payment popup for free Rechute sessions
       if (selectedType.kind === 'rechute' || selectedType.price === 0) {
-        console.log('⚠️ Rechute session (€0) - no payment required, skipping popup');
+        console.log('Rechute session (€0) - no payment required, skipping popup');
         return;
       }
 
-      console.log('✅ Appointment type is valid, proceeding with popup...');
-
-      // Calculate prices based on appointment type using PRICE_TABLE
+      // Calculate prices based on appointment type
       let centerPrice, onlinePrice, monthlyPrice, monthlyTotal;
 
-      // Get pricing from PRICE_TABLE using the 'kind' field for accurate mapping
-      const priceData = PRICE_TABLE[selectedType.kind];
+      // Determine pricing based on type name
+      const typeName = selectedType.name.toLowerCase();
 
-      if (!priceData) {
-        console.error('No price data found for appointment type:', selectedType.kind);
-        return;
-      }
-
-      centerPrice = priceData.center;
-      onlinePrice = priceData.online;
-      const onlineOldPrice = priceData.onlineOld || priceData.centerOld || centerPrice;
-      monthlyPrice = priceData.plan ? priceData.plan[0] : 0;
-      monthlyTotal = priceData.plan ? priceData.plan.reduce((sum, val) => sum + val, 0) : 0;
-
-      // Calculate savings
-      const onlineSavings = onlineOldPrice - onlinePrice;
-
-      // Update popup prices - Online option (Option 1 now)
-      document.getElementById('popup-online-price').textContent = `€${onlinePrice}`;
-      document.getElementById('popup-online-original').textContent = `€${onlineOldPrice}`;
-      document.getElementById('popup-online-btn-price').textContent = onlinePrice;
-      document.getElementById('popup-savings-amount').textContent = onlineSavings;
-
-      // Update center price (Option 2 now)
-      document.getElementById('popup-center-price').textContent = `€${centerPrice}`;
-
-      // Show old price for center if available
-      const centerOldElement = document.getElementById('popup-center-old');
-      const centerStandardElement = document.getElementById('popup-center-standard');
-      if (priceData.centerOld) {
-        centerOldElement.textContent = `€${priceData.centerOld}`;
-        centerOldElement.classList.remove('hidden');
-        centerStandardElement.classList.add('hidden');
+      if (typeName.includes('duo')) {
+        // DUO Cigarettes: 2×€170 center, 2×€160 online, 3×€114 monthly
+        centerPrice = 170; // per person (total €340)
+        onlinePrice = 160; // per person (total €320)
+        monthlyPrice = 114;
+        monthlyTotal = monthlyPrice * 3;
+      } else if (typeName.includes('cannabis')) {
+        // Cannabis: €250 center, €230 online, 3×€84 monthly
+        centerPrice = 250;
+        onlinePrice = 230;
+        monthlyPrice = 84;
+        monthlyTotal = monthlyPrice * 3;
       } else {
-        centerOldElement.classList.add('hidden');
-        centerStandardElement.classList.remove('hidden');
+        // Cigarettes SOLO (default): €190 center, €170 online, 3×€65 monthly
+        centerPrice = 190;
+        onlinePrice = 170;
+        monthlyPrice = 65;
+        monthlyTotal = monthlyPrice * 3;
       }
 
-      // Update monthly prices (Option 3)
+      // Update popup prices
+      document.getElementById('popup-center-price').textContent = `€${centerPrice}`;
+      document.getElementById('popup-online-price').textContent = `€${onlinePrice}`;
+      document.getElementById('popup-online-original').textContent = `€${centerPrice}`; // Strikethrough shows original center price
+      document.getElementById('popup-online-btn-price').textContent = onlinePrice;
       document.getElementById('popup-monthly-price').textContent = `€${monthlyPrice}`;
       document.getElementById('popup-monthly-total').textContent = monthlyTotal;
-      document.getElementById('popup-monthly-btn-price').textContent = monthlyPrice;
 
       // Store prices in popup for payment selection
       window.paymentPopupData = {
@@ -1690,10 +1490,7 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
       };
 
       // Show popup (fixed overlay - no scroll issues)
-      const popupElement = document.getElementById('payment-popup');
-      console.log('🎨 Payment popup element:', popupElement);
-      popupElement.classList.remove('hidden');
-      console.log('✅ Payment popup should now be visible!');
+      document.getElementById('payment-popup').classList.remove('hidden');
     }
 
     /**
@@ -1701,49 +1498,6 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
      */
     function closePaymentPopup() {
       document.getElementById('payment-popup').classList.add('hidden');
-    }
-
-    /**
-     * Show promotional popup on page load
-     */
-    function showPromoPopup() {
-      const promoPopup = document.getElementById('promo-popup');
-
-      // Check if user has already seen the popup in this session
-      if (sessionStorage.getItem('promoPopupSeen')) {
-        return;
-      }
-
-      // Show popup after a short delay for better UX
-      setTimeout(() => {
-        promoPopup.classList.remove('hidden');
-        // Mark as seen for this session
-        sessionStorage.setItem('promoPopupSeen', 'true');
-      }, 2000);
-    }
-
-    /**
-     * Close promotional popup
-     */
-    function closePromoPopup() {
-      document.getElementById('promo-popup').classList.add('hidden');
-    }
-
-    /**
-     * Close promotional popup and scroll to booking section
-     */
-    function closePromoAndScroll() {
-      // Close the popup
-      closePromoPopup();
-
-      // Scroll to booking section
-      const bookingSection = document.getElementById('booking');
-      if (bookingSection) {
-        bookingSection.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start'
-        });
-      }
     }
 
     /**
@@ -1768,44 +1522,36 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
       // Get company
       const company = getCompany(centerId);
 
-      // Stripe Payment Links Configuration - UPDATED Nov 2025
+      // Stripe Payment Links Configuration
       const stripeLinks = {
         company1: {
           // Company 1: Madrid Chamartín, Torrejón, Majadahonda, San Sebastián
           solo_cig: {
-            onetime: 'https://buy.stripe.com/5kQdR85fNfQG9PvbCJawo0b',  // €149 (NEW)
-            monthly: 'https://buy.stripe.com/4gMfZgcIfbAqbXDfSZawo0c'   // 3×€50 (NEW)
+            onetime: 'https://buy.stripe.com/9B628q23B9si9Pv7mtawo00',  // €170
+            monthly: 'https://buy.stripe.com/bJe00i5fN47Y1iZfSZawo03'   // 3×€65
           },
           duo_cig: {
             onetime: 'https://buy.stripe.com/28E9AS0ZxfQGd1H4ahawo01',   // €320
-            monthly: 'https://buy.stripe.com/9B64gyeQn7kabXD9uBawo07'    // 3×€105
+            monthly: 'https://buy.stripe.com/6oUbJ0cIfgUKaTzgX3awo04'    // 3×€114
           },
           solo_drugs: {
-            onetime: 'https://buy.stripe.com/9B6bJ09w3bAq9Pv36dawo0d', // €189 (NEW)
-            monthly: 'https://buy.stripe.com/fZu00i0Zx47Ye5L9uBawo0e'  // 3×€70 (NEW)
-          },
-          solo_sugar: {
-            onetime: 'https://buy.stripe.com/4gM5kCaA7dIyaTz9uBawo09', // €180
-            monthly: 'https://buy.stripe.com/8x214maA7fQG7Hn36dawo0a'  // 3×€60
+            onetime: 'https://buy.stripe.com/00w8wOgYvbAq6Dj36dawo02', // €230
+            monthly: 'https://buy.stripe.com/6oU3cu0Zx47Y5zfgX3awo05'  // 3×€84
           }
         },
         company2: {
           // Company 2: Valencia, Barcelona Sants, Sevilla, Madrid Atocha
           solo_cig: {
-            onetime: 'https://buy.stripe.com/4gM8wPbgpcsdfoL5sAdby0j',  // €149 (NEW)
-            monthly: 'https://buy.stripe.com/eVqcN5bgp0Jv0tR08gdby0k'   // 3×€50 (NEW)
+            onetime: 'https://buy.stripe.com/8x25kD2JTcsdgsPdZ6dby08',  // €170
+            monthly: 'https://buy.stripe.com/9B65kDesB3VH7Wjg7edby0b'   // 3×€65
           },
           duo_cig: {
             onetime: 'https://buy.stripe.com/8x2fZh3NX4ZL2BZ6wEdby09',   // €320
-            monthly: 'https://buy.stripe.com/7sYcN5dox3VH1xV08gdby0f'    // 3×€105
+            monthly: 'https://buy.stripe.com/aFa00j0BLfEpfoL2godby0c'    // 3×€114
           },
           solo_drugs: {
-            onetime: 'https://buy.stripe.com/28E28rcktfEpb8vf3adby0l', // €189 (NEW)
-            monthly: 'https://buy.stripe.com/bJe4gz98h2RD0tR3ksdby0m'  // 3×€70 (NEW)
-          },
-          solo_sugar: {
-            onetime: 'https://buy.stripe.com/5kQ14n7090Jv3G39IQdby0h', // €180
-            monthly: 'https://buy.stripe.com/9B6bJ198h3VH0tR8EMdby0i'  // 3×€60
+            onetime: 'https://buy.stripe.com/cNi14nesB2RD4K78EMdby0a', // €230
+            monthly: 'https://buy.stripe.com/cNi7sLesB2RD4K7dZ6dby0d'  // 3×€84
           }
         }
       };
@@ -1836,7 +1582,10 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
       }
 
       if (option === 1) {
-        // Pay online once - redirect to Stripe (NOW OPTION 1 - RECOMMENDED)
+        // Pay at center
+        closePaymentPopup();
+      } else if (option === 2) {
+        // Pay online once - redirect to Stripe
         const stripeLinks = getStripeLinks(bookingState.selectedCenter, data.appointmentType.id);
 
         if (!stripeLinks) {
@@ -1853,9 +1602,6 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
         window.open(stripeLinks.onetime, '_blank');
 
         // Close popup
-        closePaymentPopup();
-      } else if (option === 2) {
-        // Pay at center (NOW OPTION 2)
         closePaymentPopup();
       } else if (option === 3) {
         // Pay in 3 installments - redirect to Stripe subscription
@@ -1979,11 +1725,11 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
      * Price table - Single source of truth for payment UI
      */
     const PRICE_TABLE = {
-      solo_cig:   { centerOld: 250, center: 190, onlineOld: 250, online: 149, plan: [50, 50, 50] },
-      duo_cig:    { centerOld: 400, center: 340, onlineOld: 400, online: 320, plan: [105, 105, 105] },
-      solo_drugs: { centerOld: 300, center: 250, onlineOld: 300, online: 189, plan: [70, 70, 70] },
+      solo_cig:   { center: 190, online: 170, plan: [65, 65, 65] },
+      duo_cig:    { center: 340, online: 320, plan: [114, 114, 114] },
+      solo_drugs: { center: 250, online: 230, plan: [84, 84, 84] },
       rechute:    { center: 0 },
-      solo_sugar: { centerOld: 280, center: 200, onlineOld: 280, online: 180, plan: [60, 60, 60] }
+      solo_sugar: { center: 200, online: 180, plan: [65, 65, 65] }
     };
 
     /**
@@ -2218,178 +1964,7 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
       });
 
       console.log('Processed availability slots:', Object.keys(slots).length, 'days');
-
-      // Apply slot filtering to create scarcity perception
-      return applySlotFiltering(slots);
-    }
-
-    // ========== SLOT FILTERING SYSTEM ==========
-    // Strategy: Show limited slots per day to create urgency and distribute bookings evenly
-    // Different users see different slots based on fingerprint + date hash
-
-    /**
-     * Slot filtering configuration
-     */
-    const SLOT_FILTER_CONFIG = {
-      enabled: true,              // Master toggle
-      maxSlotsPerDay: 4,         // Maximum slots to show per day
-      minSpacingMinutes: 60,     // Minimum minutes between displayed slots
-      showAllIfFewer: 4          // If total slots <= this, show all
-    };
-
-    /**
-     * Generate anonymous user fingerprint for consistent slot selection
-     * Uses browser characteristics (no personal data)
-     */
-    function getUserFingerprint() {
-      // Try to get cached fingerprint first
-      let fingerprint = sessionStorage.getItem('userFingerprint');
-
-      if (!fingerprint) {
-        // Create fingerprint from browser metadata
-        const components = [
-          navigator.userAgent,
-          navigator.language,
-          screen.width + 'x' + screen.height,
-          screen.colorDepth,
-          new Date().getTimezoneOffset(),
-          navigator.hardwareConcurrency || 0,
-          navigator.platform
-        ];
-
-        // Simple hash function
-        let hash = 0;
-        const str = components.join('|');
-        for (let i = 0; i < str.length; i++) {
-          const char = str.charCodeAt(i);
-          hash = ((hash << 5) - hash) + char;
-          hash = hash & hash; // Convert to 32-bit integer
-        }
-
-        fingerprint = Math.abs(hash).toString(36);
-        sessionStorage.setItem('userFingerprint', fingerprint);
-      }
-
-      return fingerprint;
-    }
-
-    /**
-     * Seeded random number generator for deterministic shuffling
-     * Same seed always produces same sequence
-     */
-    function seededRandom(seed) {
-      let value = seed;
-      return function() {
-        value = (value * 9301 + 49297) % 233280;
-        return value / 233280;
-      };
-    }
-
-    /**
-     * Shuffle array using seeded random (deterministic)
-     */
-    function seededShuffle(array, seed) {
-      const shuffled = [...array];
-      const random = seededRandom(seed);
-
-      for (let i = shuffled.length - 1; i > 0; i--) {
-        const j = Math.floor(random() * (i + 1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-      }
-
-      return shuffled;
-    }
-
-    /**
-     * Convert time string (HH:MM) to minutes since midnight
-     */
-    function timeToMinutes(timeStr) {
-      const [hours, minutes] = timeStr.split(':').map(Number);
-      return hours * 60 + minutes;
-    }
-
-    /**
-     * Simple string hash function
-     */
-    function simpleHash(str) {
-      let hash = 0;
-      for (let i = 0; i < str.length; i++) {
-        const char = str.charCodeAt(i);
-        hash = ((hash << 5) - hash) + char;
-        hash = hash & hash;
-      }
-      return Math.abs(hash);
-    }
-
-    /**
-     * Filter slots for a single date to show limited selection
-     */
-    function filterSlotsForDate(times, date, userFingerprint) {
-      if (!SLOT_FILTER_CONFIG.enabled) {
-        return times; // Filtering disabled, return all
-      }
-
-      if (times.length <= SLOT_FILTER_CONFIG.showAllIfFewer) {
-        return times; // Show all if few slots available
-      }
-
-      // Generate deterministic seed from fingerprint + date
-      const seed = simpleHash(userFingerprint + date);
-
-      // Shuffle slots deterministically
-      const shuffled = seededShuffle(times, seed);
-
-      // Select slots with minimum spacing
-      const selected = [];
-
-      for (const time of shuffled) {
-        if (selected.length >= SLOT_FILTER_CONFIG.maxSlotsPerDay) {
-          break;
-        }
-
-        // Check if time has minimum spacing from all selected slots
-        const timeMinutes = timeToMinutes(time);
-        const hasMinimumSpacing = selected.every(selectedTime => {
-          const selectedMinutes = timeToMinutes(selectedTime);
-          return Math.abs(timeMinutes - selectedMinutes) >= SLOT_FILTER_CONFIG.minSpacingMinutes;
-        });
-
-        if (hasMinimumSpacing || selected.length === 0) {
-          selected.push(time);
-        }
-      }
-
-      // Return in chronological order
-      return selected.sort();
-    }
-
-    /**
-     * Apply slot filtering to all dates
-     */
-    function applySlotFiltering(allSlots) {
-      if (!SLOT_FILTER_CONFIG.enabled) {
-        return allSlots; // Return unfiltered if disabled
-      }
-
-      const fingerprint = getUserFingerprint();
-      const filteredSlots = {};
-
-      // Process each date
-      for (const dateKey in allSlots) {
-        const times = Object.keys(allSlots[dateKey]).sort();
-        const filteredTimes = filterSlotsForDate(times, dateKey, fingerprint);
-
-        // Rebuild slots object with filtered times
-        filteredSlots[dateKey] = {};
-        filteredTimes.forEach(time => {
-          filteredSlots[dateKey][time] = true;
-        });
-
-        console.log(`📊 Date ${dateKey}: ${times.length} slots → ${filteredTimes.length} shown`);
-      }
-
-      console.log('✅ Slot filtering applied - User fingerprint:', fingerprint.substring(0, 8) + '...');
-      return filteredSlots;
+      return slots;
     }
 
     /**
@@ -3164,9 +2739,6 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
 
       // Auto-select center from URL if present
       await autoSelectCenterFromURL();
-
-      // Show promotional popup after initialization
-      // showPromoPopup(); // Disabled for now
 
       console.log('Initialization complete!');
     });

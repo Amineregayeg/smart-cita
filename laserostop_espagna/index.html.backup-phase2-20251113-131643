@@ -4,7 +4,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>LaserOstop España - Reserve su cita</title>
-<link rel="stylesheet" href="tailwind-generated.css">
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
 <!-- Leaflet CSS -->
@@ -123,194 +123,47 @@
       flex: 0 0 350px;
       min-width: 350px;
     }
-
-    /* City-grouped dropdown styling */
-    #center-select optgroup {
-      font-weight: 700;
-      font-size: 0.95em;
-      color: #22A9AF;
-      font-style: normal;
-      padding: 8px 0 4px 0;
-    }
-
-    #center-select option {
-      padding-left: 8px;
-      font-weight: 400;
-      color: #374151;
-    }
-
-    /* Dark mode support for dropdown */
-    @media (prefers-color-scheme: dark) {
-      #center-select optgroup {
-        color: #22A9AF;
-      }
-      #center-select option {
-        color: #D1D5DB;
-      }
-    }
   </style>
-
-  <!-- Cookie Consent & Hotjar/Contentsquare Tracking Code -->
-  <script>
-    // Cookie Consent Management
-    window.CookieConsent = {
-      init: function() {
-        const consent = localStorage.getItem('analyticsConsent');
-        if (consent === 'accepted') {
-          this.loadHotjar();
-        } else if (consent === null) {
-          // First visit - show banner
-          this.showBanner();
-        }
-        // If 'rejected', do nothing
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#22A9AF",
+            "background-light": "#FFFFFF",
+            "background-dark": "#121212",
+            "text-light": "#374151",
+            "text-dark": "#E5E7EB",
+            "border-light": "#E5E7EB",
+            "border-dark": "#374151",
+          },
+          fontFamily: {
+            display: ["Poppins", "sans-serif"],
+          },
+          borderRadius: {
+            DEFAULT: "0.5rem",
+          },
+        },
       },
-
-      showBanner: function() {
-        const banner = document.getElementById('cookie-consent-banner');
-        if (banner) {
-          banner.classList.remove('hidden');
-          banner.classList.add('animate-slide-up');
-        }
-      },
-
-      accept: function() {
-        localStorage.setItem('analyticsConsent', 'accepted');
-        this.hideBanner();
-        this.loadHotjar();
-      },
-
-      reject: function() {
-        localStorage.setItem('analyticsConsent', 'rejected');
-        this.hideBanner();
-      },
-
-      hideBanner: function() {
-        const banner = document.getElementById('cookie-consent-banner');
-        if (banner) {
-          banner.classList.add('opacity-0');
-          setTimeout(() => banner.remove(), 300);
-        }
-      },
-
-      loadHotjar: function() {
-        if (window.hj) return; // Already loaded
-
-        // Mask sensitive form fields before loading Hotjar
-        this.maskSensitiveFields();
-
-        (function (c, s, q, u, a, r, e) {
-            c.hj=c.hj||function(){(c.hj.q=c.hj.q||[]).push(arguments)};
-            c._hjSettings = { hjid: a };
-            r = s.getElementsByTagName('head')[0];
-            e = s.createElement('script');
-            e.async = true;
-            e.src = q + c._hjSettings.hjid + u;
-            r.appendChild(e);
-        })(window, document, 'https://static.hj.contentsquare.net/c/csq-', '.js', 6574639);
-
-        console.log('✅ Hotjar loaded with user consent');
-      },
-
-      maskSensitiveFields: function() {
-        // Add data-hj-suppress attribute to sensitive fields
-        // This prevents Hotjar from recording their values
-        const sensitiveSelectors = [
-          'input[type="email"]',
-          'input[type="tel"]',
-          'input[name*="email"]',
-          'input[name*="phone"]',
-          'input[name*="telefono"]',
-          'input[id*="email"]',
-          'input[id*="phone"]',
-          'input[id*="telefono"]',
-          '#contact-name',
-          '#contact-email',
-          '#contact-phone'
-        ];
-
-        sensitiveSelectors.forEach(selector => {
-          document.querySelectorAll(selector).forEach(field => {
-            field.setAttribute('data-hj-suppress', '');
-            field.setAttribute('data-cs-mask', ''); // Contentsquare masking
-          });
-        });
-
-        console.log('🔒 Sensitive fields masked for privacy');
-      }
     };
-
-    // Initialize on page load
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', () => window.CookieConsent.init());
-    } else {
-      window.CookieConsent.init();
-    }
   </script>
 
-  <style>
-    @keyframes slide-up {
-      from {
-        transform: translateY(100%);
-        opacity: 0;
-      }
-      to {
-        transform: translateY(0);
-        opacity: 1;
-      }
-    }
-    .animate-slide-up {
-      animation: slide-up 0.4s ease-out;
-    }
-    #cookie-consent-banner {
-      transition: opacity 0.3s ease-out;
-    }
-  </style>
+  <!-- Hotjar/Contentsquare Tracking Code -->
+  <script>
+    (function (c, s, q, u, a, r, e) {
+        c.hj=c.hj||function(){(c.hj.q=c.hj.q||[]).push(arguments)};
+        c._hjSettings = { hjid: a };
+        r = s.getElementsByTagName('head')[0];
+        e = s.createElement('script');
+        e.async = true;
+        e.src = q + c._hjSettings.hjid + u;
+        r.appendChild(e);
+    })(window, document, 'https://static.hj.contentsquare.net/c/csq-', '.js', 6574639);
+  </script>
 
 </head>
 <body class="bg-background-light dark:bg-background-dark font-display text-text-light dark:text-text-dark">
-
-<!-- Cookie Consent Banner -->
-<div id="cookie-consent-banner" class="hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 shadow-2xl border-t-4 border-primary z-[9999]">
-  <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
-    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-      <!-- Content -->
-      <div class="flex items-start gap-4 flex-1">
-        <div class="flex-shrink-0 mt-1">
-          <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-          </svg>
-        </div>
-        <div class="flex-1">
-          <h3 class="font-semibold text-text-light dark:text-text-dark mb-2">
-            🍪 Uso de Cookies
-          </h3>
-          <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-            Utilizamos cookies y herramientas de análisis (Hotjar/Contentsquare) para mejorar su experiencia, analizar el uso del sitio web y optimizar nuestros servicios.
-            <span class="font-medium">No compartimos datos personales con terceros.</span>
-          </p>
-          <p class="text-xs text-gray-500 dark:text-gray-500 mt-2">
-            Al aceptar, nos ayuda a entender cómo mejorar nuestro servicio de reservas.
-          </p>
-        </div>
-      </div>
-
-      <!-- Buttons -->
-      <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-        <button
-          onclick="window.CookieConsent.reject()"
-          class="px-6 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200 whitespace-nowrap">
-          Rechazar
-        </button>
-        <button
-          onclick="window.CookieConsent.accept()"
-          class="px-6 py-3 text-sm font-medium text-white bg-primary hover:bg-[#1d9199] rounded-full transition-colors duration-200 shadow-md hover:shadow-lg whitespace-nowrap">
-          Aceptar Cookies
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-
 <div class="min-h-screen flex flex-col">
 
 <!-- Modern Navigation Bar -->
@@ -392,31 +245,78 @@
 </div>
 </div>
 </section>
-<section class="py-16 sm:py-24" id="booking">
+
+<!-- About Section -->
+<section class="py-16 sm:py-24 bg-white dark:bg-gray-900" id="about">
 <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-<div class="max-w-4xl mx-auto bg-background-light dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden" style="border: 3px solid #22A9AF;">
-<div class="p-8 sm:p-12">
-<div id="booking-form">
-<!-- CTA Banner -->
-<div class="mb-8 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent rounded-lg p-6" style="border-left: 4px solid #22A9AF;">
-  <div class="flex items-start gap-4">
-    <div class="flex-shrink-0">
-      <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background-color: rgba(34, 169, 175, 0.2);">
-        <span class="material-icons text-2xl" style="color: #22A9AF;">campaign</span>
-      </div>
-    </div>
-    <div class="flex-1">
-      <h3 class="text-lg font-bold text-text-light dark:text-text-dark mb-2">
-        ¡Reserve su cita hoy y deje de fumar en una sola sesión!
-      </h3>
-      <p class="text-sm text-gray-600 dark:text-gray-400">
-        Más de 500,000 personas han dejado de fumar con LaserOstop.
-        <span class="font-semibold" style="color: #22A9AF;">Plazas limitadas disponibles</span> - Reserve ahora.
-      </p>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+<!-- About Video - Left on Desktop, Top on Mobile -->
+<div class="order-1 lg:order-1 flex justify-center">
+<div class="relative rounded-2xl overflow-hidden shadow-2xl aspect-[9/16] w-full max-w-sm group cursor-pointer" onclick="toggleVideoAudio(this)">
+<video
+  class="w-full h-full object-cover"
+  autoplay
+  muted
+  loop
+  playsinline
+  poster="assets/cigarettes.png"
+>
+  <source src="assets/about-video.mp4" type="video/mp4">
+  Tu navegador no soporta el elemento de vídeo.
+</video>
+<!-- Audio Toggle Button -->
+<div class="absolute bottom-4 right-4 bg-black/70 backdrop-blur-sm rounded-full p-3 transition-all duration-300 hover:bg-black/90 hover:scale-110">
+  <span class="material-icons text-white text-2xl audio-icon">volume_off</span>
+</div>
+<!-- Tap to unmute hint -->
+<div class="absolute inset-0 bg-black/30 backdrop-blur-[1px] flex items-center justify-center transition-opacity duration-300 opacity-100 group-hover:opacity-0 pointer-events-none audio-hint">
+  <div class="bg-white/90 dark:bg-gray-900/90 px-6 py-3 rounded-full shadow-lg">
+    <div class="flex items-center gap-2">
+      <span class="material-icons text-primary">volume_up</span>
+      <p class="text-sm font-medium text-gray-800 dark:text-gray-200">Toca para activar audio</p>
     </div>
   </div>
 </div>
+</div>
+</div>
 
+<!-- About Content - Right on Desktop, Bottom on Mobile -->
+<div class="order-2 lg:order-2">
+<div class="max-w-xl lg:max-w-none">
+<h2 class="text-3xl sm:text-4xl font-bold text-text-light dark:text-text-dark mb-4">
+<span class="text-primary">Sobre</span> LaserOstop
+</h2>
+<div class="h-1 w-20 bg-primary rounded mb-6"></div>
+<div class="prose prose-lg dark:prose-invert max-w-none">
+<p class="text-gray-700 dark:text-gray-300 leading-relaxed text-lg">
+LaserOstop ofrece una terapia láser <strong class="text-primary">segura, indolora y altamente eficaz</strong> para ayudar a las personas a dejar de fumar en una sola sesión. Utilizando tecnología avanzada de <strong>fotobiomodulación</strong>, este método estimula puntos específicos de la oreja con láser de baja intensidad para combatir la dependencia física a la nicotina, <strong>sin efectos secundarios, sin aumento de peso y sin síntomas de abstinencia.</strong>
+</p>
+<p class="text-gray-700 dark:text-gray-300 leading-relaxed text-lg mt-4">
+Con más de <strong class="text-primary">500,000 personas asistidas</strong> en todo el mundo, LaserOstop proporciona una solución científica, no invasiva, y respaldada por resultados reales para quienes desean superar la adicción y llevar una vida más saludable y libre de tabaco.
+</p>
+</div>
+<!-- Stats -->
+<div class="grid grid-cols-2 gap-6 mt-8">
+<div class="text-center p-4 bg-primary/10 rounded-xl">
+<div class="text-3xl font-bold text-primary mb-1">500K+</div>
+<div class="text-sm text-gray-600 dark:text-gray-400">Personas asistidas</div>
+</div>
+<div class="text-center p-4 bg-primary/10 rounded-xl">
+<div class="text-3xl font-bold text-primary mb-1">1 sesión</div>
+<div class="text-sm text-gray-600 dark:text-gray-400">Para dejar de fumar</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<section class="py-16 sm:py-24" id="booking">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="max-w-4xl mx-auto bg-background-light dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden">
+<div class="p-8 sm:p-12">
+<div id="booking-form">
 <div class="mb-8" id="step-1">
 <h2 class="text-2xl font-semibold mb-4 text-text-light dark:text-text-dark"><span class="text-primary mr-3">1.</span>Elija su centro</h2>
 <div class="relative">
@@ -526,333 +426,90 @@
 </div>
 </div>
 
-<!-- Promotional Popup (Modal) -->
-<div id="promo-popup" class="hidden fixed inset-0 bg-white/40 dark:bg-black/40 backdrop-blur-md flex items-center justify-center z-[60] p-4 animate-fadeIn">
-<div class="relative bg-white dark:bg-gray-900 rounded-lg shadow-2xl overflow-hidden transform transition-all animate-scaleIn" style="border: 3px solid #22A9AF; width: 420px; height: 550px;">
-<!-- Close Button (X in corner) - MUST BE FIRST for absolute positioning -->
-<button
-onclick="closePromoPopup()"
-class="absolute top-3 right-3 w-8 h-8 flex items-center justify-center hover:opacity-70 transition-opacity z-10"
-aria-label="Cerrar"
-style="z-index: 20;">
-<span class="material-icons text-gray-600 dark:text-gray-300 text-lg">close</span>
-</button>
-
-<!-- Centered Content Wrapper -->
-<div class="flex flex-col items-center justify-center" style="height: 100%;">
-<!-- Logo at Top -->
-<div class="flex justify-center bg-white dark:bg-gray-900" style="padding-bottom: 12px;">
-<img src="assets/logolaserostop-bleu.svg" alt="LaserOstop" style="height: 40px;">
-</div>
-
-<!-- Content -->
-<div style="padding-left: 24px; padding-right: 24px;">
-<!-- Big Discount Section -->
-<div class="text-center" style="margin-bottom: 24px;">
-<p class="text-sm font-medium text-gray-600 dark:text-gray-400" style="margin-bottom: 8px;">OFERTA ESPECIAL</p>
-<div class="relative inline-block">
-<div class="text-7xl leading-none" style="color: #22A9AF; font-weight: 900;">
-30%
-</div>
-<div class="absolute bg-red-500 text-white text-xs font-bold rounded transform rotate-12" style="top: -8px; right: -48px; padding: 4px 8px;">
-AHORRO
-</div>
-</div>
-<p class="text-lg font-semibold text-gray-800 dark:text-white" style="margin-top: 8px;">DE DESCUENTO</p>
-</div>
-
-<!-- Sales Highlights -->
-<div class="bg-gradient-to-br from-[#22A9AF]/10 via-[#22A9AF]/5 to-transparent rounded-lg border-l-4 border-[#22A9AF]" style="padding: 16px; margin-bottom: 20px;">
-<div style="display: flex; flex-direction: column; gap: 8px;">
-<div style="display: flex; align-items: center; justify-content: space-between;">
-<span class="text-sm font-medium text-gray-700 dark:text-gray-300">Precio normal</span>
-<span class="text-sm font-bold line-through" style="color: #EF4444;">hasta 280€</span>
-</div>
-<div style="display: flex; align-items: center; justify-content: space-between;">
-<span class="text-sm font-medium text-gray-700 dark:text-gray-300">Precio con descuento</span>
-<span class="text-lg font-bold" style="color: #22A9AF;">desde 200€</span>
-</div>
-</div>
-</div>
-
-<!-- Payment Option Highlight -->
-<div class="bg-[#22A9AF]/5 rounded-lg text-center border border-[#22A9AF]/20" style="padding: 16px;">
-<p class="text-xs font-semibold text-[#22A9AF] uppercase tracking-wide" style="margin-bottom: 4px;">Facilidades de pago</p>
-<p class="text-2xl font-bold text-gray-800 dark:text-white">3 cuotas sin intereses</p>
-<p class="text-xs text-gray-600 dark:text-gray-400" style="margin-top: 4px;">Sin comisiones adicionales</p>
-</div>
-
-<!-- CTA Button -->
-<div class="text-center" style="margin-top: 24px;">
-<button onclick="closePromoAndScroll()" class="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white font-semibold px-8 py-3 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300" style="width: 100%;">
-<span class="material-icons">event_available</span>
-<span>Reservar mi cita</span>
-</button>
-</div>
-</div>
-</div>
-</div>
-</div>
-
 <!-- Payment Options Popup (Modal) -->
-<!-- Payment Popup - Redesigned Nov 2025 -->
-<div id="payment-popup" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-<div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-scaleIn relative">
-<!-- Close X Button -->
-<button onclick="closePaymentPopup()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 z-10">
-<span class="material-icons text-2xl">close</span>
-</button>
-
+<div id="payment-popup" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+<div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
 <div class="p-6 sm:p-8">
 <!-- Header -->
 <div class="text-center mb-6">
-<div class="w-16 h-16 bg-gradient-to-br from-primary to-primary/70 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-<span class="material-icons text-4xl text-white">savings</span>
+<div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+<span class="material-icons text-4xl text-primary">credit_card</span>
 </div>
-<h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">¡Ahorra pagando online!</h3>
-<p class="text-gray-600 dark:text-gray-300">Elige tu método de pago preferido</p>
+<h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">¿Sabías que puedes obtener un descuento?</h3>
+<p class="text-gray-600 dark:text-gray-300">Elige cómo prefieres pagar tu sesión</p>
 </div>
 
 <!-- Payment Options -->
 <div class="space-y-4">
-
-<!-- OPTION 1: Pay Online Now (RECOMMENDED) -->
-<div class="border-2 border-primary bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl p-5 pt-6 relative cursor-pointer hover:shadow-lg transition-all transform hover:scale-[1.01]" onclick="selectPaymentOption(1)">
-<!-- Recommended Badge -->
-<div class="absolute -top-3 left-4">
-<span class="bg-gradient-to-r from-primary to-teal-500 text-white text-xs font-bold px-4 py-1.5 rounded-full shadow-md flex items-center gap-1">
-<span class="material-icons text-sm">star</span>
-OPCIÓN RECOMENDADA
-</span>
+<!-- Option 1: Pay at Center (Default - Already Selected) -->
+<div class="border-2 border-primary bg-primary/5 rounded-xl p-6 relative">
+<div class="absolute top-4 right-4">
+<span class="bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">SELECCIONADO</span>
 </div>
-
-<div class="flex items-start mt-2">
-<div class="w-12 h-12 bg-primary/20 rounded-xl flex items-center justify-center mr-4 flex-shrink-0">
-<span class="material-icons text-primary text-2xl">flash_on</span>
-</div>
-<div class="flex-1">
-<h4 class="font-bold text-lg text-gray-800 dark:text-white mb-1">Pagar online ahora</h4>
-<p class="text-gray-500 dark:text-gray-400 text-sm mb-3">Pago único seguro con descuento exclusivo</p>
-
-<!-- Price Display -->
-<div class="flex items-center flex-wrap gap-2 mb-3">
-<span id="popup-online-price" class="text-3xl font-bold text-primary">€149</span>
-<span id="popup-online-original" class="text-gray-400 line-through text-lg">€250</span>
-<span id="popup-online-savings" class="bg-green-100 text-green-700 text-sm font-bold px-2 py-1 rounded-lg flex items-center gap-1">
-<span class="material-icons text-sm">local_offer</span>
-AHORRA €<span id="popup-savings-amount">101</span>
-</span>
-</div>
-
-<!-- Benefits List -->
-<ul class="text-sm text-gray-600 dark:text-gray-300 space-y-1.5 mb-4">
-<li class="flex items-center gap-2">
-<span class="material-icons text-green-500 text-base">check_circle</span>
-<span>Confirmación inmediata de tu cita</span>
-</li>
-<li class="flex items-center gap-2">
-<span class="material-icons text-green-500 text-base">check_circle</span>
-<span>Pago 100% seguro con encriptación SSL</span>
-</li>
-<li class="flex items-center gap-2">
-<span class="material-icons text-green-500 text-base">check_circle</span>
-<span>Garantía de reembolso si cancelas 24h antes</span>
-</li>
-</ul>
-
-<!-- CTA Button -->
-<button class="w-full bg-gradient-to-r from-primary to-teal-500 hover:from-primary/90 hover:to-teal-500/90 text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2">
-<span class="material-icons">lock</span>
-<span>Pagar €<span id="popup-online-btn-price">149</span> de forma segura</span>
-</button>
-</div>
-</div>
-</div>
-
-<!-- OPTION 2: Pay at Center -->
-<div class="border-2 border-gray-200 dark:border-gray-700 hover:border-gray-300 rounded-xl p-5 cursor-pointer transition-all hover:bg-gray-50 dark:hover:bg-gray-700/50" onclick="selectPaymentOption(2)">
 <div class="flex items-start">
-<div class="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center mr-4 flex-shrink-0">
-<span class="material-icons text-gray-500 dark:text-gray-400 text-2xl">store</span>
-</div>
+<span class="material-icons text-primary text-3xl mr-4">store</span>
 <div class="flex-1">
 <h4 class="font-bold text-lg text-gray-800 dark:text-white mb-1">Pagar en el centro</h4>
-<p class="text-gray-500 dark:text-gray-400 text-sm mb-3">Paga el día de tu cita en efectivo o tarjeta</p>
-
-<!-- Price Display -->
-<div class="flex items-center flex-wrap gap-2 mb-3">
-<span id="popup-center-price" class="text-2xl font-bold text-gray-700 dark:text-gray-300">€190</span>
-<span id="popup-center-old" class="text-gray-400 line-through text-lg hidden">€250</span>
-<span id="popup-center-standard" class="text-gray-400 text-sm">Precio estándar</span>
-</div>
-
-<!-- Warning Message -->
-<div class="bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700 rounded-lg p-3 flex items-start gap-2">
-<span class="material-icons text-amber-500 text-lg flex-shrink-0">info</span>
-<p class="text-xs text-amber-700 dark:text-amber-300">
-<strong>Nota:</strong> Las reservas sin pago anticipado pueden ser canceladas en caso de alta demanda. Recomendamos el pago online para garantizar tu plaza.
-</p>
-</div>
-</div>
-</div>
-</div>
-
-<!-- OPTION 3: Pay in 3 Installments -->
-<div class="border-2 border-gray-200 dark:border-gray-700 hover:border-blue-300 rounded-xl p-5 cursor-pointer transition-all hover:bg-blue-50/50 dark:hover:bg-blue-900/20" onclick="selectPaymentOption(3)">
-<div class="flex items-start">
-<div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/50 rounded-xl flex items-center justify-center mr-4 flex-shrink-0">
-<span class="material-icons text-blue-600 dark:text-blue-400 text-2xl">calendar_month</span>
-</div>
-<div class="flex-1">
-<h4 class="font-bold text-lg text-gray-800 dark:text-white mb-1">Pagar en 3 cuotas</h4>
-<p class="text-gray-500 dark:text-gray-400 text-sm mb-3">Divide el pago en 3 meses sin intereses</p>
-
-<!-- Price Display -->
-<div class="flex items-center flex-wrap gap-3 mb-3">
+<p class="text-gray-600 dark:text-gray-300 text-sm mb-2">Paga el día de tu cita</p>
 <div class="flex items-baseline">
+<span id="popup-center-price" class="text-3xl font-bold text-primary">€190</span>
+<span class="text-gray-500 ml-2 text-sm">Precio estándar</span>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Option 2: Pay Online Once (Discount) -->
+<div class="border-2 border-gray-200 dark:border-gray-700 hover:border-primary rounded-xl p-6 cursor-pointer transition-all" onclick="selectPaymentOption(2)">
+<div class="flex items-start">
+<span class="material-icons text-purple-600 text-3xl mr-4">flash_on</span>
+<div class="flex-1">
+<div class="flex items-center mb-1">
+<h4 class="font-bold text-lg text-gray-800 dark:text-white">Pagar online ahora</h4>
+<span class="ml-2 bg-purple-100 text-purple-700 text-xs font-bold px-2 py-1 rounded">20€ DESCUENTO</span>
+</div>
+<p class="text-gray-600 dark:text-gray-300 text-sm mb-2">Pago único con descuento inmediato</p>
+<div class="flex items-baseline">
+<span id="popup-online-price" class="text-3xl font-bold text-purple-600">€170</span>
+<span id="popup-online-original" class="text-gray-400 line-through ml-2">€190</span>
+<span class="text-green-600 ml-2 text-sm font-semibold">Ahorras €20</span>
+</div>
+<button class="mt-4 w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center">
+<span class="material-icons mr-2">payment</span>
+Pagar €<span id="popup-online-btn-price">170</span> ahora
+</button>
+</div>
+</div>
+</div>
+
+<!-- Option 3: Pay in 3 Installments -->
+<div class="border-2 border-gray-200 dark:border-gray-700 hover:border-primary rounded-xl p-6 cursor-pointer transition-all" onclick="selectPaymentOption(3)">
+<div class="flex items-start">
+<span class="material-icons text-blue-600 text-3xl mr-4">calendar_today</span>
+<div class="flex-1">
+<h4 class="font-bold text-lg text-gray-800 dark:text-white mb-1">Pagar en 3 cuotas mensuales</h4>
+<p class="text-gray-600 dark:text-gray-300 text-sm mb-2">Facilita el pago dividiéndolo en 3 meses</p>
+<div class="flex items-baseline mb-2">
 <span class="text-2xl font-bold text-blue-600">3 ×</span>
-<span id="popup-monthly-price" class="text-3xl font-bold text-blue-600 ml-1">€50</span>
-<span class="text-gray-400 ml-1 text-sm">/mes</span>
+<span id="popup-monthly-price" class="text-3xl font-bold text-blue-600 ml-2">€65</span>
+<span class="text-gray-500 ml-2 text-sm">/mes</span>
 </div>
-<span class="text-gray-400 text-sm">(Total: €<span id="popup-monthly-total">150</span>)</span>
-</div>
-
-<!-- Benefits -->
-<ul class="text-sm text-gray-600 dark:text-gray-300 space-y-1 mb-4">
-<li class="flex items-center gap-2">
-<span class="material-icons text-blue-500 text-base">check_circle</span>
-<span>Reserva confirmada inmediatamente</span>
-</li>
-<li class="flex items-center gap-2">
-<span class="material-icons text-blue-500 text-base">check_circle</span>
-<span>Sin intereses ni comisiones</span>
-</li>
-</ul>
-
-<!-- CTA Button -->
-<button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-xl transition-all flex items-center justify-center gap-2">
-<span class="material-icons">schedule</span>
-<span>Pagar en 3 cuotas de €<span id="popup-monthly-btn-price">50</span></span>
-</button>
-</div>
-</div>
-</div>
-
-</div>
-
-<!-- Security Footer -->
-<div class="mt-6 pt-5 border-t border-gray-200 dark:border-gray-700">
-<div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-<!-- Security Text -->
-<div class="flex items-center gap-2 text-gray-500 dark:text-gray-400 text-sm">
-<span class="material-icons text-green-500">verified_user</span>
-<span>Pago protegido con encriptación SSL de 256-bit</span>
-</div>
-</div>
-<!-- Payment Logos -->
-<div class="flex items-center justify-center gap-4 mt-4 opacity-60">
-<img src="https://cdn.jsdelivr.net/gh/nickytonline/random-images/stripe-logo.svg" alt="Stripe" class="h-6 grayscale hover:grayscale-0 transition-all" onerror="this.style.display='none'">
-<img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" class="h-5 grayscale hover:grayscale-0 transition-all">
-<img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" class="h-8 grayscale hover:grayscale-0 transition-all">
-</div>
-</div>
-
-<!-- Close Link -->
-<div class="mt-4 text-center">
-<button onclick="closePaymentPopup()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-sm font-medium transition-colors">
-Cerrar y pagar en el centro
+<p class="text-gray-500 text-xs mb-4">Total: €<span id="popup-monthly-total">195</span></p>
+<button class="mt-2 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center">
+<span class="material-icons mr-2">schedule</span>
+Pagar en 3 cuotas
 </button>
 </div>
 </div>
 </div>
 </div>
 
-<style>
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.9) translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-}
-
-.animate-fadeIn {
-  animation: fadeIn 0.3s ease-out;
-}
-
-.animate-scaleIn {
-  animation: scaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-</style>
-
-</section>
-
-<!-- About Section -->
-<section class="py-16 sm:py-24 bg-white dark:bg-gray-900" id="about">
-<div class="container mx-auto px-4 sm:px-6 lg:px-8">
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-<!-- About Video - Left on Desktop, Top on Mobile -->
-<div class="order-1 lg:order-1 flex justify-center">
-<div class="relative rounded-2xl overflow-hidden shadow-2xl aspect-[9/16] w-full max-w-sm group cursor-pointer" onclick="toggleVideoAudio(this)">
-<video
-  class="w-full h-full object-cover"
-  autoplay
-  muted
-  loop
-  playsinline
-  poster="assets/cigarettes.png"
->
-  <source src="assets/about-video.mp4" type="video/mp4">
-  Tu navegador no soporta el elemento de vídeo.
-</video>
-<!-- Audio Toggle Button -->
-<div class="absolute bottom-4 right-4 bg-black/70 backdrop-blur-sm rounded-full p-3 transition-all duration-300 hover:bg-black/90 hover:scale-110">
-  <span class="material-icons text-white text-2xl audio-icon">volume_off</span>
+<!-- Close Button -->
+<div class="mt-6 text-center">
+<button onclick="closePaymentPopup()" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 font-medium">
+Cerrar y continuar con pago en centro
+</button>
 </div>
-<!-- Tap to unmute hint -->
-<div class="absolute inset-0 bg-black/30 backdrop-blur-[1px] flex items-center justify-center transition-opacity duration-300 opacity-100 group-hover:opacity-0 pointer-events-none audio-hint">
-  <div class="bg-white/90 dark:bg-gray-900/90 px-6 py-3 rounded-full shadow-lg">
-    <div class="flex items-center gap-2">
-      <span class="material-icons text-primary">volume_up</span>
-      <p class="text-sm font-medium text-gray-800 dark:text-gray-200">Toca para activar audio</p>
-    </div>
-  </div>
-</div>
-</div>
-</div>
-
-<!-- About Content - Right on Desktop, Bottom on Mobile -->
-<div class="order-2 lg:order-2">
-<div class="max-w-xl lg:max-w-none">
-<h2 class="text-3xl sm:text-4xl font-bold text-text-light dark:text-text-dark mb-4">
-<span class="text-primary">Sobre</span> LaserOstop
-</h2>
-<div class="h-1 w-20 bg-primary rounded mb-6"></div>
-<div class="prose prose-lg dark:prose-invert max-w-none">
-<p class="text-gray-700 dark:text-gray-300 leading-relaxed text-lg">
-LaserOstop ofrece una terapia láser <strong class="text-primary">segura, indolora y altamente eficaz</strong> para ayudar a las personas a dejar de fumar en una sola sesión. Utilizando tecnología avanzada de <strong>fotobiomodulación</strong>, este método estimula puntos específicos de la oreja con láser de baja intensidad para combatir la dependencia física a la nicotina, <strong>sin efectos secundarios, sin aumento de peso y sin síntomas de abstinencia.</strong>
-</p>
-<p class="text-gray-700 dark:text-gray-300 leading-relaxed text-lg mt-4">
-Con más de <strong class="text-primary">500,000 personas asistidas</strong> en todo el mundo, LaserOstop proporciona una solución científica, no invasiva, y respaldada por resultados reales para quienes desean superar la adicción y llevar una vida más saludable y libre de tabaco.
-</p>
-</div>
-<!-- Stats -->
-<div class="grid grid-cols-2 gap-6 mt-8">
-<div class="text-center p-4 bg-primary/10 rounded-xl">
-<div class="text-3xl font-bold text-primary mb-1">500K+</div>
-<div class="text-sm text-gray-600 dark:text-gray-400">Personas asistidas</div>
-</div>
-<div class="text-center p-4 bg-primary/10 rounded-xl">
-<div class="text-3xl font-bold text-primary mb-1">1 sesión</div>
-<div class="text-sm text-gray-600 dark:text-gray-400">Para dejar de fumar</div>
 </div>
 </div>
 </div>
@@ -1590,9 +1247,6 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
 
         // Show payment options popup after 2 seconds
         setTimeout(() => {
-          console.log('🔔 Attempting to show payment popup...');
-          console.log('📋 Booking state:', bookingState);
-          console.log('🎯 Selected appointment type ID:', bookingState.selectedAppointmentType);
           showPaymentPopup();
         }, 2000);
 
@@ -1612,73 +1266,53 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
      * Show payment options popup
      */
     function showPaymentPopup() {
-      console.log('💳 showPaymentPopup() called');
-
       // Get selected appointment type to determine pricing
       const selectedType = bookingState.appointmentTypes.find(t => t.id === bookingState.selectedAppointmentType);
 
-      console.log('🔍 Looking for appointment type with ID:', bookingState.selectedAppointmentType);
-      console.log('📚 Available appointment types:', bookingState.appointmentTypes);
-      console.log('✅ Found appointment type:', selectedType);
-
       if (!selectedType) {
-        console.warn('❌ No appointment type found for payment popup');
+        console.warn('No appointment type found for payment popup');
         return;
       }
 
       // Prevent payment popup for free Rechute sessions
       if (selectedType.kind === 'rechute' || selectedType.price === 0) {
-        console.log('⚠️ Rechute session (€0) - no payment required, skipping popup');
+        console.log('Rechute session (€0) - no payment required, skipping popup');
         return;
       }
 
-      console.log('✅ Appointment type is valid, proceeding with popup...');
-
-      // Calculate prices based on appointment type using PRICE_TABLE
+      // Calculate prices based on appointment type
       let centerPrice, onlinePrice, monthlyPrice, monthlyTotal;
 
-      // Get pricing from PRICE_TABLE using the 'kind' field for accurate mapping
-      const priceData = PRICE_TABLE[selectedType.kind];
+      // Determine pricing based on type name
+      const typeName = selectedType.name.toLowerCase();
 
-      if (!priceData) {
-        console.error('No price data found for appointment type:', selectedType.kind);
-        return;
-      }
-
-      centerPrice = priceData.center;
-      onlinePrice = priceData.online;
-      const onlineOldPrice = priceData.onlineOld || priceData.centerOld || centerPrice;
-      monthlyPrice = priceData.plan ? priceData.plan[0] : 0;
-      monthlyTotal = priceData.plan ? priceData.plan.reduce((sum, val) => sum + val, 0) : 0;
-
-      // Calculate savings
-      const onlineSavings = onlineOldPrice - onlinePrice;
-
-      // Update popup prices - Online option (Option 1 now)
-      document.getElementById('popup-online-price').textContent = `€${onlinePrice}`;
-      document.getElementById('popup-online-original').textContent = `€${onlineOldPrice}`;
-      document.getElementById('popup-online-btn-price').textContent = onlinePrice;
-      document.getElementById('popup-savings-amount').textContent = onlineSavings;
-
-      // Update center price (Option 2 now)
-      document.getElementById('popup-center-price').textContent = `€${centerPrice}`;
-
-      // Show old price for center if available
-      const centerOldElement = document.getElementById('popup-center-old');
-      const centerStandardElement = document.getElementById('popup-center-standard');
-      if (priceData.centerOld) {
-        centerOldElement.textContent = `€${priceData.centerOld}`;
-        centerOldElement.classList.remove('hidden');
-        centerStandardElement.classList.add('hidden');
+      if (typeName.includes('duo')) {
+        // DUO Cigarettes: 2×€170 center, 2×€160 online, 3×€114 monthly
+        centerPrice = 170; // per person (total €340)
+        onlinePrice = 160; // per person (total €320)
+        monthlyPrice = 114;
+        monthlyTotal = monthlyPrice * 3;
+      } else if (typeName.includes('cannabis')) {
+        // Cannabis: €250 center, €230 online, 3×€84 monthly
+        centerPrice = 250;
+        onlinePrice = 230;
+        monthlyPrice = 84;
+        monthlyTotal = monthlyPrice * 3;
       } else {
-        centerOldElement.classList.add('hidden');
-        centerStandardElement.classList.remove('hidden');
+        // Cigarettes SOLO (default): €190 center, €170 online, 3×€65 monthly
+        centerPrice = 190;
+        onlinePrice = 170;
+        monthlyPrice = 65;
+        monthlyTotal = monthlyPrice * 3;
       }
 
-      // Update monthly prices (Option 3)
+      // Update popup prices
+      document.getElementById('popup-center-price').textContent = `€${centerPrice}`;
+      document.getElementById('popup-online-price').textContent = `€${onlinePrice}`;
+      document.getElementById('popup-online-original').textContent = `€${centerPrice}`; // Strikethrough shows original center price
+      document.getElementById('popup-online-btn-price').textContent = onlinePrice;
       document.getElementById('popup-monthly-price').textContent = `€${monthlyPrice}`;
       document.getElementById('popup-monthly-total').textContent = monthlyTotal;
-      document.getElementById('popup-monthly-btn-price').textContent = monthlyPrice;
 
       // Store prices in popup for payment selection
       window.paymentPopupData = {
@@ -1690,10 +1324,7 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
       };
 
       // Show popup (fixed overlay - no scroll issues)
-      const popupElement = document.getElementById('payment-popup');
-      console.log('🎨 Payment popup element:', popupElement);
-      popupElement.classList.remove('hidden');
-      console.log('✅ Payment popup should now be visible!');
+      document.getElementById('payment-popup').classList.remove('hidden');
     }
 
     /**
@@ -1701,49 +1332,6 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
      */
     function closePaymentPopup() {
       document.getElementById('payment-popup').classList.add('hidden');
-    }
-
-    /**
-     * Show promotional popup on page load
-     */
-    function showPromoPopup() {
-      const promoPopup = document.getElementById('promo-popup');
-
-      // Check if user has already seen the popup in this session
-      if (sessionStorage.getItem('promoPopupSeen')) {
-        return;
-      }
-
-      // Show popup after a short delay for better UX
-      setTimeout(() => {
-        promoPopup.classList.remove('hidden');
-        // Mark as seen for this session
-        sessionStorage.setItem('promoPopupSeen', 'true');
-      }, 2000);
-    }
-
-    /**
-     * Close promotional popup
-     */
-    function closePromoPopup() {
-      document.getElementById('promo-popup').classList.add('hidden');
-    }
-
-    /**
-     * Close promotional popup and scroll to booking section
-     */
-    function closePromoAndScroll() {
-      // Close the popup
-      closePromoPopup();
-
-      // Scroll to booking section
-      const bookingSection = document.getElementById('booking');
-      if (bookingSection) {
-        bookingSection.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start'
-        });
-      }
     }
 
     /**
@@ -1768,44 +1356,36 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
       // Get company
       const company = getCompany(centerId);
 
-      // Stripe Payment Links Configuration - UPDATED Nov 2025
+      // Stripe Payment Links Configuration
       const stripeLinks = {
         company1: {
           // Company 1: Madrid Chamartín, Torrejón, Majadahonda, San Sebastián
           solo_cig: {
-            onetime: 'https://buy.stripe.com/5kQdR85fNfQG9PvbCJawo0b',  // €149 (NEW)
-            monthly: 'https://buy.stripe.com/4gMfZgcIfbAqbXDfSZawo0c'   // 3×€50 (NEW)
+            onetime: 'https://buy.stripe.com/9B628q23B9si9Pv7mtawo00',  // €170
+            monthly: 'https://buy.stripe.com/bJe00i5fN47Y1iZfSZawo03'   // 3×€65
           },
           duo_cig: {
             onetime: 'https://buy.stripe.com/28E9AS0ZxfQGd1H4ahawo01',   // €320
-            monthly: 'https://buy.stripe.com/9B64gyeQn7kabXD9uBawo07'    // 3×€105
+            monthly: 'https://buy.stripe.com/6oUbJ0cIfgUKaTzgX3awo04'    // 3×€114
           },
           solo_drugs: {
-            onetime: 'https://buy.stripe.com/9B6bJ09w3bAq9Pv36dawo0d', // €189 (NEW)
-            monthly: 'https://buy.stripe.com/fZu00i0Zx47Ye5L9uBawo0e'  // 3×€70 (NEW)
-          },
-          solo_sugar: {
-            onetime: 'https://buy.stripe.com/4gM5kCaA7dIyaTz9uBawo09', // €180
-            monthly: 'https://buy.stripe.com/8x214maA7fQG7Hn36dawo0a'  // 3×€60
+            onetime: 'https://buy.stripe.com/00w8wOgYvbAq6Dj36dawo02', // €230
+            monthly: 'https://buy.stripe.com/6oU3cu0Zx47Y5zfgX3awo05'  // 3×€84
           }
         },
         company2: {
           // Company 2: Valencia, Barcelona Sants, Sevilla, Madrid Atocha
           solo_cig: {
-            onetime: 'https://buy.stripe.com/4gM8wPbgpcsdfoL5sAdby0j',  // €149 (NEW)
-            monthly: 'https://buy.stripe.com/eVqcN5bgp0Jv0tR08gdby0k'   // 3×€50 (NEW)
+            onetime: 'https://buy.stripe.com/8x25kD2JTcsdgsPdZ6dby08',  // €170
+            monthly: 'https://buy.stripe.com/9B65kDesB3VH7Wjg7edby0b'   // 3×€65
           },
           duo_cig: {
             onetime: 'https://buy.stripe.com/8x2fZh3NX4ZL2BZ6wEdby09',   // €320
-            monthly: 'https://buy.stripe.com/7sYcN5dox3VH1xV08gdby0f'    // 3×€105
+            monthly: 'https://buy.stripe.com/aFa00j0BLfEpfoL2godby0c'    // 3×€114
           },
           solo_drugs: {
-            onetime: 'https://buy.stripe.com/28E28rcktfEpb8vf3adby0l', // €189 (NEW)
-            monthly: 'https://buy.stripe.com/bJe4gz98h2RD0tR3ksdby0m'  // 3×€70 (NEW)
-          },
-          solo_sugar: {
-            onetime: 'https://buy.stripe.com/5kQ14n7090Jv3G39IQdby0h', // €180
-            monthly: 'https://buy.stripe.com/9B6bJ198h3VH0tR8EMdby0i'  // 3×€60
+            onetime: 'https://buy.stripe.com/cNi14nesB2RD4K78EMdby0a', // €230
+            monthly: 'https://buy.stripe.com/cNi7sLesB2RD4K7dZ6dby0d'  // 3×€84
           }
         }
       };
@@ -1836,7 +1416,10 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
       }
 
       if (option === 1) {
-        // Pay online once - redirect to Stripe (NOW OPTION 1 - RECOMMENDED)
+        // Pay at center
+        closePaymentPopup();
+      } else if (option === 2) {
+        // Pay online once - redirect to Stripe
         const stripeLinks = getStripeLinks(bookingState.selectedCenter, data.appointmentType.id);
 
         if (!stripeLinks) {
@@ -1853,9 +1436,6 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
         window.open(stripeLinks.onetime, '_blank');
 
         // Close popup
-        closePaymentPopup();
-      } else if (option === 2) {
-        // Pay at center (NOW OPTION 2)
         closePaymentPopup();
       } else if (option === 3) {
         // Pay in 3 installments - redirect to Stripe subscription
@@ -1917,61 +1497,53 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
     // Showing: Solo 190€, Duo 170€, Cannabis 190€, Recaída (same as TEST had)
     // Mapping: Valencia=10, Barcelona=43, Sevilla=44, Chamartin=48, Torrejon=49, Atocha=50, Majadahonda=51, San Sebastian=52
     const APPOINTMENT_TYPES = {
-      '10': [ // Valencia - 5 types (added sugar)
+      '10': [ // Valencia - 4 types (original)
         { id: '1',  kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '10' },
         { id: '9',  kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '10' },
         { id: '18', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '10' },
-        { id: '3',  kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '10' },
-        { id: '98', kind: 'solo_sugar',   name: 'Adicción al azúcar (1h)', duration: 60, price: 200, deposit: 0, centerId: '10' }
+        { id: '3',  kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '10' }
       ],
-      '43': [ // Barcelona - 5 types (added sugar)
+      '43': [ // Barcelona - 4 types (original)
         { id: '20', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '43' },
         { id: '21', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '43' },
         { id: '23', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '43' },
-        { id: '22', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '43' },
-        { id: '91', kind: 'solo_sugar',   name: 'Adicción al azúcar (1h)', duration: 60, price: 200, deposit: 0, centerId: '43' }
+        { id: '22', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '43' }
       ],
-      '44': [ // Sevilla - 5 types (added sugar)
+      '44': [ // Sevilla - 4 types (original)
         { id: '32', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '44' },
         { id: '34', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '44' },
         { id: '37', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '44' },
-        { id: '35', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '44' },
-        { id: '96', kind: 'solo_sugar',   name: 'Adicción al azúcar (1h)', duration: 60, price: 200, deposit: 0, centerId: '44' }
+        { id: '35', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '44' }
       ],
-      '49': [ // Torrejón - 5 types (added sugar)
+      '49': [ // Torrejón - 4 types (original)
         { id: '53', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '49' },
         { id: '56', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '49' },
         { id: '59', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '49' },
-        { id: '57', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '49' },
-        { id: '97', kind: 'solo_sugar',   name: 'Adicción al azúcar (1h)', duration: 60, price: 200, deposit: 0, centerId: '49' }
+        { id: '57', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '49' }
       ],
-      '48': [ // Madrid Chamartín - 5 types (added sugar)
+      '48': [ // Madrid Chamartín - 4 types (original)
         { id: '44', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '48' },
         { id: '46', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '48' },
         { id: '49', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '48' },
-        { id: '47', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '48' },
-        { id: '93', kind: 'solo_sugar',   name: 'Adicción al azúcar (1h)', duration: 60, price: 200, deposit: 0, centerId: '48' }
+        { id: '47', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '48' }
       ],
-      '50': [ // Madrid Atocha - 5 types (added sugar)
+      '50': [ // Madrid Atocha - 4 types (original)
         { id: '63', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '50' },
         { id: '65', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '50' },
         { id: '68', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '50' },
-        { id: '66', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '50' },
-        { id: '92', kind: 'solo_sugar',   name: 'Adicción al azúcar (1h)', duration: 60, price: 200, deposit: 0, centerId: '50' }
+        { id: '66', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '50' }
       ],
-      '52': [ // San Sebastián - 5 types (added sugar)
+      '52': [ // San Sebastián - 4 types (original)
         { id: '81', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '52' },
         { id: '83', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '52' },
         { id: '86', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '52' },
-        { id: '84', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '52' },
-        { id: '95', kind: 'solo_sugar',   name: 'Adicción al azúcar (1h)', duration: 60, price: 200, deposit: 0, centerId: '52' }
+        { id: '84', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '52' }
       ],
-      '51': [ // Majadahonda - 5 types (added sugar)
+      '51': [ // Majadahonda - 4 types (original)
         { id: '72', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '51' },
         { id: '74', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 170, deposit: 0, centerId: '51' },
         { id: '77', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '51' },
-        { id: '75', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '51' },
-        { id: '94', kind: 'solo_sugar',   name: 'Adicción al azúcar (1h)', duration: 60, price: 200, deposit: 0, centerId: '51' }
+        { id: '75', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '51' }
       ]
     };
 
@@ -1979,11 +1551,10 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
      * Price table - Single source of truth for payment UI
      */
     const PRICE_TABLE = {
-      solo_cig:   { centerOld: 250, center: 190, onlineOld: 250, online: 149, plan: [50, 50, 50] },
-      duo_cig:    { centerOld: 400, center: 340, onlineOld: 400, online: 320, plan: [105, 105, 105] },
-      solo_drugs: { centerOld: 300, center: 250, onlineOld: 300, online: 189, plan: [70, 70, 70] },
-      rechute:    { center: 0 },
-      solo_sugar: { centerOld: 280, center: 200, onlineOld: 280, online: 180, plan: [60, 60, 60] }
+      solo_cig:   { center: 190, online: 170, plan: [65, 65, 65] },
+      duo_cig:    { center: 340, online: 320, plan: [114, 114, 114] },
+      solo_drugs: { center: 250, online: 230, plan: [84, 84, 84] },
+      rechute:    { center: 0 }
     };
 
     /**
@@ -2000,111 +1571,48 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
     // ========== API FUNCTIONS ==========
 
     /**
-     * Load centers from Smart Agenda API with retry logic
-     * Handles Render.com cold starts and network timeouts
+     * Load centers from Smart Agenda API
      */
-    async function loadCentersFromAPI(retries = 3) {
-      for (let attempt = 1; attempt <= retries; attempt++) {
-        try {
-          console.log(`Loading centers from Smart Agenda... (attempt ${attempt}/${retries})`);
+    async function loadCentersFromAPI() {
+      try {
+        console.log('Loading centers from Smart Agenda...');
+        const response = await fetch(`${API_BASE_URL}/centers`);
 
-          // Add 60-second timeout to handle Render cold starts
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 seconds
-
-          const response = await fetch(`${API_BASE_URL}/centers`, {
-            signal: controller.signal
-          });
-          clearTimeout(timeoutId);
-
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-
-          const centers = await response.json();
-
-          // Validate response
-          if (!centers || centers.length === 0) {
-            throw new Error('Empty centers response from API');
-          }
-
-          bookingState.smartAgendaCenters = centers;
-          console.log('✅ Loaded', centers.length, 'centers from Smart Agenda');
-
-          // Populate the center dropdown
-          populateCenterDropdown(centers);
-
-          return centers;
-
-        } catch (error) {
-          console.error(`❌ Attempt ${attempt} failed:`, error.message);
-
-          // If not the last attempt, retry with exponential backoff
-          if (attempt < retries) {
-            const delay = Math.min(1000 * Math.pow(2, attempt - 1), 5000); // 1s, 2s, 4s max
-            console.log(`⏳ Retrying in ${delay}ms...`);
-            await new Promise(resolve => setTimeout(resolve, delay));
-          } else {
-            // Final attempt failed - show error to user
-            console.error('❌ All retry attempts failed');
-            alert('Error al cargar los centros. Por favor, recargue la página.');
-            return [];
-          }
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
+
+        const centers = await response.json();
+        bookingState.smartAgendaCenters = centers;
+
+        console.log('Loaded', centers.length, 'centers from Smart Agenda');
+
+        // Populate the center dropdown
+        populateCenterDropdown(centers);
+
+        return centers;
+      } catch (error) {
+        console.error('Error loading centers:', error);
+        alert('Error al cargar los centros. Por favor, recargue la página.');
+        return [];
       }
     }
 
     /**
-     * Populate center dropdown with API data - Grouped by city
+     * Populate center dropdown with API data
      */
     function populateCenterDropdown(centers) {
       const select = document.getElementById('center-select');
 
-      // Clear existing options
-      select.innerHTML = '<option value="">Seleccione su ciudad y centro...</option>';
+      // Clear existing options except the first one
+      select.innerHTML = '<option value="">Seleccione un centro...</option>';
 
-      // Define city groups with their centers
-      const cityGroups = {
-        'Madrid': [
-          { id: '50', name: 'Madrid – Atocha' },
-          { id: '48', name: 'Madrid – Chamartín' },
-          { id: '51', name: 'Madrid – Majadahonda' },
-          { id: '49', name: 'Madrid – Torrejón de Ardoz' }
-        ],
-        'Barcelona': [
-          { id: '43', name: 'Barcelona' }
-        ],
-        'San Sebastián': [
-          { id: '52', name: 'San Sebastián' }
-        ],
-        'Sevilla': [
-          { id: '44', name: 'Sevilla' }
-        ],
-        'Valencia': [
-          { id: '10', name: 'Valencia' }
-        ]
-      };
-
-      // Create optgroups for each city
-      Object.entries(cityGroups).forEach(([city, cityCenters]) => {
-        const optgroup = document.createElement('optgroup');
-        optgroup.label = city;
-
-        cityCenters.forEach(center => {
-          // Check if this center exists in the API data
-          const centerExists = centers.find(c => c.id === center.id);
-          if (centerExists) {
-            const option = document.createElement('option');
-            option.value = center.id;
-            option.textContent = center.name;
-            optgroup.appendChild(option);
-          }
-        });
-
-        // Only add optgroup if it has at least one center
-        if (optgroup.children.length > 0) {
-          select.appendChild(optgroup);
-        }
+      // Add centers from API
+      centers.forEach(center => {
+        const option = document.createElement('option');
+        option.value = center.id;
+        option.textContent = center.name;
+        select.appendChild(option);
       });
     }
 
@@ -2218,178 +1726,7 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
       });
 
       console.log('Processed availability slots:', Object.keys(slots).length, 'days');
-
-      // Apply slot filtering to create scarcity perception
-      return applySlotFiltering(slots);
-    }
-
-    // ========== SLOT FILTERING SYSTEM ==========
-    // Strategy: Show limited slots per day to create urgency and distribute bookings evenly
-    // Different users see different slots based on fingerprint + date hash
-
-    /**
-     * Slot filtering configuration
-     */
-    const SLOT_FILTER_CONFIG = {
-      enabled: true,              // Master toggle
-      maxSlotsPerDay: 4,         // Maximum slots to show per day
-      minSpacingMinutes: 60,     // Minimum minutes between displayed slots
-      showAllIfFewer: 4          // If total slots <= this, show all
-    };
-
-    /**
-     * Generate anonymous user fingerprint for consistent slot selection
-     * Uses browser characteristics (no personal data)
-     */
-    function getUserFingerprint() {
-      // Try to get cached fingerprint first
-      let fingerprint = sessionStorage.getItem('userFingerprint');
-
-      if (!fingerprint) {
-        // Create fingerprint from browser metadata
-        const components = [
-          navigator.userAgent,
-          navigator.language,
-          screen.width + 'x' + screen.height,
-          screen.colorDepth,
-          new Date().getTimezoneOffset(),
-          navigator.hardwareConcurrency || 0,
-          navigator.platform
-        ];
-
-        // Simple hash function
-        let hash = 0;
-        const str = components.join('|');
-        for (let i = 0; i < str.length; i++) {
-          const char = str.charCodeAt(i);
-          hash = ((hash << 5) - hash) + char;
-          hash = hash & hash; // Convert to 32-bit integer
-        }
-
-        fingerprint = Math.abs(hash).toString(36);
-        sessionStorage.setItem('userFingerprint', fingerprint);
-      }
-
-      return fingerprint;
-    }
-
-    /**
-     * Seeded random number generator for deterministic shuffling
-     * Same seed always produces same sequence
-     */
-    function seededRandom(seed) {
-      let value = seed;
-      return function() {
-        value = (value * 9301 + 49297) % 233280;
-        return value / 233280;
-      };
-    }
-
-    /**
-     * Shuffle array using seeded random (deterministic)
-     */
-    function seededShuffle(array, seed) {
-      const shuffled = [...array];
-      const random = seededRandom(seed);
-
-      for (let i = shuffled.length - 1; i > 0; i--) {
-        const j = Math.floor(random() * (i + 1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-      }
-
-      return shuffled;
-    }
-
-    /**
-     * Convert time string (HH:MM) to minutes since midnight
-     */
-    function timeToMinutes(timeStr) {
-      const [hours, minutes] = timeStr.split(':').map(Number);
-      return hours * 60 + minutes;
-    }
-
-    /**
-     * Simple string hash function
-     */
-    function simpleHash(str) {
-      let hash = 0;
-      for (let i = 0; i < str.length; i++) {
-        const char = str.charCodeAt(i);
-        hash = ((hash << 5) - hash) + char;
-        hash = hash & hash;
-      }
-      return Math.abs(hash);
-    }
-
-    /**
-     * Filter slots for a single date to show limited selection
-     */
-    function filterSlotsForDate(times, date, userFingerprint) {
-      if (!SLOT_FILTER_CONFIG.enabled) {
-        return times; // Filtering disabled, return all
-      }
-
-      if (times.length <= SLOT_FILTER_CONFIG.showAllIfFewer) {
-        return times; // Show all if few slots available
-      }
-
-      // Generate deterministic seed from fingerprint + date
-      const seed = simpleHash(userFingerprint + date);
-
-      // Shuffle slots deterministically
-      const shuffled = seededShuffle(times, seed);
-
-      // Select slots with minimum spacing
-      const selected = [];
-
-      for (const time of shuffled) {
-        if (selected.length >= SLOT_FILTER_CONFIG.maxSlotsPerDay) {
-          break;
-        }
-
-        // Check if time has minimum spacing from all selected slots
-        const timeMinutes = timeToMinutes(time);
-        const hasMinimumSpacing = selected.every(selectedTime => {
-          const selectedMinutes = timeToMinutes(selectedTime);
-          return Math.abs(timeMinutes - selectedMinutes) >= SLOT_FILTER_CONFIG.minSpacingMinutes;
-        });
-
-        if (hasMinimumSpacing || selected.length === 0) {
-          selected.push(time);
-        }
-      }
-
-      // Return in chronological order
-      return selected.sort();
-    }
-
-    /**
-     * Apply slot filtering to all dates
-     */
-    function applySlotFiltering(allSlots) {
-      if (!SLOT_FILTER_CONFIG.enabled) {
-        return allSlots; // Return unfiltered if disabled
-      }
-
-      const fingerprint = getUserFingerprint();
-      const filteredSlots = {};
-
-      // Process each date
-      for (const dateKey in allSlots) {
-        const times = Object.keys(allSlots[dateKey]).sort();
-        const filteredTimes = filterSlotsForDate(times, dateKey, fingerprint);
-
-        // Rebuild slots object with filtered times
-        filteredSlots[dateKey] = {};
-        filteredTimes.forEach(time => {
-          filteredSlots[dateKey][time] = true;
-        });
-
-        console.log(`📊 Date ${dateKey}: ${times.length} slots → ${filteredTimes.length} shown`);
-      }
-
-      console.log('✅ Slot filtering applied - User fingerprint:', fingerprint.substring(0, 8) + '...');
-      return filteredSlots;
+      return slots;
     }
 
     /**
@@ -2591,13 +1928,13 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
       generateTimeSlots(); // Show available time slots
       updateStepIndicators(); // Update visual indicators
 
-      // Auto-scroll to time slots section for better UX - DISABLED
-      // setTimeout(() => {
-      //   document.getElementById('time-slots-section').scrollIntoView({
-      //     behavior: 'smooth',
-      //     block: 'start'
-      //   });
-      // }, 100);
+      // Auto-scroll to time slots section for better UX
+      setTimeout(() => {
+        document.getElementById('time-slots-section').scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }, 100);
     }
 
     // Generate time slots for selected date
@@ -2660,13 +1997,13 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
       generateTimeSlots(); // Refresh to show selection
       updateStepIndicators(); // Update visual indicators
 
-      // Auto-scroll to user info form for better UX - DISABLED
-      // setTimeout(() => {
-      //   document.getElementById('step-3').scrollIntoView({
-      //     behavior: 'smooth',
-      //     block: 'start'
-      //   });
-      // }, 100);
+      // Auto-scroll to user info form for better UX
+      setTimeout(() => {
+        document.getElementById('step-3').scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }, 100);
 
       console.log('Booking state:', bookingState);
       // This will be used later for Smart Agenda API call
@@ -2723,9 +2060,6 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
       bookingState.selectedTime = earliestTime;
       bookingState.autoSelected = true; // Flag to show it was auto-selected
 
-      // Update calendar month to show the selected date's month
-      bookingState.currentMonth = new Date(soonestDate.getFullYear(), soonestDate.getMonth(), 1);
-
       // Update UI
       generateCalendar(); // Refresh calendar with selection
       generateTimeSlots(); // Show time slots with selection
@@ -2734,13 +2068,13 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
       // Show notification to user
       showAutoSelectNotification(soonestDate, earliestTime);
 
-      // Scroll to time slots so user sees the selection - DISABLED
-      // setTimeout(() => {
-      //   document.getElementById('time-slots-section').scrollIntoView({
-      //     behavior: 'smooth',
-      //     block: 'start'
-      //   });
-      // }, 500);
+      // Scroll to time slots so user sees the selection
+      setTimeout(() => {
+        document.getElementById('time-slots-section').scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }, 500);
     }
 
     /**
@@ -2918,15 +2252,6 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
 
         // Show the booking type section
         step1b.classList.remove('hidden');
-
-        // ✅ AUTO-SELECT FIRST APPOINTMENT TYPE
-        // Automatically select the first type and trigger change event
-        // This loads availability and shows calendar without requiring manual selection
-        if (centerPaymentTypes.length > 0) {
-          select.value = centerPaymentTypes[0].id;
-          select.dispatchEvent(new Event('change'));
-          console.log('✅ Auto-selected first appointment type:', centerPaymentTypes[0].name);
-        }
       } else {
         // Hide the booking type section if no types available
         step1b.classList.add('hidden');
@@ -2996,32 +2321,32 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
         // Update step indicators
         updateStepIndicators();
 
-        // Load availability for next 3 months when appointment type is selected
+        // Load availability for current month when appointment type is selected
         // Start from tomorrow to avoid timezone issues with Smart Agenda
         const tomorrow = new Date();
         tomorrow.setDate(tomorrow.getDate() + 1);
         tomorrow.setHours(0, 0, 0, 0);
-        const startDate = new Date(tomorrow);
+        const firstOfMonth = new Date(bookingState.currentMonth.getFullYear(), bookingState.currentMonth.getMonth(), 1);
+        const startDate = firstOfMonth < tomorrow ? tomorrow : firstOfMonth;
 
-        // End date: 3 months from tomorrow (90 days)
-        const threeMonthsOut = new Date(startDate);
-        threeMonthsOut.setDate(startDate.getDate() + 90);
-        const endDate = threeMonthsOut;
-
-        console.log(`📅 Loading availability for 3 months: ${formatDateForAPI(startDate)} to ${formatDateForAPI(endDate)}`);
+        // End date: last day of current month OR 30 days from start (whichever is later)
+        const lastDayOfMonth = new Date(bookingState.currentMonth.getFullYear(), bookingState.currentMonth.getMonth() + 1, 0);
+        const thirtyDaysOut = new Date(startDate);
+        thirtyDaysOut.setDate(startDate.getDate() + 30);
+        const endDate = lastDayOfMonth > startDate ? lastDayOfMonth : thirtyDaysOut;
 
         loadAvailability(startDate, endDate).then(() => {
           generateCalendar(); // Refresh calendar with availability data
-          autoSelectSoonestSlot(); // Auto-select the soonest available slot across all 3 months
+          autoSelectSoonestSlot(); // Auto-select the soonest available slot
         });
 
-        // Auto-scroll to calendar section for better UX - DISABLED
-        // setTimeout(() => {
-        //   document.getElementById('step-2').scrollIntoView({
-        //     behavior: 'smooth',
-        //     block: 'start'
-        //   });
-        // }, 300);
+        // Auto-scroll to calendar section for better UX
+        setTimeout(() => {
+          document.getElementById('step-2').scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }, 300);
 
         console.log('Selected appointment type:', bookingState.selectedAppointmentType);
       } else {
@@ -3164,9 +2489,6 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
 
       // Auto-select center from URL if present
       await autoSelectCenterFromURL();
-
-      // Show promotional popup after initialization
-      // showPromoPopup(); // Disabled for now
 
       console.log('Initialization complete!');
     });

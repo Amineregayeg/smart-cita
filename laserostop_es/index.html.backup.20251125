@@ -392,6 +392,65 @@
 </div>
 </div>
 </section>
+
+<!-- Sales Countdown Timer Section -->
+<section class="py-4 bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 dark:from-primary/20 dark:via-primary/10 dark:to-primary/20 border-y border-primary/20">
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6">
+      <div class="flex items-center gap-2">
+        <span class="material-icons text-primary text-xl animate-pulse">local_offer</span>
+        <span class="text-sm sm:text-base font-semibold text-gray-800 dark:text-gray-200">¡Oferta especial!</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Termina en:</span>
+        <div class="flex items-center gap-1" id="sales-timer">
+          <div class="bg-primary text-white font-bold text-lg sm:text-xl px-2 py-1 rounded-lg min-w-[2.5rem] text-center shadow-md" id="timer-hours">12</div>
+          <span class="text-primary font-bold text-lg">:</span>
+          <div class="bg-primary text-white font-bold text-lg sm:text-xl px-2 py-1 rounded-lg min-w-[2.5rem] text-center shadow-md" id="timer-minutes">00</div>
+          <span class="text-primary font-bold text-lg">:</span>
+          <div class="bg-primary text-white font-bold text-lg sm:text-xl px-2 py-1 rounded-lg min-w-[2.5rem] text-center shadow-md" id="timer-seconds">00</div>
+        </div>
+      </div>
+      <span class="hidden sm:inline-block text-gray-300 dark:text-gray-600">|</span>
+      <span class="text-xs sm:text-sm font-medium text-primary">-20% en sesiones online</span>
+    </div>
+  </div>
+</section>
+
+<script>
+// Sales Countdown Timer - Resets every 12 hours
+(function() {
+  const hoursEl = document.getElementById('timer-hours');
+  const minutesEl = document.getElementById('timer-minutes');
+  const secondsEl = document.getElementById('timer-seconds');
+
+  function getTimeRemaining() {
+    const now = new Date();
+    const msPerCycle = 12 * 60 * 60 * 1000; // 12 hours in ms
+    const msSinceMidnight = now.getTime() % (24 * 60 * 60 * 1000);
+    const msInCurrentCycle = msSinceMidnight % msPerCycle;
+    const msRemaining = msPerCycle - msInCurrentCycle;
+
+    const hours = Math.floor(msRemaining / (1000 * 60 * 60));
+    const minutes = Math.floor((msRemaining % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((msRemaining % (1000 * 60)) / 1000);
+
+    return { hours, minutes, seconds };
+  }
+
+  function updateTimer() {
+    const time = getTimeRemaining();
+    hoursEl.textContent = String(time.hours).padStart(2, '0');
+    minutesEl.textContent = String(time.minutes).padStart(2, '0');
+    secondsEl.textContent = String(time.seconds).padStart(2, '0');
+  }
+
+  // Update immediately and then every second
+  updateTimer();
+  setInterval(updateTimer, 1000);
+})();
+</script>
+
 <section class="py-16 sm:py-24" id="booking">
 <div class="container mx-auto px-4 sm:px-6 lg:px-8">
 <div class="max-w-4xl mx-auto bg-background-light dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden" style="border: 3px solid #22A9AF;">
@@ -595,173 +654,92 @@ AHORRO
 </div>
 
 <!-- Payment Options Popup (Modal) -->
-<!-- Payment Popup - Redesigned Nov 2025 -->
-<div id="payment-popup" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-<div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-scaleIn relative">
-<!-- Close X Button -->
-<button onclick="closePaymentPopup()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 z-10">
-<span class="material-icons text-2xl">close</span>
-</button>
-
+<div id="payment-popup" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+<div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
 <div class="p-6 sm:p-8">
 <!-- Header -->
 <div class="text-center mb-6">
-<div class="w-16 h-16 bg-gradient-to-br from-primary to-primary/70 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-<span class="material-icons text-4xl text-white">savings</span>
+<div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+<span class="material-icons text-4xl text-primary">credit_card</span>
 </div>
-<h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">¡Ahorra pagando online!</h3>
-<p class="text-gray-600 dark:text-gray-300">Elige tu método de pago preferido</p>
+<h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">¿Sabías que puedes obtener un descuento?</h3>
+<p class="text-gray-600 dark:text-gray-300">Elige cómo prefieres pagar tu sesión</p>
 </div>
 
 <!-- Payment Options -->
 <div class="space-y-4">
-
-<!-- OPTION 1: Pay Online Now (RECOMMENDED) -->
-<div class="border-2 border-primary bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl p-5 pt-6 relative cursor-pointer hover:shadow-lg transition-all transform hover:scale-[1.01]" onclick="selectPaymentOption(1)">
-<!-- Recommended Badge -->
-<div class="absolute -top-3 left-4">
-<span class="bg-gradient-to-r from-primary to-teal-500 text-white text-xs font-bold px-4 py-1.5 rounded-full shadow-md flex items-center gap-1">
-<span class="material-icons text-sm">star</span>
-OPCIÓN RECOMENDADA
-</span>
+<!-- Option 1: Pay at Center (Default - Already Selected) -->
+<div class="border-2 border-primary bg-primary/5 rounded-xl p-6 relative cursor-pointer hover:bg-primary/10 transition-all" onclick="selectPaymentOption(1)">
+<div class="absolute top-4 right-4">
+<span class="bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">SELECCIONADO</span>
 </div>
-
-<div class="flex items-start mt-2">
-<div class="w-12 h-12 bg-primary/20 rounded-xl flex items-center justify-center mr-4 flex-shrink-0">
-<span class="material-icons text-primary text-2xl">flash_on</span>
-</div>
-<div class="flex-1">
-<h4 class="font-bold text-lg text-gray-800 dark:text-white mb-1">Pagar online ahora</h4>
-<p class="text-gray-500 dark:text-gray-400 text-sm mb-3">Pago único seguro con descuento exclusivo</p>
-
-<!-- Price Display -->
-<div class="flex items-center flex-wrap gap-2 mb-3">
-<span id="popup-online-price" class="text-3xl font-bold text-primary">€149</span>
-<span id="popup-online-original" class="text-gray-400 line-through text-lg">€250</span>
-<span id="popup-online-savings" class="bg-green-100 text-green-700 text-sm font-bold px-2 py-1 rounded-lg flex items-center gap-1">
-<span class="material-icons text-sm">local_offer</span>
-AHORRA €<span id="popup-savings-amount">101</span>
-</span>
-</div>
-
-<!-- Benefits List -->
-<ul class="text-sm text-gray-600 dark:text-gray-300 space-y-1.5 mb-4">
-<li class="flex items-center gap-2">
-<span class="material-icons text-green-500 text-base">check_circle</span>
-<span>Confirmación inmediata de tu cita</span>
-</li>
-<li class="flex items-center gap-2">
-<span class="material-icons text-green-500 text-base">check_circle</span>
-<span>Pago 100% seguro con encriptación SSL</span>
-</li>
-<li class="flex items-center gap-2">
-<span class="material-icons text-green-500 text-base">check_circle</span>
-<span>Garantía de reembolso si cancelas 24h antes</span>
-</li>
-</ul>
-
-<!-- CTA Button -->
-<button class="w-full bg-gradient-to-r from-primary to-teal-500 hover:from-primary/90 hover:to-teal-500/90 text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2">
-<span class="material-icons">lock</span>
-<span>Pagar €<span id="popup-online-btn-price">149</span> de forma segura</span>
-</button>
-</div>
-</div>
-</div>
-
-<!-- OPTION 2: Pay at Center -->
-<div class="border-2 border-gray-200 dark:border-gray-700 hover:border-gray-300 rounded-xl p-5 cursor-pointer transition-all hover:bg-gray-50 dark:hover:bg-gray-700/50" onclick="selectPaymentOption(2)">
 <div class="flex items-start">
-<div class="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center mr-4 flex-shrink-0">
-<span class="material-icons text-gray-500 dark:text-gray-400 text-2xl">store</span>
-</div>
+<span class="material-icons text-primary text-3xl mr-4">store</span>
 <div class="flex-1">
 <h4 class="font-bold text-lg text-gray-800 dark:text-white mb-1">Pagar en el centro</h4>
-<p class="text-gray-500 dark:text-gray-400 text-sm mb-3">Paga el día de tu cita en efectivo o tarjeta</p>
-
-<!-- Price Display -->
-<div class="flex items-center flex-wrap gap-2 mb-3">
-<span id="popup-center-price" class="text-2xl font-bold text-gray-700 dark:text-gray-300">€190</span>
-<span id="popup-center-old" class="text-gray-400 line-through text-lg hidden">€250</span>
-<span id="popup-center-standard" class="text-gray-400 text-sm">Precio estándar</span>
-</div>
-
-<!-- Warning Message -->
-<div class="bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700 rounded-lg p-3 flex items-start gap-2">
-<span class="material-icons text-amber-500 text-lg flex-shrink-0">info</span>
-<p class="text-xs text-amber-700 dark:text-amber-300">
-<strong>Nota:</strong> Las reservas sin pago anticipado pueden ser canceladas en caso de alta demanda. Recomendamos el pago online para garantizar tu plaza.
-</p>
-</div>
-</div>
-</div>
-</div>
-
-<!-- OPTION 3: Pay in 3 Installments -->
-<div class="border-2 border-gray-200 dark:border-gray-700 hover:border-blue-300 rounded-xl p-5 cursor-pointer transition-all hover:bg-blue-50/50 dark:hover:bg-blue-900/20" onclick="selectPaymentOption(3)">
-<div class="flex items-start">
-<div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/50 rounded-xl flex items-center justify-center mr-4 flex-shrink-0">
-<span class="material-icons text-blue-600 dark:text-blue-400 text-2xl">calendar_month</span>
-</div>
-<div class="flex-1">
-<h4 class="font-bold text-lg text-gray-800 dark:text-white mb-1">Pagar en 3 cuotas</h4>
-<p class="text-gray-500 dark:text-gray-400 text-sm mb-3">Divide el pago en 3 meses sin intereses</p>
-
-<!-- Price Display -->
-<div class="flex items-center flex-wrap gap-3 mb-3">
+<p class="text-gray-600 dark:text-gray-300 text-sm mb-2">Paga el día de tu cita</p>
 <div class="flex items-baseline">
+<span id="popup-center-price" class="text-3xl font-bold text-primary">€190</span>
+<span id="popup-center-old" class="text-red-500 line-through ml-2 text-lg font-semibold hidden">€280</span>
+<span id="popup-center-standard" class="text-gray-500 ml-2 text-sm">Precio estándar</span>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Option 2: Pay Online Once (Discount) -->
+<div class="border-2 border-gray-200 dark:border-gray-700 hover:border-primary rounded-xl p-6 cursor-pointer transition-all" onclick="selectPaymentOption(2)">
+<div class="flex items-start">
+<span class="material-icons text-purple-600 text-3xl mr-4">flash_on</span>
+<div class="flex-1">
+<div class="flex items-center mb-1">
+<h4 class="font-bold text-lg text-gray-800 dark:text-white">Pagar online ahora</h4>
+<span class="ml-2 bg-purple-100 text-purple-700 text-xs font-bold px-2 py-1 rounded">20€ DESCUENTO</span>
+</div>
+<p class="text-gray-600 dark:text-gray-300 text-sm mb-2">Pago único con descuento inmediato</p>
+<div class="flex items-baseline">
+<span id="popup-online-price" class="text-3xl font-bold text-purple-600">€170</span>
+<span id="popup-online-original" class="text-red-500 line-through ml-2 text-lg font-semibold">€190</span>
+<span class="text-green-600 ml-2 text-sm font-semibold">Ahorras €20</span>
+</div>
+<button class="mt-4 w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center">
+<span class="material-icons mr-2">payment</span>
+Pagar €<span id="popup-online-btn-price">170</span> ahora
+</button>
+</div>
+</div>
+</div>
+
+<!-- Option 3: Pay in 3 Installments -->
+<div class="border-2 border-gray-200 dark:border-gray-700 hover:border-primary rounded-xl p-6 cursor-pointer transition-all" onclick="selectPaymentOption(3)">
+<div class="flex items-start">
+<span class="material-icons text-blue-600 text-3xl mr-4">calendar_today</span>
+<div class="flex-1">
+<h4 class="font-bold text-lg text-gray-800 dark:text-white mb-1">Pagar en 3 cuotas mensuales</h4>
+<p class="text-gray-600 dark:text-gray-300 text-sm mb-2">Facilita el pago dividiéndolo en 3 meses</p>
+<div class="flex items-baseline mb-2">
 <span class="text-2xl font-bold text-blue-600">3 ×</span>
-<span id="popup-monthly-price" class="text-3xl font-bold text-blue-600 ml-1">€50</span>
-<span class="text-gray-400 ml-1 text-sm">/mes</span>
+<span id="popup-monthly-price" class="text-3xl font-bold text-blue-600 ml-2">€65</span>
+<span class="text-gray-500 ml-2 text-sm">/mes</span>
 </div>
-<span class="text-gray-400 text-sm">(Total: €<span id="popup-monthly-total">150</span>)</span>
-</div>
-
-<!-- Benefits -->
-<ul class="text-sm text-gray-600 dark:text-gray-300 space-y-1 mb-4">
-<li class="flex items-center gap-2">
-<span class="material-icons text-blue-500 text-base">check_circle</span>
-<span>Reserva confirmada inmediatamente</span>
-</li>
-<li class="flex items-center gap-2">
-<span class="material-icons text-blue-500 text-base">check_circle</span>
-<span>Sin intereses ni comisiones</span>
-</li>
-</ul>
-
-<!-- CTA Button -->
-<button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-xl transition-all flex items-center justify-center gap-2">
-<span class="material-icons">schedule</span>
-<span>Pagar en 3 cuotas de €<span id="popup-monthly-btn-price">50</span></span>
+<p class="text-gray-500 text-xs mb-4">Total: €<span id="popup-monthly-total">195</span></p>
+<button class="mt-2 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center">
+<span class="material-icons mr-2">schedule</span>
+Pagar en 3 cuotas
 </button>
 </div>
 </div>
 </div>
-
 </div>
 
-<!-- Security Footer -->
-<div class="mt-6 pt-5 border-t border-gray-200 dark:border-gray-700">
-<div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-<!-- Security Text -->
-<div class="flex items-center gap-2 text-gray-500 dark:text-gray-400 text-sm">
-<span class="material-icons text-green-500">verified_user</span>
-<span>Pago protegido con encriptación SSL de 256-bit</span>
-</div>
-</div>
-<!-- Payment Logos -->
-<div class="flex items-center justify-center gap-4 mt-4 opacity-60">
-<img src="https://cdn.jsdelivr.net/gh/nickytonline/random-images/stripe-logo.svg" alt="Stripe" class="h-6 grayscale hover:grayscale-0 transition-all" onerror="this.style.display='none'">
-<img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" class="h-5 grayscale hover:grayscale-0 transition-all">
-<img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" class="h-8 grayscale hover:grayscale-0 transition-all">
-</div>
-</div>
-
-<!-- Close Link -->
-<div class="mt-4 text-center">
-<button onclick="closePaymentPopup()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-sm font-medium transition-colors">
-Cerrar y pagar en el centro
+<!-- Close Button -->
+<div class="mt-6 text-center">
+<button onclick="closePaymentPopup()" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 font-medium">
+Cerrar y continuar con pago en centro
 </button>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -795,8 +773,82 @@ Cerrar y pagar en el centro
 
 </section>
 
-<!-- About Section -->
-<section class="py-16 sm:py-24 bg-white dark:bg-gray-900" id="about">
+<!-- 3 Verified Reviews Section - Right after booking form -->
+<section class="bg-gray-50 dark:bg-gray-900/50 py-12 sm:py-16" id="reviews">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="text-center mb-8">
+<div class="flex items-center justify-center gap-3 mb-4">
+<img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png" alt="Google" class="h-5 opacity-80">
+<div class="flex items-baseline gap-2">
+<span class="text-2xl font-bold text-primary">4.8</span>
+<div class="flex text-yellow-400 text-lg">
+<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+</div>
+</div>
+</div>
+<p class="text-gray-500 dark:text-gray-400 text-sm">Reseñas verificadas de Google</p>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+<!-- Review 1 -->
+<article class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm">
+<div class="flex items-start gap-4 mb-4">
+<img src="https://ui-avatars.com/api/?name=Mauricio+M&background=22A9AF&color=fff&size=48" alt="Mauricio M." class="w-12 h-12 rounded-full flex-shrink-0">
+<div class="flex-1 min-w-0">
+<h3 class="font-semibold text-text-light dark:text-text-dark">Mauricio M.</h3>
+<div class="flex items-center gap-2 mt-1">
+<div class="flex text-yellow-400 text-sm">
+<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+</div>
+</div>
+</div>
+</div>
+<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+Después de 42 años fumando logré dejarlo gracias a Nabila. El tratamiento fue cómodo, sin ansiedad y realmente efectivo.
+</p>
+</article>
+
+<!-- Review 2 -->
+<article class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm">
+<div class="flex items-start gap-4 mb-4">
+<img src="https://ui-avatars.com/api/?name=Raul+L&background=843ed4&color=fff&size=48" alt="Raul L." class="w-12 h-12 rounded-full flex-shrink-0">
+<div class="flex-1 min-w-0">
+<h3 class="font-semibold text-text-light dark:text-text-dark">Raul L.</h3>
+<div class="flex items-center gap-2 mt-1">
+<div class="flex text-yellow-400 text-sm">
+<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+</div>
+</div>
+</div>
+</div>
+<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+Muy contento con el tratamiento de Nabila. Dejé de fumar de un día para otro y me siento completamente renovado.
+</p>
+</article>
+
+<!-- Review 3 -->
+<article class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm">
+<div class="flex items-start gap-4 mb-4">
+<img src="https://ui-avatars.com/api/?name=Alexandre+M&background=f59e0b&color=fff&size=48" alt="Alexandre M." class="w-12 h-12 rounded-full flex-shrink-0">
+<div class="flex-1 min-w-0">
+<h3 class="font-semibold text-text-light dark:text-text-dark">Alexandre M.</h3>
+<div class="flex items-center gap-2 mt-1">
+<div class="flex text-yellow-400 text-sm">
+<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+</div>
+</div>
+</div>
+</div>
+<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+Tras varios intentos fallidos probé el láser y funcionó de inmediato. Cero ansiedad y sin ganas de fumar. Excelente atención.
+</p>
+</article>
+</div>
+</div>
+</section>
+
+<!-- How It Works Section -->
+<section class="py-16 sm:py-24 bg-white dark:bg-gray-900" id="how-it-works">
 <div class="container mx-auto px-4 sm:px-6 lg:px-8">
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
 <!-- About Video - Left on Desktop, Top on Mobile -->
@@ -810,7 +862,7 @@ Cerrar y pagar en el centro
   playsinline
   poster="assets/cigarettes.png"
 >
-  <source src="assets/about-video.mp4" type="video/mp4">
+  <source src="../laserostop_espagna/assets/about-video.mp4" type="video/mp4">
   Tu navegador no soporta el elemento de vídeo.
 </video>
 <!-- Audio Toggle Button -->
@@ -833,7 +885,7 @@ Cerrar y pagar en el centro
 <div class="order-2 lg:order-2">
 <div class="max-w-xl lg:max-w-none">
 <h2 class="text-3xl sm:text-4xl font-bold text-text-light dark:text-text-dark mb-4">
-<span class="text-primary">Sobre</span> LaserOstop
+<span class="text-primary">Cómo</span> funciona
 </h2>
 <div class="h-1 w-20 bg-primary rounded mb-6"></div>
 <div class="prose prose-lg dark:prose-invert max-w-none">
@@ -861,487 +913,99 @@ Con más de <strong class="text-primary">500,000 personas asistidas</strong> en 
 </div>
 </section>
 
-<section class="bg-gray-50 dark:bg-gray-900/50 py-16 sm:py-24">
+<!-- Guarantee + Security Section -->
+<section class="bg-gray-50 dark:bg-gray-900/50 py-12 sm:py-16" id="guarantee">
 <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-<h2 class="text-3xl font-bold text-center mb-10 text-text-light dark:text-text-dark">Nuestros centros cerca de usted</h2>
-<div id="spain-map-container" class="rounded-lg overflow-hidden shadow-xl">
-<div id="spain-map"></div>
+<div class="max-w-3xl mx-auto text-center">
+<div class="mb-6">
+<span class="material-icons text-5xl text-primary">verified_user</span>
+</div>
+<h2 class="text-2xl sm:text-3xl font-bold text-text-light dark:text-text-dark mb-4">Garantía y seguridad</h2>
+<p class="text-gray-600 dark:text-gray-400 mb-8">
+Su pago está protegido con encriptación SSL. Garantía de reembolso si cancela 24h antes de su cita.
+</p>
+
+<!-- Payment Badges -->
+<div class="flex flex-wrap items-center justify-center gap-4 mb-6">
+<img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" alt="Stripe" class="h-8 opacity-70">
+<img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" class="h-6 opacity-70">
+<img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" class="h-8 opacity-70">
+</div>
+<p class="text-sm text-gray-500 dark:text-gray-500">Pago protegido con encriptación SSL y validado por Stripe</p>
 </div>
 </div>
 </section>
 
-<!-- Google Reviews Section - Infinite Scroll Carousel -->
-<section id="testimonials" class="bg-white dark:bg-gray-800 py-16 sm:py-24 overflow-hidden">
-<div class="max-w-7xl mx-auto">
-<!-- Section Header -->
-<div class="text-center mb-12 px-4 sm:px-6 lg:px-8">
-<h2 class="text-3xl sm:text-4xl font-bold text-text-light dark:text-text-dark mb-4">Lo que dicen nuestros clientes</h2>
-<p class="text-lg text-gray-600 dark:text-gray-400 mb-6">Más de 1,000 personas han dejado de fumar con LaserOstop</p>
+<!-- FAQ Section -->
+<section class="bg-white dark:bg-gray-900 py-12 sm:py-16" id="faq">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="max-w-3xl mx-auto">
+<h2 class="text-2xl sm:text-3xl font-bold text-center text-text-light dark:text-text-dark mb-8">Preguntas frecuentes</h2>
 
-<!-- Google Rating Aggregate -->
-<div class="flex items-center justify-center gap-3 mb-2">
-<img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png" alt="Google" class="h-6 opacity-80">
-<div class="flex items-baseline gap-2">
-<span class="text-4xl font-bold text-primary">4.8</span>
-<div class="flex text-yellow-400 text-2xl">
-<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-</div>
-</div>
-</div>
-<p class="text-gray-500 dark:text-gray-400 text-sm">(1,234 reseñas verificadas)</p>
-</div>
-
-<!-- Carousel Row 1 - Scrolls Left -->
-<div class="carousel-container carousel-row-1 mb-6">
-<div class="carousel-track">
-<!-- Original 6 reviews -->
-<article class="review-card-carousel bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-shadow">
-<div class="flex items-start gap-4 mb-4">
-<img src="https://ui-avatars.com/api/?name=Mauricio+M&background=22A9AF&color=fff&size=48" alt="Mauricio M." class="w-12 h-12 rounded-full flex-shrink-0">
-<div class="flex-1 min-w-0">
-<h3 class="font-semibold text-text-light dark:text-text-dark">Mauricio M.</h3>
-<div class="flex items-center gap-2 mt-1">
-<div class="flex text-yellow-400 text-sm">
-<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-</div>
-<span class="text-xs text-gray-500 dark:text-gray-400">Hace 6 meses</span>
-</div>
-</div>
-</div>
-<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
-Después de 42 años fumando logré dejarlo gracias a Nabila. El tratamiento fue cómodo, sin ansiedad y realmente efectivo.
+<div class="space-y-4">
+<!-- FAQ Item 1 -->
+<details class="group bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
+<summary class="flex items-center justify-between cursor-pointer font-semibold text-text-light dark:text-text-dark">
+¿Es doloroso el tratamiento?
+<span class="material-icons text-primary group-open:rotate-180 transition-transform">expand_more</span>
+</summary>
+<p class="mt-3 text-gray-600 dark:text-gray-400 text-sm">
+No, el tratamiento con láser es completamente indoloro. Solo sentirá una ligera sensación de calor en los puntos de aplicación.
 </p>
-</article>
+</details>
 
-<article class="review-card-carousel bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-shadow">
-<div class="flex items-start gap-4 mb-4">
-<img src="https://ui-avatars.com/api/?name=Raul+L&background=843ed4&color=fff&size=48" alt="Raul L." class="w-12 h-12 rounded-full flex-shrink-0">
-<div class="flex-1 min-w-0">
-<h3 class="font-semibold text-text-light dark:text-text-dark">Raul L.</h3>
-<div class="flex items-center gap-2 mt-1">
-<div class="flex text-yellow-400 text-sm">
-<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-</div>
-<span class="text-xs text-gray-500 dark:text-gray-400">Hace 1 semana</span>
-</div>
-</div>
-</div>
-<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
-Muy contento con el tratamiento de Nabila. Dejé de fumar de un día para otro y me siento completamente renovado.
+<!-- FAQ Item 2 -->
+<details class="group bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
+<summary class="flex items-center justify-between cursor-pointer font-semibold text-text-light dark:text-text-dark">
+¿Cuántas sesiones necesito?
+<span class="material-icons text-primary group-open:rotate-180 transition-transform">expand_more</span>
+</summary>
+<p class="mt-3 text-gray-600 dark:text-gray-400 text-sm">
+La mayoría de nuestros clientes logran dejar de fumar con una sola sesión de 60 minutos. En caso de recaída, ofrecemos sesiones de refuerzo gratuitas.
 </p>
-</article>
+</details>
 
-<article class="review-card-carousel bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-shadow">
-<div class="flex items-start gap-4 mb-4">
-<img src="https://ui-avatars.com/api/?name=Alexandre+M&background=f59e0b&color=fff&size=48" alt="Alexandre M." class="w-12 h-12 rounded-full flex-shrink-0">
-<div class="flex-1 min-w-0">
-<h3 class="font-semibold text-text-light dark:text-text-dark">Alexandre M.</h3>
-<div class="flex items-center gap-2 mt-1">
-<div class="flex text-yellow-400 text-sm">
-<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-</div>
-<span class="text-xs text-gray-500 dark:text-gray-400">Hace 2 días</span>
-</div>
-</div>
-</div>
-<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
-Tras varios intentos fallidos probé el láser y funcionó de inmediato. Cero ansiedad y sin ganas de fumar. Excelente atención.
+<!-- FAQ Item 3 -->
+<details class="group bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
+<summary class="flex items-center justify-between cursor-pointer font-semibold text-text-light dark:text-text-dark">
+¿Hay efectos secundarios?
+<span class="material-icons text-primary group-open:rotate-180 transition-transform">expand_more</span>
+</summary>
+<p class="mt-3 text-gray-600 dark:text-gray-400 text-sm">
+No hay efectos secundarios. A diferencia de otros métodos, no experimentará aumento de peso, ansiedad ni síntomas de abstinencia.
 </p>
-</article>
+</details>
 
-<article class="review-card-carousel bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-shadow">
-<div class="flex items-start gap-4 mb-4">
-<img src="https://ui-avatars.com/api/?name=Victoria+G&background=10b981&color=fff&size=48" alt="Victoria G." class="w-12 h-12 rounded-full flex-shrink-0">
-<div class="flex-1 min-w-0">
-<h3 class="font-semibold text-text-light dark:text-text-dark">Victoria G.</h3>
-<div class="flex items-center gap-2 mt-1">
-<div class="flex text-yellow-400 text-sm">
-<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-</div>
-<span class="text-xs text-gray-500 dark:text-gray-400">Hace 4 meses</span>
-</div>
-</div>
-</div>
-<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
-Fui con mi marido para el tratamiento y ha sido un éxito. En dos semanas sin fumar, ambos muy satisfechos con el resultado.
+<!-- FAQ Item 4 -->
+<details class="group bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
+<summary class="flex items-center justify-between cursor-pointer font-semibold text-text-light dark:text-text-dark">
+¿Puedo cancelar mi cita?
+<span class="material-icons text-primary group-open:rotate-180 transition-transform">expand_more</span>
+</summary>
+<p class="mt-3 text-gray-600 dark:text-gray-400 text-sm">
+Sí, puede cancelar o reprogramar su cita hasta 24 horas antes sin coste. Si ha pagado online, le reembolsamos el 100% del importe.
 </p>
-</article>
+</details>
+</div>
+</div>
+</div>
+</section>
 
-<article class="review-card-carousel bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-shadow">
-<div class="flex items-start gap-4 mb-4">
-<img src="https://ui-avatars.com/api/?name=Cristina+B&background=ef4444&color=fff&size=48" alt="Cristina B." class="w-12 h-12 rounded-full flex-shrink-0">
-<div class="flex-1 min-w-0">
-<h3 class="font-semibold text-text-light dark:text-text-dark">Cristina B.</h3>
-<div class="flex items-center gap-2 mt-1">
-<div class="flex text-yellow-400 text-sm">
-<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-</div>
-<span class="text-xs text-gray-500 dark:text-gray-400">Hace 2 semanas</span>
-</div>
-</div>
-</div>
-<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
-Estoy encantada con el método. Fui sin expectativas y en dos semanas dejé de fumar. Trato profesional y humano.
+<!-- Final CTA Section -->
+<section class="bg-primary py-12 sm:py-16" id="final-cta">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+<h2 class="text-2xl sm:text-3xl font-bold text-white mb-4">¿Listo para dejar de fumar?</h2>
+<p class="text-white/80 mb-8 max-w-2xl mx-auto">
+Más de 500,000 personas ya lo han conseguido. Reserve su cita hoy y dé el primer paso hacia una vida sin tabaco.
 </p>
-</article>
-
-<article class="review-card-carousel bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-shadow">
-<div class="flex items-start gap-4 mb-4">
-<img src="https://ui-avatars.com/api/?name=Nuria+M&background=6366f1&color=fff&size=48" alt="Nuria M." class="w-12 h-12 rounded-full flex-shrink-0">
-<div class="flex-1 min-w-0">
-<h3 class="font-semibold text-text-light dark:text-text-dark">Nuria M.</h3>
-<div class="flex items-center gap-2 mt-1">
-<div class="flex text-yellow-400 text-sm">
-<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-</div>
-<span class="text-xs text-gray-500 dark:text-gray-400">Hace 4 meses</span>
-</div>
-</div>
-</div>
-<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
-Nabila me explicó todo con claridad. La sesión fue relajante, sin dolor, y desde entonces no he vuelto a tener ganas de fumar.
-</p>
-</article>
-
-<!-- Duplicate for seamless loop -->
-<article class="review-card-carousel bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-shadow">
-<div class="flex items-start gap-4 mb-4">
-<img src="https://ui-avatars.com/api/?name=Mauricio+M&background=22A9AF&color=fff&size=48" alt="Mauricio M." class="w-12 h-12 rounded-full flex-shrink-0">
-<div class="flex-1 min-w-0">
-<h3 class="font-semibold text-text-light dark:text-text-dark">Mauricio M.</h3>
-<div class="flex items-center gap-2 mt-1">
-<div class="flex text-yellow-400 text-sm">
-<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-</div>
-<span class="text-xs text-gray-500 dark:text-gray-400">Hace 6 meses</span>
-</div>
-</div>
-</div>
-<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
-Después de 42 años fumando logré dejarlo gracias a Nabila. El tratamiento fue cómodo, sin ansiedad y realmente efectivo.
-</p>
-</article>
-
-<article class="review-card-carousel bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-shadow">
-<div class="flex items-start gap-4 mb-4">
-<img src="https://ui-avatars.com/api/?name=Raul+L&background=843ed4&color=fff&size=48" alt="Raul L." class="w-12 h-12 rounded-full flex-shrink-0">
-<div class="flex-1 min-w-0">
-<h3 class="font-semibold text-text-light dark:text-text-dark">Raul L.</h3>
-<div class="flex items-center gap-2 mt-1">
-<div class="flex text-yellow-400 text-sm">
-<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-</div>
-<span class="text-xs text-gray-500 dark:text-gray-400">Hace 1 semana</span>
-</div>
-</div>
-</div>
-<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
-Muy contento con el tratamiento de Nabila. Dejé de fumar de un día para otro y me siento completamente renovado.
-</p>
-</article>
-
-<article class="review-card-carousel bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-shadow">
-<div class="flex items-start gap-4 mb-4">
-<img src="https://ui-avatars.com/api/?name=Alexandre+M&background=f59e0b&color=fff&size=48" alt="Alexandre M." class="w-12 h-12 rounded-full flex-shrink-0">
-<div class="flex-1 min-w-0">
-<h3 class="font-semibold text-text-light dark:text-text-dark">Alexandre M.</h3>
-<div class="flex items-center gap-2 mt-1">
-<div class="flex text-yellow-400 text-sm">
-<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-</div>
-<span class="text-xs text-gray-500 dark:text-gray-400">Hace 2 días</span>
-</div>
-</div>
-</div>
-<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
-Tras varios intentos fallidos probé el láser y funcionó de inmediato. Cero ansiedad y sin ganas de fumar. Excelente atención.
-</p>
-</article>
-
-<article class="review-card-carousel bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-shadow">
-<div class="flex items-start gap-4 mb-4">
-<img src="https://ui-avatars.com/api/?name=Victoria+G&background=10b981&color=fff&size=48" alt="Victoria G." class="w-12 h-12 rounded-full flex-shrink-0">
-<div class="flex-1 min-w-0">
-<h3 class="font-semibold text-text-light dark:text-text-dark">Victoria G.</h3>
-<div class="flex items-center gap-2 mt-1">
-<div class="flex text-yellow-400 text-sm">
-<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-</div>
-<span class="text-xs text-gray-500 dark:text-gray-400">Hace 4 meses</span>
-</div>
-</div>
-</div>
-<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
-Fui con mi marido para el tratamiento y ha sido un éxito. En dos semanas sin fumar, ambos muy satisfechos con el resultado.
-</p>
-</article>
-
-<article class="review-card-carousel bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-shadow">
-<div class="flex items-start gap-4 mb-4">
-<img src="https://ui-avatars.com/api/?name=Cristina+B&background=ef4444&color=fff&size=48" alt="Cristina B." class="w-12 h-12 rounded-full flex-shrink-0">
-<div class="flex-1 min-w-0">
-<h3 class="font-semibold text-text-light dark:text-text-dark">Cristina B.</h3>
-<div class="flex items-center gap-2 mt-1">
-<div class="flex text-yellow-400 text-sm">
-<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-</div>
-<span class="text-xs text-gray-500 dark:text-gray-400">Hace 2 semanas</span>
-</div>
-</div>
-</div>
-<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
-Estoy encantada con el método. Fui sin expectativas y en dos semanas dejé de fumar. Trato profesional y humano.
-</p>
-</article>
-
-<article class="review-card-carousel bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-shadow">
-<div class="flex items-start gap-4 mb-4">
-<img src="https://ui-avatars.com/api/?name=Nuria+M&background=6366f1&color=fff&size=48" alt="Nuria M." class="w-12 h-12 rounded-full flex-shrink-0">
-<div class="flex-1 min-w-0">
-<h3 class="font-semibold text-text-light dark:text-text-dark">Nuria M.</h3>
-<div class="flex items-center gap-2 mt-1">
-<div class="flex text-yellow-400 text-sm">
-<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-</div>
-<span class="text-xs text-gray-500 dark:text-gray-400">Hace 4 meses</span>
-</div>
-</div>
-</div>
-<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
-Nabila me explicó todo con claridad. La sesión fue relajante, sin dolor, y desde entonces no he vuelto a tener ganas de fumar.
-</p>
-</article>
-</div>
-</div>
-
-<!-- Carousel Row 2 - Scrolls Right -->
-<div class="carousel-container carousel-row-2">
-<div class="carousel-track">
-<!-- Different 6 reviews -->
-<article class="review-card-carousel bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-shadow">
-<div class="flex items-start gap-4 mb-4">
-<img src="https://ui-avatars.com/api/?name=Maya+Rodriguez&background=8b5cf6&color=fff&size=48" alt="Maya Rodriguez" class="w-12 h-12 rounded-full flex-shrink-0">
-<div class="flex-1 min-w-0">
-<h3 class="font-semibold text-text-light dark:text-text-dark">Maya Rodriguez</h3>
-<div class="flex items-center gap-2 mt-1">
-<div class="flex text-yellow-400 text-sm">
-<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-</div>
-<span class="text-xs text-gray-500 dark:text-gray-400">Hace 8 meses</span>
-</div>
-</div>
-</div>
-<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
-Fumé desde los 14 años y con Láser Stop logré dejarlo después de más de 40 años fumando. El método redujo mi ansiedad y Nabila fue muy cercana.
-</p>
-</article>
-
-<article class="review-card-carousel bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-shadow">
-<div class="flex items-start gap-4 mb-4">
-<img src="https://ui-avatars.com/api/?name=Paito+Luque&background=ec4899&color=fff&size=48" alt="Paito Luque" class="w-12 h-12 rounded-full flex-shrink-0">
-<div class="flex-1 min-w-0">
-<h3 class="font-semibold text-text-light dark:text-text-dark">Paito Luque</h3>
-<div class="flex items-center gap-2 mt-1">
-<div class="flex text-yellow-400 text-sm">
-<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-</div>
-<span class="text-xs text-gray-500 dark:text-gray-400">Hace 6 meses</span>
-</div>
-</div>
-</div>
-<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
-La sesión fue relajante y sin dolor. Llevo once días sin fumar, duermo mejor y me siento más tranquila. Recomiendo Láser Stop al cien por cien.
-</p>
-</article>
-
-<article class="review-card-carousel bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-shadow">
-<div class="flex items-start gap-4 mb-4">
-<img src="https://ui-avatars.com/api/?name=Alexi+Vela&background=14b8a6&color=fff&size=48" alt="Alexi Vela Pinargote" class="w-12 h-12 rounded-full flex-shrink-0">
-<div class="flex-1 min-w-0">
-<h3 class="font-semibold text-text-light dark:text-text-dark">Alexi Vela Pinargote</h3>
-<div class="flex items-center gap-2 mt-1">
-<div class="flex text-yellow-400 text-sm">
-<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-</div>
-<span class="text-xs text-gray-500 dark:text-gray-400">Hace 7 meses</span>
-</div>
-</div>
-</div>
-<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
-Atención impecable y trato muy amable. Ocho días sin fumar y sin ansiedad. El procedimiento fue claro y sin molestias. Lo recomiendo con confianza.
-</p>
-</article>
-
-<article class="review-card-carousel bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-shadow">
-<div class="flex items-start gap-4 mb-4">
-<img src="https://ui-avatars.com/api/?name=Mireia+Gubern&background=f97316&color=fff&size=48" alt="Mireia Gubern" class="w-12 h-12 rounded-full flex-shrink-0">
-<div class="flex-1 min-w-0">
-<h3 class="font-semibold text-text-light dark:text-text-dark">Mireia Gubern</h3>
-<div class="flex items-center gap-2 mt-1">
-<div class="flex text-yellow-400 text-sm">
-<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-</div>
-<span class="text-xs text-gray-500 dark:text-gray-400">Hace 2 meses</span>
-</div>
-</div>
-</div>
-<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
-Muy buena experiencia y totalmente recomendable. Seis meses sin fumar después de muchos años. Gracias a Láser Stop Barcelona por su ayuda.
-</p>
-</article>
-
-<article class="review-card-carousel bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-shadow">
-<div class="flex items-start gap-4 mb-4">
-<img src="https://ui-avatars.com/api/?name=Ana+Fuente&background=06b6d4&color=fff&size=48" alt="Ana Fuente" class="w-12 h-12 rounded-full flex-shrink-0">
-<div class="flex-1 min-w-0">
-<h3 class="font-semibold text-text-light dark:text-text-dark">Ana Fuente</h3>
-<div class="flex items-center gap-2 mt-1">
-<div class="flex text-yellow-400 text-sm">
-<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-</div>
-<span class="text-xs text-gray-500 dark:text-gray-400">Hace 7 meses</span>
-</div>
-</div>
-</div>
-<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
-Sigo sin fumar y mi ansiedad ha desaparecido. Había probado de todo sin éxito, pero este método realmente funciona. Solo hay que querer hacerlo.
-</p>
-</article>
-
-<article class="review-card-carousel bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-shadow">
-<div class="flex items-start gap-4 mb-4">
-<img src="https://ui-avatars.com/api/?name=Dori+Pascual&background=a855f7&color=fff&size=48" alt="Dori Pascual" class="w-12 h-12 rounded-full flex-shrink-0">
-<div class="flex-1 min-w-0">
-<h3 class="font-semibold text-text-light dark:text-text-dark">Dori Pascual</h3>
-<div class="flex items-center gap-2 mt-1">
-<div class="flex text-yellow-400 text-sm">
-<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-</div>
-<span class="text-xs text-gray-500 dark:text-gray-400">Hace 4 meses</span>
-</div>
-</div>
-</div>
-<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
-Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me siento feliz. Gracias Nabila por tu profesionalidad y apoyo.
-</p>
-</article>
-
-<!-- Duplicate for seamless loop -->
-<article class="review-card-carousel bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-shadow">
-<div class="flex items-start gap-4 mb-4">
-<img src="https://ui-avatars.com/api/?name=Maya+Rodriguez&background=8b5cf6&color=fff&size=48" alt="Maya Rodriguez" class="w-12 h-12 rounded-full flex-shrink-0">
-<div class="flex-1 min-w-0">
-<h3 class="font-semibold text-text-light dark:text-text-dark">Maya Rodriguez</h3>
-<div class="flex items-center gap-2 mt-1">
-<div class="flex text-yellow-400 text-sm">
-<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-</div>
-<span class="text-xs text-gray-500 dark:text-gray-400">Hace 8 meses</span>
-</div>
-</div>
-</div>
-<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
-Fumé desde los 14 años y con Láser Stop logré dejarlo después de más de 40 años fumando. El método redujo mi ansiedad y Nabila fue muy cercana.
-</p>
-</article>
-
-<article class="review-card-carousel bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-shadow">
-<div class="flex items-start gap-4 mb-4">
-<img src="https://ui-avatars.com/api/?name=Paito+Luque&background=ec4899&color=fff&size=48" alt="Paito Luque" class="w-12 h-12 rounded-full flex-shrink-0">
-<div class="flex-1 min-w-0">
-<h3 class="font-semibold text-text-light dark:text-text-dark">Paito Luque</h3>
-<div class="flex items-center gap-2 mt-1">
-<div class="flex text-yellow-400 text-sm">
-<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-</div>
-<span class="text-xs text-gray-500 dark:text-gray-400">Hace 6 meses</span>
-</div>
-</div>
-</div>
-<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
-La sesión fue relajante y sin dolor. Llevo once días sin fumar, duermo mejor y me siento más tranquila. Recomiendo Láser Stop al cien por cien.
-</p>
-</article>
-
-<article class="review-card-carousel bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-shadow">
-<div class="flex items-start gap-4 mb-4">
-<img src="https://ui-avatars.com/api/?name=Alexi+Vela&background=14b8a6&color=fff&size=48" alt="Alexi Vela Pinargote" class="w-12 h-12 rounded-full flex-shrink-0">
-<div class="flex-1 min-w-0">
-<h3 class="font-semibold text-text-light dark:text-text-dark">Alexi Vela Pinargote</h3>
-<div class="flex items-center gap-2 mt-1">
-<div class="flex text-yellow-400 text-sm">
-<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-</div>
-<span class="text-xs text-gray-500 dark:text-gray-400">Hace 7 meses</span>
-</div>
-</div>
-</div>
-<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
-Atención impecable y trato muy amable. Ocho días sin fumar y sin ansiedad. El procedimiento fue claro y sin molestias. Lo recomiendo con confianza.
-</p>
-</article>
-
-<article class="review-card-carousel bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-shadow">
-<div class="flex items-start gap-4 mb-4">
-<img src="https://ui-avatars.com/api/?name=Mireia+Gubern&background=f97316&color=fff&size=48" alt="Mireia Gubern" class="w-12 h-12 rounded-full flex-shrink-0">
-<div class="flex-1 min-w-0">
-<h3 class="font-semibold text-text-light dark:text-text-dark">Mireia Gubern</h3>
-<div class="flex items-center gap-2 mt-1">
-<div class="flex text-yellow-400 text-sm">
-<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-</div>
-<span class="text-xs text-gray-500 dark:text-gray-400">Hace 2 meses</span>
-</div>
-</div>
-</div>
-<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
-Muy buena experiencia y totalmente recomendable. Seis meses sin fumar después de muchos años. Gracias a Láser Stop Barcelona por su ayuda.
-</p>
-</article>
-
-<article class="review-card-carousel bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-shadow">
-<div class="flex items-start gap-4 mb-4">
-<img src="https://ui-avatars.com/api/?name=Ana+Fuente&background=06b6d4&color=fff&size=48" alt="Ana Fuente" class="w-12 h-12 rounded-full flex-shrink-0">
-<div class="flex-1 min-w-0">
-<h3 class="font-semibold text-text-light dark:text-text-dark">Ana Fuente</h3>
-<div class="flex items-center gap-2 mt-1">
-<div class="flex text-yellow-400 text-sm">
-<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-</div>
-<span class="text-xs text-gray-500 dark:text-gray-400">Hace 7 meses</span>
-</div>
-</div>
-</div>
-<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
-Sigo sin fumar y mi ansiedad ha desaparecido. Había probado de todo sin éxito, pero este método realmente funciona. Solo hay que querer hacerlo.
-</p>
-</article>
-
-<article class="review-card-carousel bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-600 hover:shadow-xl transition-shadow">
-<div class="flex items-start gap-4 mb-4">
-<img src="https://ui-avatars.com/api/?name=Dori+Pascual&background=a855f7&color=fff&size=48" alt="Dori Pascual" class="w-12 h-12 rounded-full flex-shrink-0">
-<div class="flex-1 min-w-0">
-<h3 class="font-semibold text-text-light dark:text-text-dark">Dori Pascual</h3>
-<div class="flex items-center gap-2 mt-1">
-<div class="flex text-yellow-400 text-sm">
-<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-</div>
-<span class="text-xs text-gray-500 dark:text-gray-400">Hace 4 meses</span>
-</div>
-</div>
-</div>
-<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
-Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me siento feliz. Gracias Nabila por tu profesionalidad y apoyo.
-</p>
-</article>
-</div>
-</div>
-
+<a href="#booking" class="smooth-scroll inline-flex items-center gap-2 bg-white hover:bg-gray-100 text-primary font-semibold px-8 py-4 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
+<span class="material-icons">event_available</span>
+<span>Reservar mi cita ahora</span>
+</a>
 </div>
 </section>
 
 </main>
-
 <!-- WhatsApp Floating Button -->
 <a href="https://wa.me/34689560130" target="_blank" rel="noopener noreferrer" class="fixed bottom-6 right-6 z-50 bg-green-500 hover:bg-green-600 text-white rounded-full p-4 shadow-2xl transition-all duration-300 transform hover:scale-110 flex items-center justify-center group" aria-label="Contactar por WhatsApp">
   <!-- WhatsApp Icon (SVG) -->
@@ -1353,6 +1017,78 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
     ¿Necesitas ayuda? Chatea con nosotros
   </span>
 </a>
+
+<!-- Social Proof Notification -->
+<div id="social-proof-notification" class="fixed bottom-6 left-6 z-50 bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-4 max-w-xs transform -translate-x-full opacity-0 transition-all duration-500 ease-out border border-gray-100 dark:border-gray-700">
+  <div class="flex items-start gap-3">
+    <div class="flex-shrink-0 w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+      <span class="material-icons text-primary text-xl">check_circle</span>
+    </div>
+    <div class="flex-1 min-w-0">
+      <p class="text-sm font-medium text-gray-900 dark:text-white" id="social-proof-name">María G.</p>
+      <p class="text-xs text-gray-500 dark:text-gray-400" id="social-proof-message">acaba de reservar una sesión</p>
+      <p class="text-xs text-primary mt-1" id="social-proof-location">Madrid</p>
+    </div>
+    <button onclick="hideSocialProof()" class="flex-shrink-0 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+      <span class="material-icons text-lg">close</span>
+    </button>
+  </div>
+</div>
+
+<script>
+// Social Proof Notification System
+(function() {
+  const names = [
+    'María G.', 'Carlos R.', 'Ana M.', 'Pedro L.', 'Laura S.',
+    'Miguel A.', 'Carmen P.', 'Francisco J.', 'Isabel T.', 'Antonio B.',
+    'Elena V.', 'Javier M.', 'Rosa C.', 'Manuel D.', 'Patricia H.'
+  ];
+
+  const cities = [
+    'Madrid', 'Barcelona', 'Valencia', 'Sevilla', 'San Sebastián de los Reyes',
+    'Majadahonda', 'Torrejón de Ardoz'
+  ];
+
+  const messages = [
+    'acaba de reservar una sesión',
+    'ha reservado su cita',
+    'se ha apuntado para dejar de fumar',
+    'ha dado el primer paso'
+  ];
+
+  const notification = document.getElementById('social-proof-notification');
+  const nameEl = document.getElementById('social-proof-name');
+  const messageEl = document.getElementById('social-proof-message');
+  const locationEl = document.getElementById('social-proof-location');
+
+  function getRandomItem(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+  }
+
+  function showSocialProof() {
+    // Update content with random data
+    nameEl.textContent = getRandomItem(names);
+    messageEl.textContent = getRandomItem(messages);
+    locationEl.textContent = getRandomItem(cities);
+
+    // Show notification
+    notification.classList.remove('-translate-x-full', 'opacity-0');
+    notification.classList.add('translate-x-0', 'opacity-100');
+
+    // Hide after 7 seconds
+    setTimeout(hideSocialProof, 7000);
+  }
+
+  window.hideSocialProof = function() {
+    notification.classList.add('-translate-x-full', 'opacity-0');
+    notification.classList.remove('translate-x-0', 'opacity-100');
+  };
+
+  // Show first notification after 10 seconds, then every 1 minute
+  setTimeout(showSocialProof, 10000);
+  setInterval(showSocialProof, 60000);
+})();
+</script>
 
 </div>
 
@@ -1425,6 +1161,11 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
 
     // Initialize Leaflet map
     function initializeMap() {
+      // Guard: skip if map container doesn't exist (removed in clone)
+      if (!document.getElementById('spain-map')) {
+        console.log('Map container not found - skipping map initialization');
+        return;
+      }
       // Create map centered on Spain
       map = L.map('spain-map').setView([40.4168, -3.7038], 6);
 
@@ -1647,23 +1388,13 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
 
       centerPrice = priceData.center;
       onlinePrice = priceData.online;
-      const onlineOldPrice = priceData.onlineOld || priceData.centerOld || centerPrice;
       monthlyPrice = priceData.plan ? priceData.plan[0] : 0;
       monthlyTotal = priceData.plan ? priceData.plan.reduce((sum, val) => sum + val, 0) : 0;
 
-      // Calculate savings
-      const onlineSavings = onlineOldPrice - onlinePrice;
-
-      // Update popup prices - Online option (Option 1 now)
-      document.getElementById('popup-online-price').textContent = `€${onlinePrice}`;
-      document.getElementById('popup-online-original').textContent = `€${onlineOldPrice}`;
-      document.getElementById('popup-online-btn-price').textContent = onlinePrice;
-      document.getElementById('popup-savings-amount').textContent = onlineSavings;
-
-      // Update center price (Option 2 now)
+      // Update popup prices
       document.getElementById('popup-center-price').textContent = `€${centerPrice}`;
 
-      // Show old price for center if available
+      // Show old price for center if available (e.g., sugar addiction: €280 → €200)
       const centerOldElement = document.getElementById('popup-center-old');
       const centerStandardElement = document.getElementById('popup-center-standard');
       if (priceData.centerOld) {
@@ -1675,10 +1406,11 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
         centerStandardElement.classList.remove('hidden');
       }
 
-      // Update monthly prices (Option 3)
+      document.getElementById('popup-online-price').textContent = `€${onlinePrice}`;
+      document.getElementById('popup-online-original').textContent = `€${centerPrice}`; // Strikethrough shows original center price
+      document.getElementById('popup-online-btn-price').textContent = onlinePrice;
       document.getElementById('popup-monthly-price').textContent = `€${monthlyPrice}`;
       document.getElementById('popup-monthly-total').textContent = monthlyTotal;
-      document.getElementById('popup-monthly-btn-price').textContent = monthlyPrice;
 
       // Store prices in popup for payment selection
       window.paymentPopupData = {
@@ -1768,21 +1500,21 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
       // Get company
       const company = getCompany(centerId);
 
-      // Stripe Payment Links Configuration - UPDATED Nov 2025
+      // Stripe Payment Links Configuration
       const stripeLinks = {
         company1: {
           // Company 1: Madrid Chamartín, Torrejón, Majadahonda, San Sebastián
           solo_cig: {
-            onetime: 'https://buy.stripe.com/5kQdR85fNfQG9PvbCJawo0b',  // €149 (NEW)
-            monthly: 'https://buy.stripe.com/4gMfZgcIfbAqbXDfSZawo0c'   // 3×€50 (NEW)
+            onetime: 'https://buy.stripe.com/9B628q23B9si9Pv7mtawo00',  // €170
+            monthly: 'https://buy.stripe.com/4gM7sKeQn0VMd1H4ahawo06'   // 3×€60 (UPDATED)
           },
           duo_cig: {
             onetime: 'https://buy.stripe.com/28E9AS0ZxfQGd1H4ahawo01',   // €320
-            monthly: 'https://buy.stripe.com/9B64gyeQn7kabXD9uBawo07'    // 3×€105
+            monthly: 'https://buy.stripe.com/9B64gyeQn7kabXD9uBawo07'    // 3×€105 (UPDATED)
           },
           solo_drugs: {
-            onetime: 'https://buy.stripe.com/9B6bJ09w3bAq9Pv36dawo0d', // €189 (NEW)
-            monthly: 'https://buy.stripe.com/fZu00i0Zx47Ye5L9uBawo0e'  // 3×€70 (NEW)
+            onetime: 'https://buy.stripe.com/00w8wOgYvbAq6Dj36dawo02', // €230
+            monthly: 'https://buy.stripe.com/dRmfZggYvdIyf9P0Y5awo08'  // 3×€80 (UPDATED)
           },
           solo_sugar: {
             onetime: 'https://buy.stripe.com/4gM5kCaA7dIyaTz9uBawo09', // €180
@@ -1792,16 +1524,16 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
         company2: {
           // Company 2: Valencia, Barcelona Sants, Sevilla, Madrid Atocha
           solo_cig: {
-            onetime: 'https://buy.stripe.com/4gM8wPbgpcsdfoL5sAdby0j',  // €149 (NEW)
-            monthly: 'https://buy.stripe.com/eVqcN5bgp0Jv0tR08gdby0k'   // 3×€50 (NEW)
+            onetime: 'https://buy.stripe.com/8x25kD2JTcsdgsPdZ6dby08',  // €170
+            monthly: 'https://buy.stripe.com/14AeVd4S1ak55Obf3adby0e'   // 3×€60 (UPDATED)
           },
           duo_cig: {
             onetime: 'https://buy.stripe.com/8x2fZh3NX4ZL2BZ6wEdby09',   // €320
-            monthly: 'https://buy.stripe.com/7sYcN5dox3VH1xV08gdby0f'    // 3×€105
+            monthly: 'https://buy.stripe.com/7sYcN5dox3VH1xV08gdby0f'    // 3×€105 (UPDATED)
           },
           solo_drugs: {
-            onetime: 'https://buy.stripe.com/28E28rcktfEpb8vf3adby0l', // €189 (NEW)
-            monthly: 'https://buy.stripe.com/bJe4gz98h2RD0tR3ksdby0m'  // 3×€70 (NEW)
+            onetime: 'https://buy.stripe.com/cNi14nesB2RD4K78EMdby0a', // €230
+            monthly: 'https://buy.stripe.com/28E7sL3NX8bXdgDaMUdby0g'  // 3×€80 (UPDATED)
           },
           solo_sugar: {
             onetime: 'https://buy.stripe.com/5kQ14n7090Jv3G39IQdby0h', // €180
@@ -1836,7 +1568,10 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
       }
 
       if (option === 1) {
-        // Pay online once - redirect to Stripe (NOW OPTION 1 - RECOMMENDED)
+        // Pay at center
+        closePaymentPopup();
+      } else if (option === 2) {
+        // Pay online once - redirect to Stripe
         const stripeLinks = getStripeLinks(bookingState.selectedCenter, data.appointmentType.id);
 
         if (!stripeLinks) {
@@ -1853,9 +1588,6 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
         window.open(stripeLinks.onetime, '_blank');
 
         // Close popup
-        closePaymentPopup();
-      } else if (option === 2) {
-        // Pay at center (NOW OPTION 2)
         closePaymentPopup();
       } else if (option === 3) {
         // Pay in 3 installments - redirect to Stripe subscription
@@ -1979,11 +1711,11 @@ Me costaba creer en el método, pero funciona. Tres semanas sin fumar y me sient
      * Price table - Single source of truth for payment UI
      */
     const PRICE_TABLE = {
-      solo_cig:   { centerOld: 250, center: 190, onlineOld: 250, online: 149, plan: [50, 50, 50] },
-      duo_cig:    { centerOld: 400, center: 340, onlineOld: 400, online: 320, plan: [105, 105, 105] },
-      solo_drugs: { centerOld: 300, center: 250, onlineOld: 300, online: 189, plan: [70, 70, 70] },
+      solo_cig:   { centerOld: 250, center: 190, online: 170, plan: [60, 60, 60] },
+      duo_cig:    { centerOld: 400, center: 340, online: 320, plan: [105, 105, 105] },
+      solo_drugs: { centerOld: 300, center: 250, online: 230, plan: [80, 80, 80] },
       rechute:    { center: 0 },
-      solo_sugar: { centerOld: 280, center: 200, onlineOld: 280, online: 180, plan: [60, 60, 60] }
+      solo_sugar: { centerOld: 280, center: 200, online: 180, plan: [60, 60, 60] }
     };
 
     /**
