@@ -2667,10 +2667,15 @@ Más de 500,000 personas ya lo han conseguido. Reserve su cita hoy y dé el prim
           console.warn('Sugar addiction type not available for this center');
         }
 
-        // Load availability for current month
-        const startDate = new Date(bookingState.currentMonth.getFullYear(), bookingState.currentMonth.getMonth(), 1);
-        const endDate = new Date(bookingState.currentMonth.getFullYear(), bookingState.currentMonth.getMonth() + 1, 0);
+        // Load availability for 3 months (like other pages)
+        const startDate = new Date();
+        startDate.setDate(startDate.getDate() + 1); // Start from tomorrow
+        const endDate = new Date();
+        endDate.setMonth(endDate.getMonth() + 3); // 3 months ahead
+
         await loadAvailability(startDate, endDate);
+        generateCalendar();
+        autoSelectSoonestSlot(); // Auto-select the soonest available slot
       } else {
         // Hide steps if no center selected
         document.getElementById('step-2').classList.add('hidden');
