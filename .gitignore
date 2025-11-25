@@ -3,3 +3,7 @@ node_modules/
 .DS_Store
 *.log
 .netlify/
+
+# Stripe API key files
+create-*stripe*.js
+test-stripe*.js
