@@ -670,83 +670,66 @@ AHORRO
 </div>
 
 <!-- Payment Options -->
-<div class="space-y-4">
+<div class="space-y-5">
 
 <!-- OPTION 1: Pay Online Now (RECOMMENDED) -->
-<div class="border-2 border-primary bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl p-5 relative cursor-pointer hover:shadow-lg transition-all transform hover:scale-[1.01]" onclick="selectPaymentOption(1)">
+<div class="border-2 border-primary bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl p-5 pt-8 min-h-[180px] relative cursor-pointer hover:shadow-lg transition-all" onclick="selectPaymentOption(1)">
 <!-- Recommended Badge -->
-<div class="absolute -top-3 left-1/2 -translate-x-1/2">
-<span class="bg-primary text-white text-xs font-bold px-4 py-1.5 rounded-full shadow-md flex items-center gap-1 whitespace-nowrap">
-<span class="material-icons text-sm">star</span>
+<div class="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
+<span class="bg-primary text-white text-xs font-bold px-3 py-1 rounded-full shadow-md flex items-center gap-1 whitespace-nowrap">
+<span class="material-icons text-xs">star</span>
 OPCIÓN RECOMENDADA
 </span>
 </div>
 
-<div class="flex items-start mt-4">
-<div class="w-12 h-12 bg-primary/20 rounded-xl flex items-center justify-center mr-4 flex-shrink-0">
-<span class="material-icons text-primary text-2xl">flash_on</span>
+<div class="flex items-start">
+<div class="w-10 h-10 bg-primary/20 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
+<span class="material-icons text-primary text-xl">flash_on</span>
 </div>
 <div class="flex-1">
-<h4 class="font-bold text-lg text-gray-800 dark:text-white mb-1">Pagar online ahora</h4>
-<p class="text-gray-500 dark:text-gray-400 text-sm mb-3">Pago único seguro con descuento exclusivo</p>
-
-<!-- Price Display -->
-<div class="flex items-center flex-wrap gap-2 mb-3">
-<span id="popup-online-price" class="text-3xl font-bold text-primary">€149</span>
-<span id="popup-online-original" class="text-red-500 line-through text-lg">€250</span>
-<span id="popup-online-savings" class="bg-green-100 text-green-700 text-sm font-bold px-2 py-1 rounded-lg flex items-center gap-1">
-<span class="material-icons text-sm">local_offer</span>
+<h4 class="font-bold text-base text-gray-800 dark:text-white mb-1">Pagar online ahora</h4>
+<div class="flex items-center flex-wrap gap-2 mb-2">
+<span id="popup-online-price" class="text-2xl font-bold text-primary">€149</span>
+<span id="popup-online-original" class="text-red-500 line-through text-sm">€250</span>
+<span id="popup-online-savings" class="bg-green-100 text-green-700 text-xs font-bold px-2 py-0.5 rounded flex items-center gap-1">
 AHORRA €<span id="popup-savings-amount">101</span>
 </span>
 </div>
-
-<!-- Benefits List -->
-<ul class="text-sm text-gray-600 dark:text-gray-300 space-y-1.5 mb-4">
-<li class="flex items-center gap-2">
-<span class="material-icons text-green-500 text-base">check_circle</span>
-<span>Confirmación inmediata de tu cita</span>
+<ul class="text-xs text-gray-600 dark:text-gray-300 space-y-1 mb-3">
+<li class="flex items-center gap-1">
+<span class="material-icons text-green-500 text-sm">check</span>
+<span>Confirmación inmediata</span>
 </li>
-<li class="flex items-center gap-2">
-<span class="material-icons text-green-500 text-base">check_circle</span>
-<span>Pago 100% seguro con encriptación SSL</span>
-</li>
-<li class="flex items-center gap-2">
-<span class="material-icons text-green-500 text-base">check_circle</span>
-<span>Garantía de reembolso si cancelas 24h antes</span>
+<li class="flex items-center gap-1">
+<span class="material-icons text-green-500 text-sm">check</span>
+<span>Pago 100% seguro SSL</span>
 </li>
 </ul>
-
-<!-- CTA Button -->
-<button class="w-full bg-gradient-to-r from-primary to-teal-500 hover:from-primary/90 hover:to-teal-500/90 text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2">
-<span class="material-icons">lock</span>
-<span>Pagar €<span id="popup-online-btn-price">149</span> de forma segura</span>
+<button class="bg-primary hover:bg-primary/90 text-white font-semibold py-2 px-4 rounded-lg transition-all text-sm inline-flex items-center gap-1">
+<span class="material-icons text-sm">lock</span>
+Pagar €<span id="popup-online-btn-price">149</span>
 </button>
 </div>
 </div>
 </div>
 
 <!-- OPTION 2: Pay at Center -->
-<div class="border-2 border-gray-200 dark:border-gray-700 hover:border-gray-300 rounded-xl p-5 cursor-pointer transition-all hover:bg-gray-50 dark:hover:bg-gray-700/50" onclick="selectPaymentOption(2)">
+<div class="border-2 border-gray-200 dark:border-gray-700 hover:border-gray-300 rounded-xl p-5 min-h-[180px] cursor-pointer transition-all hover:bg-gray-50 dark:hover:bg-gray-700/50" onclick="selectPaymentOption(2)">
 <div class="flex items-start">
-<div class="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center mr-4 flex-shrink-0">
-<span class="material-icons text-gray-500 dark:text-gray-400 text-2xl">store</span>
+<div class="w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
+<span class="material-icons text-gray-500 dark:text-gray-400 text-xl">store</span>
 </div>
 <div class="flex-1">
-<h4 class="font-bold text-lg text-gray-800 dark:text-white mb-1">Pagar en el centro</h4>
-<p class="text-gray-500 dark:text-gray-400 text-sm mb-3">Paga el día de tu cita en efectivo o tarjeta</p>
-
-<!-- Price Display -->
-<div class="flex items-center flex-wrap gap-2 mb-3">
+<h4 class="font-bold text-base text-gray-800 dark:text-white mb-1">Pagar en el centro</h4>
+<div class="flex items-center flex-wrap gap-2 mb-2">
 <span id="popup-center-price" class="text-2xl font-bold text-gray-700 dark:text-gray-300">€190</span>
-<span id="popup-center-old" class="text-red-500 line-through text-lg hidden">€250</span>
-<span id="popup-center-standard" class="text-gray-400 text-sm">Precio estándar</span>
+<span id="popup-center-old" class="text-red-500 line-through text-sm hidden">€250</span>
+<span id="popup-center-standard" class="text-gray-400 text-xs">Precio estándar</span>
 </div>
-
-<!-- Warning Message -->
-<div class="bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700 rounded-lg p-3 flex items-start gap-2">
-<span class="material-icons text-amber-500 text-lg flex-shrink-0">info</span>
+<div class="bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700 rounded p-2 flex items-start gap-2">
+<span class="material-icons text-amber-500 text-sm flex-shrink-0">info</span>
 <p class="text-xs text-amber-700 dark:text-amber-300">
-<strong>Nota:</strong> Las reservas sin pago anticipado pueden ser canceladas en caso de alta demanda. Recomendamos el pago online para garantizar tu plaza.
+Reservas sin pago pueden ser canceladas en alta demanda.
 </p>
 </div>
 </div>
@@ -754,43 +737,34 @@ AHORRA €<span id="popup-savings-amount">101</span>
 </div>
 
 <!-- OPTION 3: Pay in 3 Installments -->
-<div class="border-2 border-gray-200 dark:border-gray-700 hover:border-blue-300 rounded-xl p-5 cursor-pointer transition-all hover:bg-blue-50/50 dark:hover:bg-blue-900/20" onclick="selectPaymentOption(3)">
+<div class="border-2 border-gray-200 dark:border-gray-700 hover:border-blue-300 rounded-xl p-5 min-h-[180px] cursor-pointer transition-all hover:bg-blue-50/50 dark:hover:bg-blue-900/20" onclick="selectPaymentOption(3)">
 <div class="flex items-start">
-<div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/50 rounded-xl flex items-center justify-center mr-4 flex-shrink-0">
-<span class="material-icons text-blue-600 dark:text-blue-400 text-2xl">calendar_month</span>
+<div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/50 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
+<span class="material-icons text-blue-600 dark:text-blue-400 text-xl">calendar_month</span>
 </div>
 <div class="flex-1">
-<h4 class="font-bold text-lg text-gray-800 dark:text-white mb-1">Pagar en 3 cuotas</h4>
-<p class="text-gray-500 dark:text-gray-400 text-sm mb-3">Divide el pago en 3 meses sin intereses</p>
-
-<!-- Price Display -->
-<div class="flex items-center flex-wrap gap-3 mb-3">
-<div class="flex items-baseline">
-<span class="text-2xl font-bold text-blue-600">3 ×</span>
-<span id="popup-monthly-price" class="text-3xl font-bold text-blue-600 ml-1">€50</span>
-<span class="text-gray-400 ml-1 text-sm">/mes</span>
+<h4 class="font-bold text-base text-gray-800 dark:text-white mb-1">Pagar en 3 cuotas</h4>
+<div class="flex items-center flex-wrap gap-2 mb-2">
+<span class="text-xl font-bold text-blue-600">3 ×</span>
+<span id="popup-monthly-price" class="text-2xl font-bold text-blue-600">€50</span>
+<span class="text-gray-400 text-xs">/mes (Total: €<span id="popup-monthly-total">150</span>)</span>
 </div>
-<span class="text-gray-400 text-sm">(Total: €<span id="popup-monthly-total">150</span>)</span>
-</div>
-
-<!-- Benefits -->
-<ul class="text-sm text-gray-600 dark:text-gray-300 space-y-1">
-<li class="flex items-center gap-2">
-<span class="material-icons text-blue-500 text-base">check_circle</span>
-<span>Reserva confirmada inmediatamente</span>
+<ul class="text-xs text-gray-600 dark:text-gray-300 space-y-1 mb-3">
+<li class="flex items-center gap-1">
+<span class="material-icons text-blue-500 text-sm">check</span>
+<span>Reserva confirmada</span>
 </li>
-<li class="flex items-center gap-2">
-<span class="material-icons text-blue-500 text-base">check_circle</span>
-<span>Sin intereses ni comisiones</span>
+<li class="flex items-center gap-1">
+<span class="material-icons text-blue-500 text-sm">check</span>
+<span>Sin intereses</span>
 </li>
 </ul>
-</div>
-</div>
-<!-- CTA Button - Centered -->
-<button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-xl transition-all flex items-center justify-center gap-2 mt-4">
-<span class="material-icons">schedule</span>
-<span>Pagar en 3 cuotas de €<span id="popup-monthly-btn-price">50</span></span>
+<button class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-all text-sm inline-flex items-center gap-1 mx-auto block">
+<span class="material-icons text-sm">schedule</span>
+Pagar 3×€<span id="popup-monthly-btn-price">50</span>
 </button>
+</div>
+</div>
 </div>
 
 </div>
@@ -805,10 +779,10 @@ AHORRA €<span id="popup-savings-amount">101</span>
 </div>
 </div>
 <!-- Payment Logos -->
-<div class="flex items-center justify-center gap-4 mt-3 opacity-50">
-<img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" alt="Stripe" class="h-4 grayscale">
-<img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" class="h-4 grayscale">
-<img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" class="h-4 grayscale">
+<div class="flex items-center justify-center gap-3 mt-3">
+<img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" alt="Stripe" class="h-5 opacity-60">
+<img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" class="h-4 opacity-60">
+<img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" class="h-5 opacity-60">
 </div>
 </div>
 
