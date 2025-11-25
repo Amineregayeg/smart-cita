@@ -803,7 +803,7 @@ Tras varios intentos fallidos probé el láser y funcionó de inmediato. Cero an
   playsinline
   poster="assets/cigarettes.png"
 >
-  <source src="assets/about-video.mp4" type="video/mp4">
+  <source src="../laserostop_espagna/assets/about-video.mp4" type="video/mp4">
   Tu navegador no soporta el elemento de vídeo.
 </video>
 <!-- Audio Toggle Button -->
@@ -1030,6 +1030,11 @@ Más de 500,000 personas ya lo han conseguido. Reserve su cita hoy y dé el prim
 
     // Initialize Leaflet map
     function initializeMap() {
+      // Guard: skip if map container doesn't exist (removed in clone)
+      if (!document.getElementById('spain-map')) {
+        console.log('Map container not found - skipping map initialization');
+        return;
+      }
       // Create map centered on Spain
       map = L.map('spain-map').setView([40.4168, -3.7038], 6);
 
