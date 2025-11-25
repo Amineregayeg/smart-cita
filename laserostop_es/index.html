@@ -654,143 +654,142 @@ AHORRO
 </div>
 
 <!-- Payment Options Popup (Modal) -->
-<!-- Payment Popup - Redesigned Nov 2025 -->
-<div id="payment-popup" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-<div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-scaleIn relative">
-<!-- Close X Button -->
-<button onclick="closePaymentPopup()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 z-10">
-<span class="material-icons text-2xl">close</span>
+<div id="payment-popup" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+<div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto relative">
+
+<!-- Close Button -->
+<button onclick="closePaymentPopup()" class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-gray-700 transition-colors z-10">
+<span class="material-icons text-xl">close</span>
 </button>
 
-<div class="p-6 sm:p-8">
+<!-- Content Container - consistent padding -->
+<div class="p-6">
+
 <!-- Header -->
 <div class="text-center mb-6">
-<h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">¡Ahorra pagando online!</h3>
-<p class="text-gray-600 dark:text-gray-300">Elige tu método de pago preferido</p>
+<h2 class="text-xl font-bold text-gray-900 mb-1">¡Ahorra pagando online!</h2>
+<p class="text-sm text-gray-500">Elige tu método de pago preferido</p>
 </div>
 
-<!-- Payment Options -->
-<div class="space-y-5">
+<!-- Payment Cards Container -->
+<div class="flex flex-col gap-3">
 
-<!-- OPTION 1: Pay Online Now (RECOMMENDED) -->
-<div class="border-2 border-primary bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl p-5 pt-8 min-h-[180px] relative cursor-pointer hover:shadow-lg transition-all" onclick="selectPaymentOption(1)">
-<!-- Recommended Badge -->
-<div class="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
-<span class="bg-primary text-white text-xs font-bold px-3 py-1 rounded-full shadow-md flex items-center gap-1 whitespace-nowrap">
-<span class="material-icons text-xs">star</span>
-OPCIÓN RECOMENDADA
-</span>
+<!-- CARD 1: Online Payment (Recommended) -->
+<div class="relative border-2 border-primary bg-primary/5 rounded-xl p-4 cursor-pointer hover:shadow-md transition-all" onclick="selectPaymentOption(1)">
+<!-- Badge -->
+<span class="absolute -top-2.5 left-4 bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">Recomendado</span>
+
+<!-- Price Row -->
+<div class="flex items-baseline gap-2 mt-1 mb-3">
+<span id="popup-online-price" class="text-2xl font-bold text-gray-900">€149</span>
+<span id="popup-online-original" class="text-sm text-red-500 line-through">€250</span>
+<span class="text-xs font-semibold text-green-600 bg-green-100 px-1.5 py-0.5 rounded">Ahorra €<span id="popup-savings-amount">101</span></span>
 </div>
 
-<div class="flex items-start">
-<div class="w-10 h-10 bg-primary/20 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
-<span class="material-icons text-primary text-xl">flash_on</span>
-</div>
-<div class="flex-1">
-<h4 class="font-bold text-base text-gray-800 dark:text-white mb-1">Pagar online ahora</h4>
-<div class="flex items-center flex-wrap gap-2 mb-2">
-<span id="popup-online-price" class="text-2xl font-bold text-primary">€149</span>
-<span id="popup-online-original" class="text-red-500 line-through text-sm">€250</span>
-<span id="popup-online-savings" class="bg-green-100 text-green-700 text-xs font-bold px-2 py-0.5 rounded flex items-center gap-1">
-AHORRA €<span id="popup-savings-amount">101</span>
-</span>
-</div>
-<ul class="text-xs text-gray-600 dark:text-gray-300 space-y-1 mb-3">
-<li class="flex items-center gap-1">
-<span class="material-icons text-green-500 text-sm">check</span>
-<span>Confirmación inmediata</span>
+<!-- Benefits -->
+<ul class="flex flex-col gap-1.5 mb-4">
+<li class="flex items-center gap-2 text-sm text-gray-600">
+<span class="material-icons text-green-500 text-base">check_circle</span>
+Confirmación inmediata
 </li>
-<li class="flex items-center gap-1">
-<span class="material-icons text-green-500 text-sm">check</span>
-<span>Pago 100% seguro SSL</span>
+<li class="flex items-center gap-2 text-sm text-gray-600">
+<span class="material-icons text-green-500 text-base">check_circle</span>
+Pago 100% seguro (SSL)
+</li>
+<li class="flex items-center gap-2 text-sm text-gray-600">
+<span class="material-icons text-green-500 text-base">check_circle</span>
+Reembolso si cancelas 24h antes
 </li>
 </ul>
-<button class="bg-primary hover:bg-primary/90 text-white font-semibold py-2 px-4 rounded-lg transition-all text-sm inline-flex items-center gap-1">
-<span class="material-icons text-sm">lock</span>
-Pagar €<span id="popup-online-btn-price">149</span>
+
+<!-- Button -->
+<button class="w-full bg-primary hover:bg-primary/90 text-white font-semibold py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm">
+<span class="material-icons text-base">lock</span>
+Pagar €<span id="popup-online-btn-price">149</span> ahora
 </button>
 </div>
-</div>
+
+<!-- CARD 2: Pay at Center -->
+<div class="border border-gray-200 rounded-xl p-4 cursor-pointer hover:border-gray-300 hover:shadow-sm transition-all" onclick="selectPaymentOption(2)">
+
+<!-- Price Row -->
+<div class="flex items-baseline gap-2 mb-3">
+<span id="popup-center-price" class="text-2xl font-bold text-gray-900">€190</span>
+<span id="popup-center-old" class="text-sm text-red-500 line-through hidden">€250</span>
+<span id="popup-center-standard" class="text-xs text-gray-400">Precio estándar</span>
 </div>
 
-<!-- OPTION 2: Pay at Center -->
-<div class="border-2 border-gray-200 dark:border-gray-700 hover:border-gray-300 rounded-xl p-5 min-h-[180px] cursor-pointer transition-all hover:bg-gray-50 dark:hover:bg-gray-700/50" onclick="selectPaymentOption(2)">
-<div class="flex items-start">
-<div class="w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
-<span class="material-icons text-gray-500 dark:text-gray-400 text-xl">store</span>
-</div>
-<div class="flex-1">
-<h4 class="font-bold text-base text-gray-800 dark:text-white mb-1">Pagar en el centro</h4>
-<div class="flex items-center flex-wrap gap-2 mb-2">
-<span id="popup-center-price" class="text-2xl font-bold text-gray-700 dark:text-gray-300">€190</span>
-<span id="popup-center-old" class="text-red-500 line-through text-sm hidden">€250</span>
-<span id="popup-center-standard" class="text-gray-400 text-xs">Precio estándar</span>
-</div>
-<div class="bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700 rounded p-2 flex items-start gap-2">
-<span class="material-icons text-amber-500 text-sm flex-shrink-0">info</span>
-<p class="text-xs text-amber-700 dark:text-amber-300">
-Reservas sin pago pueden ser canceladas en alta demanda.
-</p>
-</div>
-</div>
-</div>
-</div>
-
-<!-- OPTION 3: Pay in 3 Installments -->
-<div class="border-2 border-gray-200 dark:border-gray-700 hover:border-blue-300 rounded-xl p-5 min-h-[180px] cursor-pointer transition-all hover:bg-blue-50/50 dark:hover:bg-blue-900/20" onclick="selectPaymentOption(3)">
-<div class="flex items-start">
-<div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/50 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
-<span class="material-icons text-blue-600 dark:text-blue-400 text-xl">calendar_month</span>
-</div>
-<div class="flex-1">
-<h4 class="font-bold text-base text-gray-800 dark:text-white mb-1">Pagar en 3 cuotas</h4>
-<div class="flex items-center flex-wrap gap-2 mb-2">
-<span class="text-xl font-bold text-blue-600">3 ×</span>
-<span id="popup-monthly-price" class="text-2xl font-bold text-blue-600">€50</span>
-<span class="text-gray-400 text-xs">/mes (Total: €<span id="popup-monthly-total">150</span>)</span>
-</div>
-<ul class="text-xs text-gray-600 dark:text-gray-300 space-y-1 mb-3">
-<li class="flex items-center gap-1">
-<span class="material-icons text-blue-500 text-sm">check</span>
-<span>Reserva confirmada</span>
+<!-- Benefits -->
+<ul class="flex flex-col gap-1.5 mb-4">
+<li class="flex items-center gap-2 text-sm text-gray-600">
+<span class="material-icons text-gray-400 text-base">check_circle</span>
+Pago en efectivo o tarjeta
 </li>
-<li class="flex items-center gap-1">
-<span class="material-icons text-blue-500 text-sm">check</span>
-<span>Sin intereses</span>
+<li class="flex items-center gap-2 text-sm text-gray-600">
+<span class="material-icons text-gray-400 text-base">check_circle</span>
+El día de tu cita
+</li>
+<li class="flex items-center gap-2 text-sm text-amber-600">
+<span class="material-icons text-amber-500 text-base">info</span>
+Sujeto a disponibilidad
 </li>
 </ul>
-<button class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-all text-sm inline-flex items-center gap-1 mx-auto block">
-<span class="material-icons text-sm">schedule</span>
-Pagar 3×€<span id="popup-monthly-btn-price">50</span>
+
+<!-- Button -->
+<button class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 rounded-lg transition-colors text-sm">
+Reservar y pagar en centro
 </button>
 </div>
+
+<!-- CARD 3: Pay in 3 Installments -->
+<div class="border border-gray-200 rounded-xl p-4 cursor-pointer hover:border-blue-300 hover:shadow-sm transition-all" onclick="selectPaymentOption(3)">
+
+<!-- Price Row -->
+<div class="flex items-baseline gap-2 mb-1">
+<span class="text-2xl font-bold text-gray-900">3 × <span id="popup-monthly-price">€50</span></span>
+<span class="text-xs text-gray-400">/mes</span>
 </div>
+<p class="text-xs text-gray-500 mb-3">Total: €<span id="popup-monthly-total">150</span> · Sin intereses</p>
+
+<!-- Benefits -->
+<ul class="flex flex-col gap-1.5 mb-4">
+<li class="flex items-center gap-2 text-sm text-gray-600">
+<span class="material-icons text-blue-500 text-base">check_circle</span>
+Reserva confirmada al instante
+</li>
+<li class="flex items-center gap-2 text-sm text-gray-600">
+<span class="material-icons text-blue-500 text-base">check_circle</span>
+Pago flexible mensual
+</li>
+<li class="flex items-center gap-2 text-sm text-gray-600">
+<span class="material-icons text-blue-500 text-base">check_circle</span>
+0% intereses, 0% comisiones
+</li>
+</ul>
+
+<!-- Button -->
+<button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm">
+<span class="material-icons text-base">calendar_today</span>
+Pagar en 3 cuotas de €<span id="popup-monthly-btn-price">50</span>
+</button>
 </div>
 
 </div>
 
-<!-- Security Footer -->
-<div class="mt-6 pt-5 border-t border-gray-200 dark:border-gray-700">
-<div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-<!-- Security Text -->
-<div class="flex items-center gap-2 text-gray-500 dark:text-gray-400 text-sm">
-<span class="material-icons text-green-500">verified_user</span>
+<!-- Footer -->
+<div class="mt-5 pt-4 border-t border-gray-100">
+<div class="flex items-center justify-center gap-1.5 text-xs text-gray-400 mb-3">
+<span class="material-icons text-sm text-green-500">lock</span>
 <span>Pago protegido con encriptación SSL de 256-bit</span>
 </div>
-</div>
-<!-- Payment Logos -->
-<div class="flex items-center justify-center gap-3 mt-2 text-gray-400">
-<svg width="40" height="16" viewBox="0 0 60 25" fill="currentColor"><path d="M59.64 14.28h-8.06v-2.08h8.06v2.08zm-9.42-5.15c-.47-.47-1.1-.7-1.9-.7-.64 0-1.18.16-1.62.48-.44.32-.7.74-.78 1.26h4.58c-.06-.48-.28-.88-.72-1.04h.44zm-4.3 2.98c0 .56.14 1 .42 1.32.28.32.7.48 1.26.48.74 0 1.28-.26 1.62-.78h1.28c-.22.58-.58 1.02-1.08 1.32-.5.3-1.1.44-1.82.44-.96 0-1.72-.28-2.28-.84-.56-.56-.84-1.32-.84-2.28 0-.94.28-1.7.84-2.28.56-.58 1.3-.86 2.22-.86.94 0 1.68.28 2.22.84.54.56.82 1.32.82 2.28v.36h-4.66zm-5.02-2.98c-.24-.14-.52-.2-.84-.2-.46 0-.84.16-1.14.48-.3.32-.44.74-.44 1.26v3.36h-1.34v-6.1h1.34v.72c.18-.28.42-.48.72-.62.3-.14.64-.2 1.02-.2.36 0 .68.06.96.18l-.28 1.12zm-5.9-.68c-.46 0-.82.16-1.08.48-.26.32-.38.76-.38 1.32s.12 1 .38 1.32c.26.32.62.48 1.08.48.46 0 .82-.16 1.08-.48.26-.32.38-.76.38-1.32s-.12-1-.38-1.32c-.26-.32-.62-.48-1.08-.48zm0-1.1c.94 0 1.68.28 2.22.86.54.56.82 1.32.82 2.28s-.28 1.7-.82 2.28c-.54.56-1.28.84-2.22.84s-1.68-.28-2.22-.84c-.54-.58-.82-1.34-.82-2.28s.28-1.72.82-2.28c.54-.58 1.28-.86 2.22-.86zm-4.96 1.78h-1.52v2.64c0 .28.06.48.18.6.12.12.34.18.66.18h.68v1.08h-.92c-1.28 0-1.92-.62-1.92-1.86v-2.64h-1.1v-1.08h1.1v-1.52h1.32v1.52h1.52v1.08zm-7.1-.68c-.36-.32-.8-.48-1.32-.48-.48 0-.9.16-1.26.48-.36.32-.54.76-.54 1.32 0 .56.18 1 .54 1.32.36.32.78.48 1.26.48.52 0 .96-.16 1.32-.48.36-.32.54-.76.54-1.32 0-.56-.18-1-.54-1.32zm1.02 4.02c-.28.32-.62.56-1.02.72-.4.16-.84.24-1.32.24-.72 0-1.36-.18-1.92-.54-.56-.36-.96-.86-1.2-1.5h-.02v1.86h-1.32v-8.64h1.34v3.48h.02c.24-.62.64-1.1 1.2-1.44.56-.34 1.18-.52 1.86-.52.5 0 .96.08 1.38.24.42.16.78.4 1.08.72.3.32.52.7.68 1.14.16.44.24.94.24 1.5s-.08 1.04-.24 1.48c-.16.44-.4.82-.7 1.14l-.06-.88z"/></svg>
-<svg width="32" height="10" viewBox="0 0 750 471" fill="currentColor"><path d="M278.2 334.3l33.5-207h53.6l-33.5 207zM524.9 132.3c-10.6-4.2-27.2-8.6-48-8.6-52.9 0-90.2 28.1-90.5 68.4-.3 29.8 26.6 46.4 46.9 56.3 20.9 10.2 27.9 16.7 27.8 25.8-.1 13.9-16.7 20.3-32.1 20.3-21.5 0-32.9-3.1-50.5-10.8l-6.9-3.3-7.5 46.5c12.5 5.8 35.7 10.8 59.8 11.1 56.3 0 92.8-27.8 93.2-70.8.2-23.6-14.1-41.5-45-56.3-18.7-9.6-30.2-15.9-30.1-25.6 0-8.6 9.7-17.7 30.7-17.7 17.5-.3 30.2 3.7 40.1 7.9l4.8 2.4 7.3-44.6M661.1 127.3h-41.4c-12.8 0-22.4 3.7-28 17.2l-79.5 189.8h56.3s9.2-25.5 11.3-31.1h68.8c1.6 7.3 6.5 31.1 6.5 31.1h49.8l-43.8-207zm-66.2 133.5c4.4-12 21.5-58.2 21.5-58.2-.3.5 4.4-12.1 7.2-19.9l3.6 18s10.3 49.9 12.5 60.1h-44.8z"/><path d="M232.8 127.3l-52.5 141.2-5.6-28.7c-9.7-33-40.1-68.8-74.1-86.7l48 181.2h56.7l84.4-207h-56.9z"/><path d="M100.1 127.3H12.4l-.7 4c67.2 17.2 111.7 58.7 130.2 108.5l-18.8-95.3c-3.2-13-12.5-16.8-23-17.2z"/></svg>
-<svg width="24" height="15" viewBox="0 0 152 108" fill="none"><circle cx="47" cy="54" r="47" fill="#EB001B" opacity="0.8"/><circle cx="105" cy="54" r="47" fill="#F79E1B" opacity="0.8"/><path d="M76 22c11.5 8.5 19 22 19 37s-7.5 28.5-19 37c-11.5-8.5-19-22-19-37s7.5-28.5 19-37z" fill="#FF5F00" opacity="0.8"/></svg>
-</div>
+<p class="text-center">
+<button onclick="closePaymentPopup()" class="text-xs text-gray-400 hover:text-gray-600 transition-colors">
+Cerrar
+</button>
+</p>
 </div>
 
-<!-- Close Link -->
-<div class="mt-4 text-center">
-<button onclick="closePaymentPopup()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-sm font-medium transition-colors">
-Cerrar y pagar en el centro
-</button>
+</div>
 </div>
 </div>
 </div>
