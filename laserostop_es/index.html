@@ -673,16 +673,16 @@ AHORRO
 <div class="space-y-4">
 
 <!-- OPTION 1: Pay Online Now (RECOMMENDED) -->
-<div class="border-2 border-primary bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl p-5 pt-6 relative cursor-pointer hover:shadow-lg transition-all transform hover:scale-[1.01]" onclick="selectPaymentOption(1)">
+<div class="border-2 border-primary bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl p-5 relative cursor-pointer hover:shadow-lg transition-all transform hover:scale-[1.01]" onclick="selectPaymentOption(1)">
 <!-- Recommended Badge -->
-<div class="absolute -top-3 left-4">
-<span class="bg-primary text-white text-xs font-bold px-4 py-1.5 rounded-full shadow-md flex items-center gap-1">
+<div class="absolute -top-3 left-1/2 -translate-x-1/2">
+<span class="bg-primary text-white text-xs font-bold px-4 py-1.5 rounded-full shadow-md flex items-center gap-1 whitespace-nowrap">
 <span class="material-icons text-sm">star</span>
 OPCIÓN RECOMENDADA
 </span>
 </div>
 
-<div class="flex items-start mt-2">
+<div class="flex items-start mt-4">
 <div class="w-12 h-12 bg-primary/20 rounded-xl flex items-center justify-center mr-4 flex-shrink-0">
 <span class="material-icons text-primary text-2xl">flash_on</span>
 </div>
@@ -693,7 +693,7 @@ OPCIÓN RECOMENDADA
 <!-- Price Display -->
 <div class="flex items-center flex-wrap gap-2 mb-3">
 <span id="popup-online-price" class="text-3xl font-bold text-primary">€149</span>
-<span id="popup-online-original" class="text-gray-400 line-through text-lg">€250</span>
+<span id="popup-online-original" class="text-red-500 line-through text-lg">€250</span>
 <span id="popup-online-savings" class="bg-green-100 text-green-700 text-sm font-bold px-2 py-1 rounded-lg flex items-center gap-1">
 <span class="material-icons text-sm">local_offer</span>
 AHORRA €<span id="popup-savings-amount">101</span>
@@ -738,7 +738,7 @@ AHORRA €<span id="popup-savings-amount">101</span>
 <!-- Price Display -->
 <div class="flex items-center flex-wrap gap-2 mb-3">
 <span id="popup-center-price" class="text-2xl font-bold text-gray-700 dark:text-gray-300">€190</span>
-<span id="popup-center-old" class="text-gray-400 line-through text-lg hidden">€250</span>
+<span id="popup-center-old" class="text-red-500 line-through text-lg hidden">€250</span>
 <span id="popup-center-standard" class="text-gray-400 text-sm">Precio estándar</span>
 </div>
 
@@ -774,7 +774,7 @@ AHORRA €<span id="popup-savings-amount">101</span>
 </div>
 
 <!-- Benefits -->
-<ul class="text-sm text-gray-600 dark:text-gray-300 space-y-1 mb-4">
+<ul class="text-sm text-gray-600 dark:text-gray-300 space-y-1">
 <li class="flex items-center gap-2">
 <span class="material-icons text-blue-500 text-base">check_circle</span>
 <span>Reserva confirmada inmediatamente</span>
@@ -784,14 +784,13 @@ AHORRA €<span id="popup-savings-amount">101</span>
 <span>Sin intereses ni comisiones</span>
 </li>
 </ul>
-
-<!-- CTA Button -->
-<button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-xl transition-all flex items-center justify-center gap-2">
+</div>
+</div>
+<!-- CTA Button - Centered -->
+<button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-xl transition-all flex items-center justify-center gap-2 mt-4">
 <span class="material-icons">schedule</span>
 <span>Pagar en 3 cuotas de €<span id="popup-monthly-btn-price">50</span></span>
 </button>
-</div>
-</div>
 </div>
 
 </div>
@@ -806,10 +805,10 @@ AHORRA €<span id="popup-savings-amount">101</span>
 </div>
 </div>
 <!-- Payment Logos -->
-<div class="flex items-center justify-center gap-6 mt-4 opacity-70">
-<img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" alt="Stripe" class="h-7 grayscale hover:grayscale-0 transition-all">
-<img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" class="h-7 grayscale hover:grayscale-0 transition-all">
-<img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" class="h-7 grayscale hover:grayscale-0 transition-all">
+<div class="flex items-center justify-center gap-4 mt-3 opacity-50">
+<img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" alt="Stripe" class="h-4 grayscale">
+<img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" class="h-4 grayscale">
+<img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" class="h-4 grayscale">
 </div>
 </div>
 
