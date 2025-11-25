@@ -392,52 +392,30 @@
 </div>
 </div>
 </section>
-<section class="py-16 sm:py-24" id="booking">
-<div class="container mx-auto px-4 sm:px-6 lg:px-8">
-<div class="max-w-4xl mx-auto bg-background-light dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden" style="border: 3px solid #22A9AF;">
-<div class="p-8 sm:p-12">
-<div id="booking-form">
-<!-- CTA Banner -->
-<div class="mb-8 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent rounded-lg p-6" style="border-left: 4px solid #22A9AF;">
-  <div class="flex items-start gap-4">
-    <div class="flex-shrink-0">
-      <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background-color: rgba(34, 169, 175, 0.2);">
-        <span class="material-icons text-2xl" style="color: #22A9AF;">campaign</span>
-      </div>
-    </div>
-    <div class="flex-1">
-      <h3 class="text-lg font-bold text-text-light dark:text-text-dark mb-2">
-        ¡Reserve su cita hoy y deje de fumar en una sola sesión!
-      </h3>
-      <p class="text-sm text-gray-600 dark:text-gray-400">
-        Más de 500,000 personas han dejado de fumar con LaserOstop.
-        <span class="font-semibold" style="color: #22A9AF;">Plazas limitadas disponibles</span> - Reserve ahora.
-      </p>
-    </div>
-  </div>
-</div>
 
-<!-- Sales Countdown Timer -->
-<div class="mb-6 bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 dark:from-primary/20 dark:via-primary/10 dark:to-primary/20 rounded-2xl p-4 border border-primary/20">
-  <div class="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
-    <div class="flex items-center gap-2">
-      <span class="material-icons text-primary text-xl animate-pulse">local_offer</span>
-      <span class="text-sm sm:text-base font-semibold text-gray-800 dark:text-gray-200">¡Oferta especial!</span>
-    </div>
-    <div class="flex items-center gap-2">
-      <span class="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Termina en:</span>
-      <div class="flex items-center gap-1" id="sales-timer">
-        <div class="bg-primary text-white font-bold text-lg sm:text-xl px-2 py-1 rounded-lg min-w-[2.5rem] text-center" id="timer-hours">12</div>
-        <span class="text-primary font-bold text-lg">:</span>
-        <div class="bg-primary text-white font-bold text-lg sm:text-xl px-2 py-1 rounded-lg min-w-[2.5rem] text-center" id="timer-minutes">00</div>
-        <span class="text-primary font-bold text-lg">:</span>
-        <div class="bg-primary text-white font-bold text-lg sm:text-xl px-2 py-1 rounded-lg min-w-[2.5rem] text-center" id="timer-seconds">00</div>
+<!-- Sales Countdown Timer Section -->
+<section class="py-4 bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 dark:from-primary/20 dark:via-primary/10 dark:to-primary/20 border-y border-primary/20">
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6">
+      <div class="flex items-center gap-2">
+        <span class="material-icons text-primary text-xl animate-pulse">local_offer</span>
+        <span class="text-sm sm:text-base font-semibold text-gray-800 dark:text-gray-200">¡Oferta especial!</span>
       </div>
+      <div class="flex items-center gap-2">
+        <span class="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Termina en:</span>
+        <div class="flex items-center gap-1" id="sales-timer">
+          <div class="bg-primary text-white font-bold text-lg sm:text-xl px-2 py-1 rounded-lg min-w-[2.5rem] text-center shadow-md" id="timer-hours">12</div>
+          <span class="text-primary font-bold text-lg">:</span>
+          <div class="bg-primary text-white font-bold text-lg sm:text-xl px-2 py-1 rounded-lg min-w-[2.5rem] text-center shadow-md" id="timer-minutes">00</div>
+          <span class="text-primary font-bold text-lg">:</span>
+          <div class="bg-primary text-white font-bold text-lg sm:text-xl px-2 py-1 rounded-lg min-w-[2.5rem] text-center shadow-md" id="timer-seconds">00</div>
+        </div>
+      </div>
+      <span class="hidden sm:inline-block text-gray-300 dark:text-gray-600">|</span>
+      <span class="text-xs sm:text-sm font-medium text-primary">-20% en sesiones online</span>
     </div>
-    <span class="hidden sm:inline-block text-xs text-gray-500 dark:text-gray-400">|</span>
-    <span class="text-xs sm:text-sm font-medium text-primary">-20% en sesiones online</span>
   </div>
-</div>
+</section>
 
 <script>
 // Sales Countdown Timer - Resets every 12 hours
@@ -472,6 +450,31 @@
   setInterval(updateTimer, 1000);
 })();
 </script>
+
+<section class="py-16 sm:py-24" id="booking">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="max-w-4xl mx-auto bg-background-light dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden" style="border: 3px solid #22A9AF;">
+<div class="p-8 sm:p-12">
+<div id="booking-form">
+<!-- CTA Banner -->
+<div class="mb-8 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent rounded-lg p-6" style="border-left: 4px solid #22A9AF;">
+  <div class="flex items-start gap-4">
+    <div class="flex-shrink-0">
+      <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background-color: rgba(34, 169, 175, 0.2);">
+        <span class="material-icons text-2xl" style="color: #22A9AF;">campaign</span>
+      </div>
+    </div>
+    <div class="flex-1">
+      <h3 class="text-lg font-bold text-text-light dark:text-text-dark mb-2">
+        ¡Reserve su cita hoy y deje de fumar en una sola sesión!
+      </h3>
+      <p class="text-sm text-gray-600 dark:text-gray-400">
+        Más de 500,000 personas han dejado de fumar con LaserOstop.
+        <span class="font-semibold" style="color: #22A9AF;">Plazas limitadas disponibles</span> - Reserve ahora.
+      </p>
+    </div>
+  </div>
+</div>
 
 <div class="mb-8" id="step-1">
 <h2 class="text-2xl font-semibold mb-4 text-text-light dark:text-text-dark"><span class="text-primary mr-3">1.</span>Elija su centro</h2>
