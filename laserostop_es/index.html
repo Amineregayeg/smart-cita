@@ -417,6 +417,62 @@
   </div>
 </div>
 
+<!-- Sales Countdown Timer -->
+<div class="mb-6 bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 dark:from-primary/20 dark:via-primary/10 dark:to-primary/20 rounded-2xl p-4 border border-primary/20">
+  <div class="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+    <div class="flex items-center gap-2">
+      <span class="material-icons text-primary text-xl animate-pulse">local_offer</span>
+      <span class="text-sm sm:text-base font-semibold text-gray-800 dark:text-gray-200">¡Oferta especial!</span>
+    </div>
+    <div class="flex items-center gap-2">
+      <span class="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Termina en:</span>
+      <div class="flex items-center gap-1" id="sales-timer">
+        <div class="bg-primary text-white font-bold text-lg sm:text-xl px-2 py-1 rounded-lg min-w-[2.5rem] text-center" id="timer-hours">12</div>
+        <span class="text-primary font-bold text-lg">:</span>
+        <div class="bg-primary text-white font-bold text-lg sm:text-xl px-2 py-1 rounded-lg min-w-[2.5rem] text-center" id="timer-minutes">00</div>
+        <span class="text-primary font-bold text-lg">:</span>
+        <div class="bg-primary text-white font-bold text-lg sm:text-xl px-2 py-1 rounded-lg min-w-[2.5rem] text-center" id="timer-seconds">00</div>
+      </div>
+    </div>
+    <span class="hidden sm:inline-block text-xs text-gray-500 dark:text-gray-400">|</span>
+    <span class="text-xs sm:text-sm font-medium text-primary">-20% en sesiones online</span>
+  </div>
+</div>
+
+<script>
+// Sales Countdown Timer - Resets every 12 hours
+(function() {
+  const hoursEl = document.getElementById('timer-hours');
+  const minutesEl = document.getElementById('timer-minutes');
+  const secondsEl = document.getElementById('timer-seconds');
+
+  function getTimeRemaining() {
+    const now = new Date();
+    const msPerCycle = 12 * 60 * 60 * 1000; // 12 hours in ms
+    const msSinceMidnight = now.getTime() % (24 * 60 * 60 * 1000);
+    const msInCurrentCycle = msSinceMidnight % msPerCycle;
+    const msRemaining = msPerCycle - msInCurrentCycle;
+
+    const hours = Math.floor(msRemaining / (1000 * 60 * 60));
+    const minutes = Math.floor((msRemaining % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((msRemaining % (1000 * 60)) / 1000);
+
+    return { hours, minutes, seconds };
+  }
+
+  function updateTimer() {
+    const time = getTimeRemaining();
+    hoursEl.textContent = String(time.hours).padStart(2, '0');
+    minutesEl.textContent = String(time.minutes).padStart(2, '0');
+    secondsEl.textContent = String(time.seconds).padStart(2, '0');
+  }
+
+  // Update immediately and then every second
+  updateTimer();
+  setInterval(updateTimer, 1000);
+})();
+</script>
+
 <div class="mb-8" id="step-1">
 <h2 class="text-2xl font-semibold mb-4 text-text-light dark:text-text-dark"><span class="text-primary mr-3">1.</span>Elija su centro</h2>
 <div class="relative">
