@@ -723,8 +723,8 @@ Pagar €<span id="popup-online-btn-price">149</span> ahora
 <!-- Price Row -->
 <div class="flex items-baseline gap-2 mb-3">
 <span id="popup-center-price" class="text-2xl font-bold text-gray-900">€190</span>
-<span id="popup-center-old" class="text-sm text-red-500 line-through hidden">€250</span>
-<span id="popup-center-standard" class="text-xs text-gray-400">Precio estándar</span>
+<span id="popup-center-old" class="text-sm text-red-500 line-through">€250</span>
+<span class="text-xs font-semibold text-green-600 bg-green-100 px-1.5 py-0.5 rounded">Ahorra €<span id="popup-center-savings">60</span></span>
 </div>
 
 <!-- Benefits -->
@@ -756,6 +756,7 @@ Reservar y pagar en centro
 <div class="flex items-baseline gap-2 mb-1">
 <span class="text-2xl font-bold text-gray-900">3 × <span id="popup-monthly-price">€50</span></span>
 <span class="text-xs text-gray-400">/mes</span>
+<span class="text-xs font-semibold text-green-600 bg-green-100 px-1.5 py-0.5 rounded">Ahorra €<span id="popup-plan-savings">100</span></span>
 </div>
 <p class="text-xs text-gray-500 mb-3">Total: €<span id="popup-monthly-total">150</span> · Sin intereses</p>
 
@@ -1450,34 +1451,27 @@ Más de 500,000 personas ya lo han conseguido. Reserve su cita hoy y dé el prim
       monthlyPrice = priceData.plan ? priceData.plan[0] : 0;
       monthlyTotal = priceData.plan ? priceData.plan.reduce((sum, val) => sum + val, 0) : 0;
 
-      // Calculate savings
+      // Calculate savings for all options
       const onlineSavings = onlineOldPrice - onlinePrice;
+      const centerSavings = priceData.centerOld ? priceData.centerOld - centerPrice : 0;
+      const planSavings = priceData.centerOld ? priceData.centerOld - monthlyTotal : 0;
 
-      // Update popup prices - Online option (Option 1 now)
+      // Update popup prices - Online option (Option 1)
       document.getElementById('popup-online-price').textContent = `€${onlinePrice}`;
       document.getElementById('popup-online-original').textContent = `€${onlineOldPrice}`;
       document.getElementById('popup-online-btn-price').textContent = onlinePrice;
       document.getElementById('popup-savings-amount').textContent = onlineSavings;
 
-      // Update center price (Option 2 now)
+      // Update center price (Option 2)
       document.getElementById('popup-center-price').textContent = `€${centerPrice}`;
-
-      // Show old price for center if available
-      const centerOldElement = document.getElementById('popup-center-old');
-      const centerStandardElement = document.getElementById('popup-center-standard');
-      if (priceData.centerOld) {
-        centerOldElement.textContent = `€${priceData.centerOld}`;
-        centerOldElement.classList.remove('hidden');
-        centerStandardElement.classList.add('hidden');
-      } else {
-        centerOldElement.classList.add('hidden');
-        centerStandardElement.classList.remove('hidden');
-      }
+      document.getElementById('popup-center-old').textContent = `€${priceData.centerOld || onlineOldPrice}`;
+      document.getElementById('popup-center-savings').textContent = centerSavings;
 
       // Update monthly prices (Option 3)
       document.getElementById('popup-monthly-price').textContent = `€${monthlyPrice}`;
       document.getElementById('popup-monthly-total').textContent = monthlyTotal;
       document.getElementById('popup-monthly-btn-price').textContent = monthlyPrice;
+      document.getElementById('popup-plan-savings').textContent = planSavings;
 
       // Store prices in popup for payment selection
       window.paymentPopupData = {
