@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LaserOstop - Prenez rendez-vous</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<style>
+    .material-icons {
+      vertical-align: middle;
+    }
+  </style>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#22A9AF",
+            "background-light": "#FFFFFF",
+            "background-dark": "#121212",
+            "text-light": "#374151",
+            "text-dark": "#E5E7EB",
+            "border-light": "#E5E7EB",
+            "border-dark": "#374151",
+          },
+          fontFamily: {
+            display: ["Poppins", "sans-serif"],
+          },
+          borderRadius: {
+            DEFAULT: "0.5rem",
+          },
+        },
+      },
+    };
+  </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-text-light dark:text-text-dark">
+<div class="min-h-screen flex flex-col">
+<header class="bg-background-light dark:bg-background-dark shadow-sm sticky top-0 z-50">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center py-4">
+<div class="flex items-center">
+<img alt="LaserOstop Logo" class="h-10 w-auto" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD6Ob5s6FCdW36tiQDxIpbhOAVHBPAtwW5gBMr9GLoCXHOEgJOM2DNPPamAC4PJZcDYCcY4MVuK221UFwrtnvEG7h9DEeUXc2mqH43V-Hbj2n4-hRUwNygGU0tXAnqccdjdV7WBbjs48TUTsA0fZLPNNcsma1O0o6WIae7NALP_vRQe1aKgRrkpgHa6YX8HLFqGXIDSWeg6EdhFGB3wFOUGBK3FS5NBP4zHpVjHq7VvZoN4TNkOKA5ra5Aok5aOwkEynEARA59HX7p8"/>
+</div>
+<nav class="hidden lg:flex items-center space-x-8">
+<a class="text-gray-500 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" href="#">Accueil</a>
+<a class="text-gray-500 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" href="#">Méthode LaserOstop</a>
+<a class="text-gray-500 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" href="#">Centres LaserOstop</a>
+<a class="text-gray-500 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" href="#">+ d’infos</a>
+<a class="text-gray-500 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" href="#">Blog</a>
+</nav>
+<div class="flex items-center">
+<a class="bg-primary text-white px-6 py-2.5 rounded-full font-semibold hover:bg-opacity-90 transition-all duration-300 transform hover:scale-105 hidden lg:block" href="#booking">Prendre rendez-vous</a>
+<button class="lg:hidden p-2 rounded-md text-gray-500 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
+<span class="material-icons">menu</span>
+</button>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-grow">
+<section class="relative py-20 sm:py-32 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1531545514256-b1400bc00f31?ixlib=rb-4.0.3&amp;ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&amp;auto=format&amp;fit=crop&amp;w=1974&amp;q=80');">
+<div class="absolute inset-0 bg-white dark:bg-black opacity-50"></div>
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 relative text-center">
+<h1 class="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-800 dark:text-white leading-tight">Prenez rendez-vous dès aujourd’hui <br class="hidden sm:block"/> pour arrêter de fumer en douceur</h1>
+<p class="mt-6 text-lg sm:text-xl text-gray-700 dark:text-gray-200 max-w-3xl mx-auto">Rejoignez des milliers de personnes qui ont retrouvé leur liberté grâce à notre méthode innovante.</p>
+</div>
+</section>
+<section class="bg-gray-50 dark:bg-gray-800 py-6">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex flex-wrap justify-center items-center gap-x-8 gap-y-4 text-center">
+<div class="flex items-center text-primary">
+<span class="material-icons mr-2">check_circle</span>
+<span class="font-medium text-text-light dark:text-text-dark">Indolore &amp; sans danger</span>
+</div>
+<div class="flex items-center text-primary">
+<span class="material-icons mr-2">check_circle</span>
+<span class="font-medium text-text-light dark:text-text-dark">Sans prise de poids</span>
+</div>
+<div class="flex items-center text-primary">
+<span class="material-icons mr-2">check_circle</span>
+<span class="font-medium text-text-light dark:text-text-dark">Sans effets secondaires</span>
+</div>
+</div>
+</div>
+</section>
+<section class="py-16 sm:py-24" id="booking">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="max-w-4xl mx-auto bg-background-light dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden">
+<div class="p-8 sm:p-12">
+<div id="booking-form">
+<div class="mb-8" id="step-1">
+<h2 class="text-2xl font-semibold mb-4 text-text-light dark:text-text-dark"><span class="text-primary mr-3">1.</span>Choisissez votre centre</h2>
+<div class="relative">
+<span class="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">place</span>
+<select class="w-full pl-12 pr-4 py-3 border border-border-light dark:border-border-dark rounded-full bg-transparent focus:ring-primary focus:border-primary transition">
+<option>Sélectionnez un centre...</option>
+<option>laserOstop® Montélimar</option>
+<option>laserOstop® Agen</option>
+<option>laserOstop® Aix-en-Provence</option>
+</select>
+</div>
+</div>
+<div class="mb-8" id="step-2">
+<h2 class="text-2xl font-semibold mb-4 text-text-light dark:text-text-dark"><span class="text-primary mr-3">2.</span>Choisissez une date et une heure</h2>
+<div class="bg-gray-50 dark:bg-gray-700/50 p-6 rounded-lg">
+<div class="flex justify-between items-center mb-4">
+<button class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition"><span class="material-icons">chevron_left</span></button>
+<h3 class="text-lg font-semibold">Octobre 2024</h3>
+<button class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition"><span class="material-icons">chevron_right</span></button>
+</div>
+<div class="grid grid-cols-7 gap-2 text-center">
+<div class="text-gray-500">Lu</div>
+<div class="text-gray-500">Ma</div>
+<div class="text-gray-500">Me</div>
+<div class="text-gray-500">Je</div>
+<div class="text-gray-500">Ve</div>
+<div class="text-gray-500">Sa</div>
+<div class="text-gray-500">Di</div>
+<div class="text-gray-400">30</div>
+<div>1</div>
+<div>2</div>
+<div class="bg-primary text-white rounded-full w-10 h-10 flex items-center justify-center mx-auto cursor-pointer">3</div>
+<div>4</div>
+<div>5</div>
+<div>6</div>
+<div>7</div>
+<div>8</div>
+<div>9</div>
+<div>10</div>
+<div>11</div>
+<div>12</div>
+<div class="text-gray-400">13</div>
+<div>14</div>
+<div>15</div>
+<div class="bg-primary/20 border border-primary text-primary rounded-full w-10 h-10 flex items-center justify-center mx-auto cursor-pointer">16</div>
+<div>17</div>
+<div>18</div>
+<div>19</div>
+<div>20</div>
+</div>
+<div class="mt-6">
+<h4 class="font-semibold mb-3 text-text-light dark:text-text-dark">Horaires disponibles</h4>
+<div class="grid grid-cols-3 sm:grid-cols-4 gap-2">
+<button class="py-2 border border-border-light dark:border-border-dark rounded-full hover:border-primary hover:text-primary transition">09:30</button>
+<button class="py-2 border border-border-light dark:border-border-dark rounded-full hover:border-primary hover:text-primary transition">10:00</button>
+<button class="py-2 bg-primary text-white rounded-full border border-primary">11:30</button>
+<button class="py-2 border border-border-light dark:border-border-dark rounded-full hover:border-primary hover:text-primary transition">14:00</button>
+<button class="py-2 border border-border-light dark:border-border-dark rounded-full text-gray-400 cursor-not-allowed">14:30</button>
+<button class="py-2 border border-border-light dark:border-border-dark rounded-full hover:border-primary hover:text-primary transition">15:00</button>
+</div>
+</div>
+</div>
+</div>
+<div class="mb-8" id="step-3">
+<h2 class="text-2xl font-semibold mb-4 text-text-light dark:text-text-dark"><span class="text-primary mr-3">3.</span>Vos informations</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="relative">
+<span class="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">person</span>
+<input class="w-full pl-12 pr-4 py-3 border border-border-light dark:border-border-dark rounded-full bg-transparent focus:ring-primary focus:border-primary transition" placeholder="Nom complet" type="text"/>
+</div>
+<div class="relative">
+<span class="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">email</span>
+<input class="w-full pl-12 pr-4 py-3 border border-border-light dark:border-border-dark rounded-full bg-transparent focus:ring-primary focus:border-primary transition" placeholder="Adresse e-mail" type="email"/>
+</div>
+<div class="relative md:col-span-2">
+<span class="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">phone</span>
+<input class="w-full pl-12 pr-4 py-3 border border-border-light dark:border-border-dark rounded-full bg-transparent focus:ring-primary focus:border-primary transition" placeholder="Numéro de téléphone" type="tel"/>
+</div>
+</div>
+</div>
+<div id="step-4">
+<button class="w-full bg-primary text-white py-4 px-8 rounded-full font-semibold text-lg hover:bg-opacity-90 transition-all duration-300 transform hover:scale-105 flex items-center justify-center" onclick="showConfirmation()">
+<span class="material-icons mr-2">event_available</span> Confirmer le rendez-vous
+                  </button>
+</div>
+</div>
+<div class="hidden text-center py-12" id="confirmation-message">
+<div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+<span class="material-icons text-4xl text-green-500">check</span>
+</div>
+<h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-4">Rendez-vous confirmé !</h2>
+<p class="text-lg text-gray-600 dark:text-gray-300 mb-2">Un e-mail de confirmation a été envoyé à votre adresse.</p>
+<p class="text-gray-500 dark:text-gray-400">Nous avons hâte de vous accueillir au centre <strong>LaserOstop® Montélimar</strong> le <strong>16 Octobre 2024 à 11:30</strong>.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="bg-gray-50 dark:bg-gray-900/50 py-16 sm:py-24">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<h2 class="text-3xl font-bold text-center mb-10 text-text-light dark:text-text-dark">Nos centres près de chez vous</h2>
+<div class="rounded-lg overflow-hidden shadow-xl">
+<img alt="Map showing LaserOstop centers in France" class="w-full h-96 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAd5UTtqttFjG4-cuNA77-QxYx1fpjAcVc6-6osrb5riWlrY4j8Q_blVM-TrsW_7XRt2q68iLT5CeEudEKn8ioR6T3SLt5yRDIQHSF0A9CgibWWnmCsSkAMl-7QEeT9RqhmV5ZdN1oTJ9ge50aYEzP8gyWqc-NiWn6CsbqSE-ihtIphCXnOASY0hp5PK2Ys30Dmk-IzxQ4yR_1skPPLRl1qusjnWMPM8pXmhaZmMDUAZqx2svWwzyESIKBu0loOdj6l7SGhI5x1NqC-"/>
+</div>
+</div>
+</section>
+</main>
+<footer class="bg-gray-800 dark:bg-black text-white">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+<div>
+<img alt="LaserOstop Logo" class="h-8 mb-4" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8b4oecV9DfhKAgIGLIW3L5jRgEju40LsYn2ory2Dif-O-zS9oeCl3PNkCQTSjL9nWNDF3h5KwkDHlHjGHcl77vgUdyaWljRIo0cVUKuqBkP2DUjyQZnbX4S-0anEKfswZpgoNuEt7UQ41rFSuHXbrA2_8f32kvNge_d9Qjx7cPDZACuF3V2SH4N-rBtL4pXwLMqeybQ2DPmHaPm75ZipBTROfs9kMkc9AUj68FpKkuGTLF8J9LiOflrn-sYvGlwOsolCM5zRMiwat"/>
+<p class="text-gray-400">Arrêtez de fumer en douceur avec la méthode LaserOstop.</p>
+</div>
+<div>
+<h3 class="font-semibold text-white mb-4">Navigation</h3>
+<ul class="space-y-2">
+<li><a class="text-gray-400 hover:text-white transition" href="#">Accueil</a></li>
+<li><a class="text-gray-400 hover:text-white transition" href="#">Méthode</a></li>
+<li><a class="text-gray-400 hover:text-white transition" href="#">Centres</a></li>
+<li><a class="text-gray-400 hover:text-white transition" href="#">Blog</a></li>
+</ul>
+</div>
+<div>
+<h3 class="font-semibold text-white mb-4">Contact</h3>
+<p class="text-gray-400">contact@laserostop.fr</p>
+<p class="text-gray-400">+33 1 23 45 67 89</p>
+</div>
+<div>
+<h3 class="font-semibold text-white mb-4">Suivez-nous</h3>
+<div class="flex space-x-4">
+<a class="text-gray-400 hover:text-white transition" href="#">
+<svg aria-hidden="true" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path clip-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" fill-rule="evenodd"></path></svg>
+</a>
+<a class="text-gray-400 hover:text-white transition" href="#">
+<svg aria-hidden="true" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.71v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"></path></svg>
+</a>
+</div>
+</div>
+</div>
+<div class="mt-8 pt-8 border-t border-gray-700 text-center text-gray-500 text-sm">
+<p>© 2024 LaserOstop España. Tous droits réservés.</p>
+<p class="mt-2">Ce site respecte le GDPR. <a class="underline hover:text-white" href="#">Politique de confidentialité</a>.</p>
+</div>
+</div>
+</footer>
+</div>
+<script>
+    function showConfirmation() {
+        document.getElementById('booking-form').classList.add('hidden');
+        document.getElementById('confirmation-message').classList.remove('hidden');
+    }
+  </script>
+
+</body></html>
