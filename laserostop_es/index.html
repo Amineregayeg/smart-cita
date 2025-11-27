@@ -384,6 +384,14 @@
 </div>
 </nav>
 
+<!-- Scarcity Bar -->
+<div class="bg-amber-400 text-gray-900 py-2 px-4 text-center">
+<p class="text-sm font-bold">
+<span class="hidden sm:inline">⏳ Solo 5 plazas disponibles a precio especial hoy</span>
+<span class="sm:hidden">⏳ 5 plazas a precio especial hoy</span>
+</p>
+</div>
+
 <main class="flex-grow">
 <section id="hero" class="relative py-20 sm:py-32 bg-cover bg-center" style="background-image: url('assets/cigarettes.png');">
 <div class="absolute inset-0 bg-black opacity-40"></div>
@@ -698,7 +706,7 @@ AHORRO
 
 <!-- CARD 1: Online Payment (Recommended) -->
 <div class="relative pt-3">
-<span class="absolute -top-0 left-4 bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide z-10">Recomendado</span>
+<span class="absolute -top-0 left-4 bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide z-10">⭐ Opción más elegida</span>
 <div class="border-2 border-primary bg-primary/5 rounded-xl p-4 cursor-pointer hover:shadow-md transition-all" onclick="selectPaymentOption(1)">
 
 <!-- Price Row -->
@@ -760,6 +768,11 @@ Sujeto a disponibilidad
 </li>
 </ul>
 
+<!-- Warning Badge -->
+<div class="bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mb-3">
+<p class="text-xs text-amber-700 font-medium text-center">⚠️ Pagas 41€ más que reservando online</p>
+</div>
+
 <!-- Button -->
 <div class="flex justify-center">
 <button class="px-6 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 rounded-lg transition-colors text-sm">
@@ -806,11 +819,18 @@ Pagar en 3 cuotas de €<span id="popup-monthly-btn-price">50</span>
 
 </div>
 
+<!-- Social Proof -->
+<div class="mt-4 text-center">
+<p class="text-xs text-gray-500">📈 <span class="font-medium">23 personas</span> han reservado en las últimas 24 horas</p>
+</div>
+
 <!-- Footer -->
-<div class="mt-5 pt-4 border-t border-gray-100">
-<div class="flex items-center justify-center gap-1.5 text-xs text-gray-400 mb-3">
-<span class="material-icons text-sm text-green-500">lock</span>
-<span>Pago protegido con encriptación SSL de 256-bit</span>
+<div class="mt-4 pt-4 border-t border-gray-100">
+<!-- Trust Badges -->
+<div class="flex flex-wrap justify-center gap-3 mb-3">
+<span class="inline-flex items-center gap-1 text-xs text-gray-500"><span class="material-icons text-green-500 text-sm">lock</span>Pago 100% seguro</span>
+<span class="inline-flex items-center gap-1 text-xs text-gray-500"><span class="material-icons text-green-500 text-sm">replay</span>Cancelación gratis 24h</span>
+<span class="inline-flex items-center gap-1 text-xs text-gray-500"><span class="material-icons text-green-500 text-sm">mail</span>Confirmación inmediata</span>
 </div>
 <p class="text-center">
 <button onclick="closePaymentPopup()" class="text-xs text-gray-400 hover:text-gray-600 transition-colors">
@@ -1089,8 +1109,8 @@ Más de 500,000 personas ya lo han conseguido. Reserve su cita hoy y dé el prim
 <!-- Mobile Fixed Bottom CTA Bar -->
 <div class="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-white border-t border-gray-200 shadow-lg px-4 py-3">
 <a href="#booking" class="smooth-scroll flex items-center justify-center gap-2 w-full bg-primary hover:bg-primary/90 text-white font-semibold py-3 rounded-full shadow-md transition-all duration-300">
-<span class="material-icons text-lg">event_available</span>
-<span>Reservar Cita</span>
+<span class="material-icons text-lg">lock</span>
+<span>Reservar con -40% ahora</span>
 </a>
 </div>
 
@@ -1102,7 +1122,7 @@ Más de 500,000 personas ya lo han conseguido. Reserve su cita hoy y dé el prim
   </svg>
   <!-- Tooltip on hover -->
   <span class="absolute right-full mr-3 bg-gray-800 text-white text-sm font-medium px-3 py-2 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-    ¿Necesitas ayuda? Chatea con nosotros
+    ¿Dudas? Habla con un especialista gratis
   </span>
 </a>
 
