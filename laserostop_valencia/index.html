@@ -3147,8 +3147,19 @@ Más de 500,000 personas ya lo han conseguido. Reserve su cita hoy y dé el prim
       // Load appointment types for Valencia
       await loadAppointmentTypes('10');
 
+      // Populate dropdown and auto-select "Dejar de fumar" (first option = solo_cig)
+      populateBookingTypeDropdown(bookingState.appointmentTypes);
+
       // Show step 1b (appointment type selection)
       document.getElementById('step-1b').classList.remove('hidden');
+
+      // Pre-select "Dejar de fumar" in dropdown
+      const typeSelect = document.getElementById('booking-type-select');
+      if (bookingState.selectedAppointmentType) {
+        typeSelect.value = bookingState.selectedAppointmentType;
+        // Trigger change event to show type info and load availability
+        typeSelect.dispatchEvent(new Event('change'));
+      }
 
       // Show promotional popup after initialization
       // showPromoPopup(); // Disabled for now
