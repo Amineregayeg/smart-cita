@@ -60,6 +60,7 @@
   from = "/laserostop_bf"
   to = "/laserostop_bf/index.html"
   status = 200
+  force = true
 
 # Center-specific URLs (valencia, barcelona, etc.) - serve same index.html
 [[redirects]]
@@ -81,6 +82,7 @@
   from = "/laserostop_bf/*"
   to = "/laserostop_bf/index.html"
   status = 200
+  force = true
 
 # Security headers
 [[headers]]
