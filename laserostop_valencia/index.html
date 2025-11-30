@@ -428,21 +428,35 @@
   </div>
 </section>
 
-<!-- 6. BOOKING SECTION - Clean Booking Form -->
-<section class="py-12 sm:py-16 bg-gray-50" id="booking">
+<!-- 6. BOOKING SECTION - Complete Booking Form -->
+<section class="py-16 sm:py-24" id="booking">
 <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-<div class="max-w-2xl mx-auto bg-white rounded-2xl shadow-lg overflow-hidden" style="border: 2px solid #22A9AF;">
-<div class="p-6 sm:p-10">
+<div class="max-w-4xl mx-auto bg-white rounded-lg shadow-xl overflow-hidden" style="border: 3px solid #22A9AF;">
+<div class="p-8 sm:p-12">
 <div id="booking-form">
 
-<!-- Booking Header -->
-<div class="text-center mb-8">
-  <h2 class="text-2xl sm:text-3xl font-bold mb-2" style="color: #22A9AF;">Reserva tu cita</h2>
-  <p class="text-gray-600">Completa el formulario para reservar tu sesión</p>
+<!-- CTA Banner -->
+<div class="mb-8 bg-gradient-to-r from-[#22A9AF]/10 via-[#22A9AF]/5 to-transparent rounded-lg p-6" style="border-left: 4px solid #22A9AF;">
+  <div class="flex items-start gap-4">
+    <div class="flex-shrink-0">
+      <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background-color: rgba(34, 169, 175, 0.2);">
+        <span class="material-icons text-2xl" style="color: #22A9AF;">campaign</span>
+      </div>
+    </div>
+    <div class="flex-1">
+      <h3 class="text-lg font-bold text-gray-800 mb-2">
+        ¡Reserve su cita hoy y deje de fumar en una sola sesión!
+      </h3>
+      <p class="text-sm text-gray-600">
+        Más de 500,000 personas han dejado de fumar con LaserOstop.
+        <span class="font-semibold" style="color: #22A9AF;">Plazas limitadas disponibles</span> - Reserve ahora.
+      </p>
+    </div>
+  </div>
 </div>
 
-<div class="mb-6" id="step-1">
-<h3 class="text-lg font-semibold mb-3 text-gray-800"><span style="color: #22A9AF;" class="mr-2">1.</span>Tu centro</h3>
+<div class="mb-8" id="step-1">
+<h2 class="text-2xl font-semibold mb-4 text-gray-800"><span style="color: #22A9AF;" class="mr-3">1.</span>Su centro</h2>
 <div class="relative">
 <span class="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-white">place</span>
 <div id="center-display" class="w-full pl-12 pr-4 py-3 border-0 rounded-full text-white font-medium" style="background-color: #22A9AF;">
@@ -453,16 +467,16 @@
 </select>
 </div>
 </div>
-<div class="mb-6 hidden" id="step-1b">
-<h3 class="text-lg font-semibold mb-3 text-gray-800"><span style="color: #22A9AF;" class="mr-2">2.</span>Tipo de sesión</h3>
+<div class="mb-8 hidden" id="step-1b">
+<h2 class="text-2xl font-semibold mb-4 text-gray-800"><span style="color: #22A9AF;" class="mr-3">2.</span>Tipo de sesión</h2>
 <div class="relative">
 <span class="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">healing</span>
-<select id="booking-type-select" class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-full bg-white focus:outline-none transition" style="focus:border-color: #22A9AF;">
+<select id="booking-type-select" class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-full bg-transparent focus:ring-[#22A9AF] focus:border-[#22A9AF] transition">
 <option value="">Seleccione el tipo de sesión...</option>
 </select>
 </div>
 <!-- Info box for selected type -->
-<div id="booking-type-info" class="hidden mt-4 p-4 rounded-lg" style="background-color: rgba(31, 111, 235, 0.1); border: 1px solid rgba(31, 111, 235, 0.3);">
+<div id="booking-type-info" class="hidden mt-4 p-4 bg-[#22A9AF]/10 border border-[#22A9AF]/30 rounded-lg">
 <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
 <div class="flex items-center">
 <span class="material-icons mr-2 text-lg" style="color: #22A9AF;">schedule</span>
@@ -488,66 +502,66 @@
 </div>
 </div>
 </div>
-<div class="mb-6 hidden" id="step-2">
-<h3 class="text-lg font-semibold mb-3 text-gray-800"><span style="color: #22A9AF;" class="mr-2">3.</span>Fecha y hora</h3>
-<div class="bg-gray-50 p-4 rounded-xl">
+<div class="mb-8 hidden" id="step-2">
+<h2 class="text-2xl font-semibold mb-4 text-gray-800"><span style="color: #22A9AF;" class="mr-3">3.</span>Elija una fecha y una hora</h2>
+<div class="bg-gray-50 p-6 rounded-lg">
 <div class="flex justify-between items-center mb-4">
 <button id="prev-month" class="p-2 rounded-full hover:bg-gray-200 transition"><span class="material-icons">chevron_left</span></button>
-<h4 id="current-month" class="text-base font-semibold text-gray-800"></h4>
+<h3 id="current-month" class="text-lg font-semibold"></h3>
 <button id="next-month" class="p-2 rounded-full hover:bg-gray-200 transition"><span class="material-icons">chevron_right</span></button>
 </div>
-<div class="grid grid-cols-7 gap-1 text-center mb-2">
-<div class="text-gray-500 text-xs font-medium">Lu</div>
-<div class="text-gray-500 text-xs font-medium">Ma</div>
-<div class="text-gray-500 text-xs font-medium">Mi</div>
-<div class="text-gray-500 text-xs font-medium">Ju</div>
-<div class="text-gray-500 text-xs font-medium">Vi</div>
-<div class="text-gray-500 text-xs font-medium">Sa</div>
-<div class="text-gray-500 text-xs font-medium">Do</div>
+<div class="grid grid-cols-7 gap-2 text-center mb-2">
+<div class="text-gray-500 text-sm font-medium">Lu</div>
+<div class="text-gray-500 text-sm font-medium">Ma</div>
+<div class="text-gray-500 text-sm font-medium">Mi</div>
+<div class="text-gray-500 text-sm font-medium">Ju</div>
+<div class="text-gray-500 text-sm font-medium">Vi</div>
+<div class="text-gray-500 text-sm font-medium">Sa</div>
+<div class="text-gray-500 text-sm font-medium">Do</div>
 </div>
-<div id="calendar-grid" class="grid grid-cols-7 gap-1 text-center">
+<div id="calendar-grid" class="grid grid-cols-7 gap-2 text-center">
 <!-- Calendar days will be generated here -->
 </div>
-<div class="mt-4" id="time-slots-section">
-<h5 class="font-medium mb-2 text-gray-800 text-sm">Horarios disponibles</h5>
-<div id="selected-date-info" class="text-xs text-gray-600 mb-2"></div>
+<div class="mt-6" id="time-slots-section">
+<h4 class="font-semibold mb-3 text-gray-800">Horarios disponibles</h4>
+<div id="selected-date-info" class="text-sm text-gray-600 mb-3"></div>
 <div id="time-slots" class="grid grid-cols-3 sm:grid-cols-4 gap-2">
 <!-- Time slots will be generated here -->
 </div>
 </div>
 </div>
 </div>
-<div class="mb-6 hidden" id="step-3">
-<h3 class="text-lg font-semibold mb-3 text-gray-800"><span style="color: #22A9AF;" class="mr-2">4.</span>Tus datos</h3>
-<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="mb-8 hidden" id="step-3">
+<h2 class="text-2xl font-semibold mb-4 text-gray-800"><span style="color: #22A9AF;" class="mr-3">4.</span>Sus datos</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 <div class="relative">
 <span class="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">person</span>
-<input id="full-name" class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-full bg-white focus:outline-none transition" placeholder="Nombre completo *" type="text" required/>
+<input id="full-name" class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-full bg-transparent focus:ring-[#22A9AF] focus:border-[#22A9AF] transition" placeholder="Nombre completo *" type="text" required/>
 </div>
 <div class="relative">
 <span class="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">email</span>
-<input id="email" class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-full bg-white focus:outline-none transition" placeholder="Correo electrónico *" type="email" required/>
+<input id="email" class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-full bg-transparent focus:ring-[#22A9AF] focus:border-[#22A9AF] transition" placeholder="Correo electrónico *" type="email" required/>
 </div>
 <div class="relative md:col-span-2">
 <span class="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">phone</span>
-<input id="phone" class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-full bg-white focus:outline-none transition" placeholder="Número de teléfono *" type="tel" required/>
+<input id="phone" class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-full bg-transparent focus:ring-[#22A9AF] focus:border-[#22A9AF] transition" placeholder="Número de teléfono *" type="tel" required/>
 </div>
 </div>
 </div>
 <div id="step-4" class="hidden">
-<button type="button" class="w-full text-white py-4 px-8 rounded-full font-semibold text-lg hover:opacity-90 transition-all duration-300 transform hover:scale-105 flex items-center justify-center" style="background-color: #F28B27;" onclick="showConfirmation(event)">
+<button type="button" class="w-full bg-[#22A9AF] text-white py-4 px-8 rounded-full font-semibold text-lg hover:bg-opacity-90 transition-all duration-300 transform hover:scale-105 flex items-center justify-center" onclick="showConfirmation(event)">
 <span class="material-icons mr-2">event_available</span> Confirmar la cita
 </button>
 </div>
 </div>
 <div class="hidden flex items-center justify-center text-center" id="confirmation-message">
-<div class="py-8">
-<div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+<div class="py-12">
+<div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
 <span class="material-icons text-4xl text-green-500">check</span>
 </div>
-<h2 class="text-2xl font-bold text-gray-800 mb-3">¡Cita confirmada!</h2>
-<p class="text-gray-600 mb-2">Se ha enviado un correo de confirmación.</p>
-<p class="text-gray-500 text-sm">Te esperamos en <strong>LaserOstop Valencia</strong></p>
+<h2 class="text-3xl font-bold text-gray-800 mb-4">¡Cita confirmada!</h2>
+<p class="text-lg text-gray-600 mb-2">Se ha enviado un correo de confirmación a su dirección.</p>
+<p class="text-gray-500">Estaremos encantados de recibirle en el centro <strong>LaserOstop Valencia</strong> el <strong>15 de Octubre de 2025 a las 11:30</strong>.</p>
 </div>
 </div>
 
