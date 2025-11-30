@@ -11,7 +11,7 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 <style>
     :root {
-      --blue-primary: #1F6FEB;
+      --teal-primary: #22A9AF;
       --orange-cta: #F28B27;
       --text-dark: #1a1a1a;
       --text-gray: #666666;
@@ -23,10 +23,10 @@
       vertical-align: middle;
     }
 
-    /* Override primary color to blue for this page */
-    .text-blue-primary { color: var(--blue-primary); }
-    .bg-blue-primary { background-color: var(--blue-primary); }
-    .border-blue-primary { border-color: var(--blue-primary); }
+    /* Override primary color to teal for this page */
+    .text-teal-primary { color: var(--teal-primary); }
+    .bg-teal-primary { background-color: var(--teal-primary); }
+    .border-teal-primary { border-color: var(--teal-primary); }
     .text-orange-cta { color: var(--orange-cta); }
     .bg-orange-cta { background-color: var(--orange-cta); }
 
@@ -48,7 +48,7 @@
 
     /* Custom marker styles */
     .custom-marker {
-      background-color: var(--blue-primary);
+      background-color: var(--teal-primary);
       width: 30px;
       height: 30px;
       border-radius: 50% 50% 50% 0;
@@ -81,7 +81,7 @@
     }
 
     .leaflet-popup-content h3 {
-      color: var(--blue-primary);
+      color: var(--teal-primary);
       font-weight: 600;
       margin-bottom: 8px;
     }
@@ -102,7 +102,7 @@
 
     /* City-grouped dropdown styling */
     #center-select {
-      background-color: var(--blue-primary);
+      background-color: var(--teal-primary);
       color: white;
       font-weight: 500;
     }
@@ -110,7 +110,7 @@
     #center-select optgroup {
       font-weight: 700;
       font-size: 0.95em;
-      color: var(--blue-primary);
+      color: var(--teal-primary);
       font-style: normal;
       padding: 8px 0 4px 0;
       background-color: white;
@@ -136,15 +136,15 @@
       color: var(--star-yellow);
     }
 
-    /* Booking form adjustments for blue theme */
+    /* Booking form adjustments for teal theme */
     #center-display {
-      background-color: var(--blue-primary) !important;
+      background-color: var(--teal-primary) !important;
     }
 
-    /* Override focus states for blue */
+    /* Override focus states for teal */
     input:focus, select:focus {
-      border-color: var(--blue-primary) !important;
-      ring-color: var(--blue-primary) !important;
+      border-color: var(--teal-primary) !important;
+      ring-color: var(--teal-primary) !important;
     }
   </style>
 
@@ -268,12 +268,12 @@
 <body class="bg-white font-display text-gray-900">
 
 <!-- Cookie Consent Banner -->
-<div id="cookie-consent-banner" class="hidden fixed bottom-0 left-0 right-0 bg-white shadow-2xl border-t-4 z-[9999]" style="border-color: #1F6FEB;">
+<div id="cookie-consent-banner" class="hidden fixed bottom-0 left-0 right-0 bg-white shadow-2xl border-t-4 z-[9999]" style="border-color: #22A9AF;">
   <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
       <div class="flex items-start gap-4 flex-1">
         <div class="flex-shrink-0 mt-1">
-          <svg class="w-6 h-6" style="color: #1F6FEB;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-6 h-6" style="color: #22A9AF;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
           </svg>
         </div>
@@ -287,7 +287,7 @@
         <button onclick="window.CookieConsent.reject()" class="px-5 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors">
           Rechazar
         </button>
-        <button onclick="window.CookieConsent.accept()" class="px-5 py-2 text-sm font-medium text-white rounded-full transition-colors shadow-md" style="background-color: #1F6FEB;">
+        <button onclick="window.CookieConsent.accept()" class="px-5 py-2 text-sm font-medium text-white rounded-full transition-colors shadow-md" style="background-color: #22A9AF;">
           Aceptar
         </button>
       </div>
@@ -310,7 +310,7 @@
 <section id="hero" class="bg-white py-12 sm:py-16">
   <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center max-w-4xl">
     <!-- Main Title -->
-    <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-8" style="color: #1F6FEB;">
+    <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-8" style="color: #22A9AF;">
       Reserva tu sesión para dejar de fumar en una sola sesión
     </h1>
 
@@ -341,7 +341,7 @@
 <section id="testimonials" class="bg-gray-50 py-12 sm:py-16">
   <div class="container mx-auto px-4 sm:px-6 lg:px-8">
     <!-- Section Title -->
-    <h2 class="text-2xl sm:text-3xl font-bold text-center mb-10" style="color: #1F6FEB;">
+    <h2 class="text-2xl sm:text-3xl font-bold text-center mb-10" style="color: #22A9AF;">
       Satisfecho o reembolsado
     </h2>
 
@@ -401,7 +401,7 @@
 
       <!-- Left: Text Content -->
       <div class="order-2 lg:order-1">
-        <h2 class="text-2xl sm:text-3xl font-bold mb-6" style="color: #1F6FEB;">
+        <h2 class="text-2xl sm:text-3xl font-bold mb-6" style="color: #22A9AF;">
           Nuestra metodología
         </h2>
         <div class="space-y-4 text-gray-600 leading-relaxed">
@@ -431,21 +431,21 @@
 <!-- 6. BOOKING SECTION - Clean Booking Form -->
 <section class="py-12 sm:py-16 bg-gray-50" id="booking">
 <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-<div class="max-w-2xl mx-auto bg-white rounded-2xl shadow-lg overflow-hidden" style="border: 2px solid #1F6FEB;">
+<div class="max-w-2xl mx-auto bg-white rounded-2xl shadow-lg overflow-hidden" style="border: 2px solid #22A9AF;">
 <div class="p-6 sm:p-10">
 <div id="booking-form">
 
 <!-- Booking Header -->
 <div class="text-center mb-8">
-  <h2 class="text-2xl sm:text-3xl font-bold mb-2" style="color: #1F6FEB;">Reserva tu cita</h2>
+  <h2 class="text-2xl sm:text-3xl font-bold mb-2" style="color: #22A9AF;">Reserva tu cita</h2>
   <p class="text-gray-600">Completa el formulario para reservar tu sesión</p>
 </div>
 
 <div class="mb-6" id="step-1">
-<h3 class="text-lg font-semibold mb-3 text-gray-800"><span style="color: #1F6FEB;" class="mr-2">1.</span>Tu centro</h3>
+<h3 class="text-lg font-semibold mb-3 text-gray-800"><span style="color: #22A9AF;" class="mr-2">1.</span>Tu centro</h3>
 <div class="relative">
 <span class="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-white">place</span>
-<div id="center-display" class="w-full pl-12 pr-4 py-3 border-0 rounded-full text-white font-medium" style="background-color: #1F6FEB;">
+<div id="center-display" class="w-full pl-12 pr-4 py-3 border-0 rounded-full text-white font-medium" style="background-color: #22A9AF;">
   Valencia
 </div>
 <select id="center-select" class="hidden">
@@ -454,10 +454,10 @@
 </div>
 </div>
 <div class="mb-6 hidden" id="step-1b">
-<h3 class="text-lg font-semibold mb-3 text-gray-800"><span style="color: #1F6FEB;" class="mr-2">2.</span>Tipo de sesión</h3>
+<h3 class="text-lg font-semibold mb-3 text-gray-800"><span style="color: #22A9AF;" class="mr-2">2.</span>Tipo de sesión</h3>
 <div class="relative">
 <span class="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">healing</span>
-<select id="booking-type-select" class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-full bg-white focus:outline-none transition" style="focus:border-color: #1F6FEB;">
+<select id="booking-type-select" class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-full bg-white focus:outline-none transition" style="focus:border-color: #22A9AF;">
 <option value="">Seleccione el tipo de sesión...</option>
 </select>
 </div>
@@ -465,21 +465,21 @@
 <div id="booking-type-info" class="hidden mt-4 p-4 rounded-lg" style="background-color: rgba(31, 111, 235, 0.1); border: 1px solid rgba(31, 111, 235, 0.3);">
 <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
 <div class="flex items-center">
-<span class="material-icons mr-2 text-lg" style="color: #1F6FEB;">schedule</span>
+<span class="material-icons mr-2 text-lg" style="color: #22A9AF;">schedule</span>
 <div>
 <p class="text-gray-500 text-xs">Duración</p>
 <p id="type-duration" class="font-semibold text-gray-800">-</p>
 </div>
 </div>
 <div class="flex items-center">
-<span class="material-icons mr-2 text-lg" style="color: #1F6FEB;">euro</span>
+<span class="material-icons mr-2 text-lg" style="color: #22A9AF;">euro</span>
 <div>
 <p class="text-gray-500 text-xs">Precio</p>
 <p id="type-price" class="font-semibold text-gray-800">-</p>
 </div>
 </div>
 <div class="flex items-center">
-<span class="material-icons mr-2 text-lg" style="color: #1F6FEB;">info</span>
+<span class="material-icons mr-2 text-lg" style="color: #22A9AF;">info</span>
 <div>
 <p class="text-gray-500 text-xs">Descripción</p>
 <p id="type-description" class="font-semibold text-gray-800 text-xs">-</p>
@@ -489,7 +489,7 @@
 </div>
 </div>
 <div class="mb-6 hidden" id="step-2">
-<h3 class="text-lg font-semibold mb-3 text-gray-800"><span style="color: #1F6FEB;" class="mr-2">3.</span>Fecha y hora</h3>
+<h3 class="text-lg font-semibold mb-3 text-gray-800"><span style="color: #22A9AF;" class="mr-2">3.</span>Fecha y hora</h3>
 <div class="bg-gray-50 p-4 rounded-xl">
 <div class="flex justify-between items-center mb-4">
 <button id="prev-month" class="p-2 rounded-full hover:bg-gray-200 transition"><span class="material-icons">chevron_left</span></button>
@@ -518,7 +518,7 @@
 </div>
 </div>
 <div class="mb-6 hidden" id="step-3">
-<h3 class="text-lg font-semibold mb-3 text-gray-800"><span style="color: #1F6FEB;" class="mr-2">4.</span>Tus datos</h3>
+<h3 class="text-lg font-semibold mb-3 text-gray-800"><span style="color: #22A9AF;" class="mr-2">4.</span>Tus datos</h3>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 <div class="relative">
 <span class="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">person</span>
