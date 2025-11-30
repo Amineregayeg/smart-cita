@@ -3140,26 +3140,12 @@ Más de 500,000 personas ya lo han conseguido. Reserve su cita hoy y dé el prim
       // Load centers from Smart Agenda API
       await loadCentersFromAPI();
 
-      // Auto-select Sevilla center (hardcoded)
-      bookingState.selectedCenter = '44'; // Sevilla center ID
+      // Auto-select Sevilla center by triggering the hidden dropdown change event
+      // This triggers the full flow: load types -> populate dropdown -> auto-select first type
+      const centerSelect = document.getElementById('center-select');
+      centerSelect.value = '44'; // Sevilla center ID
+      centerSelect.dispatchEvent(new Event('change'));
       console.log('📍 Auto-selected center: Sevilla (ID: 44)');
-
-      // Load appointment types for Sevilla
-      await loadAppointmentTypes('44');
-
-      // Populate dropdown and auto-select "Dejar de fumar" (first option = solo_cig)
-      populateBookingTypeDropdown(bookingState.appointmentTypes);
-
-      // Show step 1b (appointment type selection)
-      document.getElementById('step-1b').classList.remove('hidden');
-
-      // Pre-select "Dejar de fumar" in dropdown
-      const typeSelect = document.getElementById('booking-type-select');
-      if (bookingState.selectedAppointmentType) {
-        typeSelect.value = bookingState.selectedAppointmentType;
-        // Trigger change event to show type info and load availability
-        typeSelect.dispatchEvent(new Event('change'));
-      }
 
       // Show promotional popup after initialization
       // showPromoPopup(); // Disabled for now

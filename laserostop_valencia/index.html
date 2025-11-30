@@ -3,16 +3,32 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>LaserOstop Valencia - Reserve su cita</title>
+<title>LaserOstop Valencia - Dejar de fumar en una sola sesión</title>
 <link rel="stylesheet" href="tailwind-generated.css">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
 <!-- Leaflet CSS -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 <style>
+    :root {
+      --blue-primary: #1F6FEB;
+      --orange-cta: #F28B27;
+      --text-dark: #1a1a1a;
+      --text-gray: #666666;
+      --bg-white: #ffffff;
+      --star-yellow: #FFD93D;
+    }
+
     .material-icons {
       vertical-align: middle;
     }
+
+    /* Override primary color to blue for this page */
+    .text-blue-primary { color: var(--blue-primary); }
+    .bg-blue-primary { background-color: var(--blue-primary); }
+    .border-blue-primary { border-color: var(--blue-primary); }
+    .text-orange-cta { color: var(--orange-cta); }
+    .bg-orange-cta { background-color: var(--orange-cta); }
 
     /* Map container */
     #spain-map-container {
@@ -32,7 +48,7 @@
 
     /* Custom marker styles */
     .custom-marker {
-      background-color: #22A9AF;
+      background-color: var(--blue-primary);
       width: 30px;
       height: 30px;
       border-radius: 50% 50% 50% 0;
@@ -65,63 +81,9 @@
     }
 
     .leaflet-popup-content h3 {
-      color: #22A9AF;
+      color: var(--blue-primary);
       font-weight: 600;
       margin-bottom: 8px;
-    }
-
-    /* Reviews Carousel Animations */
-    @keyframes scroll-left {
-      0% {
-        transform: translateX(0);
-      }
-      100% {
-        transform: translateX(-50%);
-      }
-    }
-
-    @keyframes scroll-right {
-      0% {
-        transform: translateX(-50%);
-      }
-      100% {
-        transform: translateX(0);
-      }
-    }
-
-    .carousel-track {
-      display: flex;
-      gap: 1.5rem;
-      animation-timing-function: linear;
-      animation-iteration-count: infinite;
-    }
-
-    .carousel-row-1 .carousel-track {
-      animation: scroll-left 40s linear infinite;
-    }
-
-    .carousel-row-2 .carousel-track {
-      animation: scroll-right 40s linear infinite;
-    }
-
-    /* Faster animation on mobile devices */
-    @media (max-width: 768px) {
-      .carousel-row-1 .carousel-track {
-        animation: scroll-left 20s linear infinite;
-      }
-
-      .carousel-row-2 .carousel-track {
-        animation: scroll-right 20s linear infinite;
-      }
-    }
-
-    .carousel-container:hover .carousel-track {
-      animation-play-state: paused;
-    }
-
-    .review-card-carousel {
-      flex: 0 0 350px;
-      min-width: 350px;
     }
 
     /* Payment popup responsive width */
@@ -140,7 +102,7 @@
 
     /* City-grouped dropdown styling */
     #center-select {
-      background-color: #22A9AF;
+      background-color: var(--blue-primary);
       color: white;
       font-weight: 500;
     }
@@ -148,7 +110,7 @@
     #center-select optgroup {
       font-weight: 700;
       font-size: 0.95em;
-      color: #22A9AF;
+      color: var(--blue-primary);
       font-style: normal;
       padding: 8px 0 4px 0;
       background-color: white;
@@ -161,14 +123,28 @@
       background-color: white;
     }
 
-    /* Dark mode support for dropdown */
-    @media (prefers-color-scheme: dark) {
-      #center-select optgroup {
-        color: #22A9AF;
-      }
-      #center-select option {
-        color: #D1D5DB;
-      }
+    /* Testimonial card shadow */
+    .testimonial-card {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    /* Star rating */
+    .stars {
+      color: var(--star-yellow);
+    }
+
+    /* Booking form adjustments for blue theme */
+    #center-display {
+      background-color: var(--blue-primary) !important;
+    }
+
+    /* Override focus states for blue */
+    input:focus, select:focus {
+      border-color: var(--blue-primary) !important;
+      ring-color: var(--blue-primary) !important;
     }
   </style>
 
@@ -289,44 +265,30 @@
   </style>
 
 </head>
-<body class="bg-background-light dark:bg-background-dark font-display text-text-light dark:text-text-dark">
+<body class="bg-white font-display text-gray-900">
 
 <!-- Cookie Consent Banner -->
-<div id="cookie-consent-banner" class="hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 shadow-2xl border-t-4 border-primary z-[9999]">
+<div id="cookie-consent-banner" class="hidden fixed bottom-0 left-0 right-0 bg-white shadow-2xl border-t-4 z-[9999]" style="border-color: #1F6FEB;">
   <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-      <!-- Content -->
       <div class="flex items-start gap-4 flex-1">
         <div class="flex-shrink-0 mt-1">
-          <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-6 h-6" style="color: #1F6FEB;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
           </svg>
         </div>
         <div class="flex-1">
-          <h3 class="font-semibold text-text-light dark:text-text-dark mb-2">
-            🍪 Uso de Cookies
-          </h3>
-          <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-            Utilizamos cookies y herramientas de análisis (Hotjar/Contentsquare) para mejorar su experiencia, analizar el uso del sitio web y optimizar nuestros servicios.
-            <span class="font-medium">No compartimos datos personales con terceros.</span>
-          </p>
-          <p class="text-xs text-gray-500 dark:text-gray-500 mt-2">
-            Al aceptar, nos ayuda a entender cómo mejorar nuestro servicio de reservas.
+          <p class="text-sm text-gray-600 leading-relaxed">
+            Utilizamos cookies para mejorar su experiencia. <span class="font-medium">No compartimos datos personales.</span>
           </p>
         </div>
       </div>
-
-      <!-- Buttons -->
-      <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-        <button
-          onclick="window.CookieConsent.reject()"
-          class="px-6 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200 whitespace-nowrap">
+      <div class="flex flex-row gap-3 w-full sm:w-auto">
+        <button onclick="window.CookieConsent.reject()" class="px-5 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors">
           Rechazar
         </button>
-        <button
-          onclick="window.CookieConsent.accept()"
-          class="px-6 py-3 text-sm font-medium text-white bg-primary hover:bg-[#1d9199] rounded-full transition-colors duration-200 shadow-md hover:shadow-lg whitespace-nowrap">
-          Aceptar Cookies
+        <button onclick="window.CookieConsent.accept()" class="px-5 py-2 text-sm font-medium text-white rounded-full transition-colors shadow-md" style="background-color: #1F6FEB;">
+          Aceptar
         </button>
       </div>
     </div>
@@ -335,317 +297,155 @@
 
 <div class="min-h-screen flex flex-col">
 
-<!-- Modern Navigation Bar -->
-<nav class="bg-white dark:bg-gray-900 shadow-md sticky top-0 z-50 transition-all duration-300" id="navbar">
-<div class="container mx-auto px-4 sm:px-6 lg:px-8">
-<div class="flex items-center justify-between h-20">
-<!-- Logo -->
-<div class="flex-shrink-0">
-<a href="#hero" class="smooth-scroll">
-<img src="assets/logolaserostop-bleu.svg" alt="LaserOstop España" class="h-12 sm:h-14 w-auto transition-all duration-300"/>
-</a>
-</div>
-
-<!-- Desktop Navigation Links -->
-<div class="hidden md:flex items-center space-x-8">
-<a href="#hero" class="smooth-scroll text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors duration-200 font-medium">Inicio</a>
-<a href="#about" class="smooth-scroll text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors duration-200 font-medium">Sobre Nosotros</a>
-<a href="#testimonials" class="smooth-scroll text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors duration-200 font-medium">Testimonios</a>
-</div>
-
-<!-- Reservation CTA Button (Desktop) -->
-<div class="hidden md:flex items-center">
-<a href="#booking" class="smooth-scroll inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white font-semibold px-6 py-3 rounded-full shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300">
-<span class="material-icons text-lg">event_available</span>
-<span>Reservar Cita</span>
-</a>
-</div>
-
-<!-- Mobile Menu Button -->
-<div class="md:hidden">
-<button id="mobile-menu-button" class="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary focus:outline-none">
-<span class="material-icons text-3xl">menu</span>
-</button>
-</div>
-</div>
-
-<!-- Mobile Navigation Menu -->
-<div id="mobile-menu" class="hidden md:hidden pb-4 pt-2">
-<div class="flex flex-col space-y-3">
-<a href="#hero" class="smooth-scroll mobile-link text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors duration-200 font-medium py-2 px-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">Inicio</a>
-<a href="#about" class="smooth-scroll mobile-link text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors duration-200 font-medium py-2 px-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">Sobre Nosotros</a>
-<a href="#testimonials" class="smooth-scroll mobile-link text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors duration-200 font-medium py-2 px-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">Testimonios</a>
-<a href="#booking" class="smooth-scroll mobile-link inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white font-semibold px-6 py-3 rounded-full shadow-md transition-all duration-300 mt-2">
-<span class="material-icons text-lg">event_available</span>
-<span>Reservar Cita</span>
-</a>
-</div>
-</div>
-</div>
-</nav>
-
-<!-- Special Offer Banner -->
-<div class="py-3 px-4 text-center" style="background: #FFD93D;">
-<p class="text-base font-bold" style="color: #000;">
-<span class="hidden sm:inline">⏳ Solo 5 plazas disponibles a precio especial hoy</span>
-<span class="sm:hidden">⏳ 5 plazas a precio especial hoy</span>
-</p>
-</div>
+<!-- 1. HEADER - Centered Logo in Blue -->
+<header class="bg-white py-6">
+  <div class="container mx-auto px-4 text-center">
+    <img src="assets/logolaserostop-bleu.svg" alt="LaserOstop" class="h-14 sm:h-16 mx-auto"/>
+  </div>
+</header>
 
 <main class="flex-grow">
-<section id="hero" class="relative py-20 sm:py-32 bg-cover bg-center" style="background-image: url('assets/cigarettes.png');">
-<div class="absolute inset-0 bg-black opacity-40"></div>
-<div class="container mx-auto px-4 sm:px-6 lg:px-8 relative text-center">
-<h1 class="text-4xl sm:text-5xl md:text-6xl font-bold text-white leading-tight mb-8">Reserve su cita hoy mismo <br class="hidden sm:block"/> para dejar de fumar suavemente</h1>
-<button id="hero-cta-btn" class="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white font-semibold text-lg px-8 py-4 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
-<span class="material-icons">event_available</span>
-<span>Reservar mi cita</span>
-</button>
-</div>
-</section>
 
-<section class="bg-gray-50 dark:bg-gray-800 py-6">
-<div class="container mx-auto px-4 sm:px-6 lg:px-8">
-<div class="flex flex-wrap justify-center items-center gap-x-8 gap-y-4 text-center">
-<div class="flex items-center text-primary">
-<span class="material-icons mr-2">check_circle</span>
-<span class="font-medium text-text-light dark:text-text-dark">Indoloro y sin peligro</span>
-</div>
-<div class="flex items-center text-primary">
-<span class="material-icons mr-2">check_circle</span>
-<span class="font-medium text-text-light dark:text-text-dark">Sin aumento de peso</span>
-</div>
-<div class="flex items-center text-primary">
-<span class="material-icons mr-2">check_circle</span>
-<span class="font-medium text-text-light dark:text-text-dark">Sin efectos secundarios</span>
-</div>
-</div>
-</div>
-</section>
+<!-- 2. HERO SECTION - Main Value Proposition -->
+<section id="hero" class="bg-white py-12 sm:py-16">
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center max-w-4xl">
+    <!-- Main Title -->
+    <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-8" style="color: #1F6FEB;">
+      Reserva tu sesión para dejar de fumar en una sola sesión
+    </h1>
 
-<!-- Special Offer Countdown Timer Section -->
-<section class="py-4 border-y" style="background: #FFD93D; border-color: #000;">
-  <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6">
+    <!-- Benefits Row -->
+    <div class="flex flex-wrap justify-center items-center gap-6 sm:gap-10 mb-10">
       <div class="flex items-center gap-2">
-        <span class="text-sm sm:text-base font-bold" style="color: #000;">OFERTA ESPECIAL</span>
+        <span class="material-icons text-green-500">check_circle</span>
+        <span class="font-medium text-gray-800">indoloro</span>
       </div>
       <div class="flex items-center gap-2">
-        <span class="text-xs sm:text-sm" style="color: #000;">Termina en:</span>
-        <div class="flex items-center gap-1" id="sales-timer">
-          <div class="font-bold text-lg sm:text-xl px-2 py-1 rounded-lg min-w-[2.5rem] text-center shadow-md" style="background-color: #000; color: #FFD93D;" id="timer-hours">12</div>
-          <span class="font-bold text-lg" style="color: #000;">:</span>
-          <div class="font-bold text-lg sm:text-xl px-2 py-1 rounded-lg min-w-[2.5rem] text-center shadow-md" style="background-color: #000; color: #FFD93D;" id="timer-minutes">00</div>
-          <span class="font-bold text-lg" style="color: #000;">:</span>
-          <div class="font-bold text-lg sm:text-xl px-2 py-1 rounded-lg min-w-[2.5rem] text-center shadow-md" style="background-color: #000; color: #FFD93D;" id="timer-seconds">00</div>
+        <span class="material-icons text-green-500">check_circle</span>
+        <span class="font-medium text-gray-800">sin aumento de peso</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="material-icons text-green-500">check_circle</span>
+        <span class="font-medium text-gray-800">sin efectos secundarios</span>
+      </div>
+    </div>
+
+    <!-- 3. CTA PRICING BLOCK - Orange Button -->
+    <a href="#booking" class="smooth-scroll inline-block px-12 py-5 text-xl sm:text-2xl font-bold text-white rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300" style="background-color: #F28B27;">
+      Precio especial 130 €
+    </a>
+  </div>
+</section>
+
+<!-- 4. TESTIMONIALS SECTION - Satisfecho o reembolsado -->
+<section id="testimonials" class="bg-gray-50 py-12 sm:py-16">
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Section Title -->
+    <h2 class="text-2xl sm:text-3xl font-bold text-center mb-10" style="color: #1F6FEB;">
+      Satisfecho o reembolsado
+    </h2>
+
+    <!-- Testimonial Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+
+      <!-- Testimonial 1: José -->
+      <article class="testimonial-card">
+        <div class="flex items-center gap-4 mb-4">
+          <img src="https://ui-avatars.com/api/?name=Jose&background=1F6FEB&color=fff&size=56&rounded=true" alt="José" class="w-14 h-14 rounded-full">
+          <div>
+            <h3 class="font-bold text-gray-900">José</h3>
+            <div class="stars text-lg">★★★★★</div>
+          </div>
+        </div>
+        <p class="text-gray-600 text-sm leading-relaxed">
+          "Dejé de fumar en una sola sesión después de 30 años. Increíble. Lo recomiendo a todo el mundo que quiera dejar este vicio de una vez por todas."
+        </p>
+      </article>
+
+      <!-- Testimonial 2: Carmen -->
+      <article class="testimonial-card">
+        <div class="flex items-center gap-4 mb-4">
+          <img src="https://ui-avatars.com/api/?name=Carmen&background=F28B27&color=fff&size=56&rounded=true" alt="Carmen" class="w-14 h-14 rounded-full">
+          <div>
+            <h3 class="font-bold text-gray-900">Carmen</h3>
+            <div class="stars text-lg">★★★★★</div>
+          </div>
+        </div>
+        <p class="text-gray-600 text-sm leading-relaxed">
+          "Llevo 8 meses sin fumar y sin ansiedad. No he engordado ni un gramo. El tratamiento me cambió la vida. Gracias LaserOstop."
+        </p>
+      </article>
+
+      <!-- Testimonial 3: Antonio -->
+      <article class="testimonial-card">
+        <div class="flex items-center gap-4 mb-4">
+          <img src="https://ui-avatars.com/api/?name=Antonio&background=22A9AF&color=fff&size=56&rounded=true" alt="Antonio" class="w-14 h-14 rounded-full">
+          <div>
+            <h3 class="font-bold text-gray-900">Antonio</h3>
+            <div class="stars text-lg">★★★★★</div>
+          </div>
+        </div>
+        <p class="text-gray-600 text-sm leading-relaxed">
+          "Fumaba desde hace 40 años. No creía que esto funcionaría pero me equivoqué. Una sesión y se acabó. Sin nervios, sin ganas de fumar."
+        </p>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- 5. METHODOLOGY SECTION - Two Columns -->
+<section id="methodology" class="bg-white py-12 sm:py-16">
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center max-w-6xl mx-auto">
+
+      <!-- Left: Text Content -->
+      <div class="order-2 lg:order-1">
+        <h2 class="text-2xl sm:text-3xl font-bold mb-6" style="color: #1F6FEB;">
+          Nuestra metodología
+        </h2>
+        <div class="space-y-4 text-gray-600 leading-relaxed">
+          <p>
+            El láser estimula la producción de <strong class="text-gray-800">endorfinas</strong>, las hormonas naturales del bienestar, que ayudan a reducir el deseo de fumar.
+          </p>
+          <p>
+            Este método <strong class="text-gray-800">elimina la ansiedad</strong> asociada al abandono del tabaco y reduce significativamente los síntomas de abstinencia.
+          </p>
+          <p>
+            La sesión actúa directamente sobre la <strong class="text-gray-800">dependencia física a la nicotina</strong>, permitiendo que puedas dejar de fumar sin sufrimiento.
+          </p>
         </div>
       </div>
-      <span class="hidden sm:inline-block" style="color: #000;">|</span>
-      <span class="text-xs sm:text-sm font-bold" style="color: #000;">-40% en sesiones online</span>
+
+      <!-- Right: Image -->
+      <div class="order-1 lg:order-2 flex justify-center">
+        <div class="relative rounded-2xl overflow-hidden shadow-xl max-w-md">
+          <img src="../laserostop_espagna/assets/laser-ear-treatment.jpg" alt="Tratamiento láser en oreja" class="w-full h-auto" onerror="this.src='https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=500&h=600&fit=crop'; this.onerror=null;">
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
 
-<script>
-// Sales Countdown Timer - Resets every 12 hours
-(function() {
-  const hoursEl = document.getElementById('timer-hours');
-  const minutesEl = document.getElementById('timer-minutes');
-  const secondsEl = document.getElementById('timer-seconds');
-
-  function getTimeRemaining() {
-    const now = new Date();
-    const msPerCycle = 12 * 60 * 60 * 1000; // 12 hours in ms
-    const msSinceMidnight = now.getTime() % (24 * 60 * 60 * 1000);
-    const msInCurrentCycle = msSinceMidnight % msPerCycle;
-    const msRemaining = msPerCycle - msInCurrentCycle;
-
-    const hours = Math.floor(msRemaining / (1000 * 60 * 60));
-    const minutes = Math.floor((msRemaining % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((msRemaining % (1000 * 60)) / 1000);
-
-    return { hours, minutes, seconds };
-  }
-
-  function updateTimer() {
-    const time = getTimeRemaining();
-    hoursEl.textContent = String(time.hours).padStart(2, '0');
-    minutesEl.textContent = String(time.minutes).padStart(2, '0');
-    secondsEl.textContent = String(time.seconds).padStart(2, '0');
-  }
-
-  // Update immediately and then every second
-  updateTimer();
-  setInterval(updateTimer, 1000);
-})();
-</script>
-
-<!-- Pricing Preview Section -->
-<section class="py-12 bg-white dark:bg-gray-900">
+<!-- 6. BOOKING SECTION - Clean Booking Form -->
+<section class="py-12 sm:py-16 bg-gray-50" id="booking">
 <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-<div class="max-w-4xl mx-auto">
-
-<!-- Section Header -->
-<div class="text-center mb-8">
-<h2 class="text-3xl sm:text-4xl font-bold mb-2" style="color: #000;">Nuestras <span style="color: #000; background-color: #FFD93D; padding: 2px 8px; border-radius: 4px;">Ofertas</span></h2>
-<p style="color: #E53935;">Plazas limitadas - Reserva online y obtén el mejor precio</p>
-</div>
-
-<!-- Pricing Cards -->
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-
-<!-- Card 1: Individual (SPECIAL OFFER) -->
-<a href="#step-1" class="block bg-white rounded-2xl p-6 pt-8 relative transition-all cursor-pointer smooth-scroll" style="border: 3px solid #FFD93D; box-shadow: 0px 4px 12px rgba(0,0,0,0.15);">
-<!-- Special Offer Tag -->
-<span class="absolute -top-4 right-4 px-4 py-1.5 text-sm font-bold rounded-full" style="background-color: #FFD93D; color: #000;">OFERTA ESPECIAL</span>
-<h3 class="text-lg font-semibold text-gray-900 mb-4">Individual</h3>
-<div class="flex items-baseline gap-2 mb-1">
-<span class="text-4xl font-black" style="color: #14A3A3;">99€</span>
-<span class="text-sm line-through" style="color: #B72222; text-decoration-thickness: 2px;">190€</span>
-</div>
-<!-- Discount Bar -->
-<div class="w-full h-3 rounded-full mb-4" style="background-color: #14A3A3;"></div>
-<!-- Ahorra Badge -->
-<div class="inline-block px-3 py-1 rounded-lg text-sm font-semibold mb-4" style="background-color: #FFD93D; color: #000;">Ahorra 91€</div>
-<ul class="text-sm space-y-2" style="color: #414141;">
-<li class="flex items-center gap-2"><span class="material-icons text-base" style="color: #29C473;">check_circle</span>1 sesión completa</li>
-<li class="flex items-center gap-2"><span class="material-icons text-base" style="color: #29C473;">check_circle</span>Pago online seguro</li>
-</ul>
-</a>
-
-<!-- Card 2: Dúo (Blue border) -->
-<a href="#step-1" class="block bg-white rounded-2xl p-6 transition-all cursor-pointer smooth-scroll" style="border: 3px solid #2563EB; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-<h3 class="text-lg font-semibold text-gray-900 mb-4">Dúo <span class="text-sm font-normal text-gray-500">(2 personas)</span></h3>
-<div class="flex items-baseline gap-2 mb-1">
-<span class="text-4xl font-black" style="color: #2563EB;">179€</span>
-<span class="text-sm line-through" style="color: #B72222; text-decoration-thickness: 2px;">380€</span>
-</div>
-<!-- Discount Bar -->
-<div class="w-full h-3 rounded-full mb-4" style="background-color: #2563EB;"></div>
-<!-- Ahorra Badge -->
-<div class="inline-block px-3 py-1 rounded-lg text-sm font-semibold mb-4" style="background-color: #FFD93D; color: #000;">Ahorra 201€</div>
-<ul class="text-sm space-y-2" style="color: #414141;">
-<li class="flex items-center gap-2"><span class="material-icons text-base" style="color: #29C473;">check_circle</span>2 sesiones completas</li>
-<li class="flex items-center gap-2"><span class="material-icons text-base" style="color: #29C473;">check_circle</span>Ideal para parejas/amigos</li>
-</ul>
-</a>
-
-<!-- Card 3: Pago Flexible (Purple border) -->
-<a href="#step-1" class="block bg-white rounded-2xl p-6 transition-all cursor-pointer smooth-scroll" style="border: 3px solid #7C3AED; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-<h3 class="text-lg font-semibold text-gray-900 mb-4">Pago Flexible</h3>
-<div class="flex items-baseline gap-2 mb-1">
-<span class="text-4xl font-black" style="color: #7C3AED;">3×40€</span>
-<span class="text-sm line-through" style="color: #B72222; text-decoration-thickness: 2px;">190€</span>
-</div>
-<!-- Discount Bar -->
-<div class="w-full h-3 rounded-full mb-4" style="background-color: #7C3AED;"></div>
-<!-- Ahorra Badge -->
-<div class="inline-block px-3 py-1 rounded-lg text-sm font-semibold mb-4" style="background-color: #FFD93D; color: #000;">Ahorra 70€</div>
-<ul class="text-sm space-y-2" style="color: #414141;">
-<li class="flex items-center gap-2"><span class="material-icons text-base" style="color: #29C473;">check_circle</span>Sin intereses</li>
-<li class="flex items-center gap-2"><span class="material-icons text-base" style="color: #29C473;">check_circle</span>Pago mensual cómodo</li>
-</ul>
-</a>
-
-</div>
-
-<!-- Guarantee Section -->
-<div class="bg-white rounded-2xl p-6 mb-6" style="border: 2px solid #22A9AF;">
-  <!-- Header -->
-  <div class="text-center mb-6">
-    <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold" style="background-color: #22A9AF; color: #FFFFFF;">
-      <span class="material-icons text-base">verified_user</span>
-      GARANTÍA DE SATISFACCIÓN
-    </span>
-  </div>
-
-  <!-- Benefits Grid -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-
-    <!-- Benefit 1: 1 Year Guarantee -->
-    <div class="flex md:flex-col items-center md:items-center md:text-center gap-4 md:gap-2 p-4 rounded-xl bg-gray-50">
-      <div class="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center" style="background-color: rgba(34, 169, 175, 0.15);">
-        <span class="material-icons text-2xl" style="color: #22A9AF;">shield</span>
-      </div>
-      <div class="flex-1 md:flex-none">
-        <h4 class="font-bold text-gray-900 text-sm md:text-base">1 AÑO DE GARANTÍA</h4>
-        <p class="text-xs md:text-sm text-gray-600">Cobertura total durante 12 meses</p>
-      </div>
-    </div>
-
-    <!-- Benefit 2: Free Session on Relapse -->
-    <div class="flex md:flex-col items-center md:items-center md:text-center gap-4 md:gap-2 p-4 rounded-xl bg-gray-50">
-      <div class="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center" style="background-color: rgba(34, 169, 175, 0.15);">
-        <span class="material-icons text-2xl" style="color: #22A9AF;">autorenew</span>
-      </div>
-      <div class="flex-1 md:flex-none">
-        <h4 class="font-bold text-gray-900 text-sm md:text-base">SESIÓN GRATIS EN RECAÍDA</h4>
-        <p class="text-xs md:text-sm text-gray-600">Si vuelves a fumar, te ayudamos gratis</p>
-      </div>
-    </div>
-
-    <!-- Benefit 3: Money Back Guarantee -->
-    <div class="flex md:flex-col items-center md:items-center md:text-center gap-4 md:gap-2 p-4 rounded-xl bg-gray-50">
-      <div class="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center" style="background-color: rgba(34, 169, 175, 0.15);">
-        <span class="material-icons text-2xl" style="color: #22A9AF;">payments</span>
-      </div>
-      <div class="flex-1 md:flex-none">
-        <h4 class="font-bold text-gray-900 text-sm md:text-base">REEMBOLSO GARANTIZADO</h4>
-        <p class="text-xs md:text-sm text-gray-600">Si la 2ª sesión no funciona, te devolvemos el dinero</p>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<!-- Trust Line -->
-<div class="flex flex-wrap justify-center gap-6 text-sm mb-6" style="color: #414141;">
-<span class="flex items-center gap-2"><span class="material-icons text-base" style="color: #29C473;">verified</span>Pago online = precio mínimo</span>
-<span class="flex items-center gap-2"><span class="material-icons text-base" style="color: #29C473;">event_available</span>Cancelación gratis 24h</span>
-</div>
-
-<!-- CTA Arrow -->
-<div class="text-center">
-<a href="#booking" class="smooth-scroll inline-flex items-center gap-2 text-primary font-semibold hover:underline">
-<span>Selecciona tu centro para reservar</span>
-<span class="material-icons animate-bounce">arrow_downward</span>
-</a>
-</div>
-
-</div>
-</div>
-</section>
-
-<section class="py-16 sm:py-24" id="booking">
-<div class="container mx-auto px-4 sm:px-6 lg:px-8">
-<div class="max-w-4xl mx-auto bg-background-light dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden" style="border: 3px solid #22A9AF;">
-<div class="p-8 sm:p-12">
+<div class="max-w-2xl mx-auto bg-white rounded-2xl shadow-lg overflow-hidden" style="border: 2px solid #1F6FEB;">
+<div class="p-6 sm:p-10">
 <div id="booking-form">
-<!-- CTA Banner -->
-<div class="mb-8 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent rounded-lg p-6" style="border-left: 4px solid #22A9AF;">
-  <div class="flex items-start gap-4">
-    <div class="flex-shrink-0">
-      <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background-color: rgba(34, 169, 175, 0.2);">
-        <span class="material-icons text-2xl" style="color: #22A9AF;">campaign</span>
-      </div>
-    </div>
-    <div class="flex-1">
-      <h3 class="text-lg font-bold text-text-light dark:text-text-dark mb-2">
-        ¡Reserve su cita hoy y deje de fumar en una sola sesión!
-      </h3>
-      <p class="text-sm text-gray-600 dark:text-gray-400">
-        Más de 500,000 personas han dejado de fumar con LaserOstop.
-        <span class="font-semibold" style="color: #22A9AF;">Plazas limitadas disponibles</span> - Reserve ahora.
-      </p>
-    </div>
-  </div>
+
+<!-- Booking Header -->
+<div class="text-center mb-8">
+  <h2 class="text-2xl sm:text-3xl font-bold mb-2" style="color: #1F6FEB;">Reserva tu cita</h2>
+  <p class="text-gray-600">Completa el formulario para reservar tu sesión</p>
 </div>
 
-<div class="mb-8" id="step-1">
-<h2 class="text-2xl font-semibold mb-4 text-text-light dark:text-text-dark"><span class="text-primary mr-3">1.</span>Su centro</h2>
+<div class="mb-6" id="step-1">
+<h3 class="text-lg font-semibold mb-3 text-gray-800"><span style="color: #1F6FEB;" class="mr-2">1.</span>Tu centro</h3>
 <div class="relative">
 <span class="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-white">place</span>
-<div id="center-display" class="w-full pl-12 pr-4 py-3 border-0 rounded-full text-white font-medium" style="background-color: #22A9AF;">
+<div id="center-display" class="w-full pl-12 pr-4 py-3 border-0 rounded-full text-white font-medium" style="background-color: #1F6FEB;">
   Valencia
 </div>
 <select id="center-select" class="hidden">
@@ -653,101 +453,101 @@
 </select>
 </div>
 </div>
-<div class="mb-8 hidden" id="step-1b">
-<h2 class="text-2xl font-semibold mb-4 text-text-light dark:text-text-dark"><span class="text-primary mr-3">2.</span>Tipo de sesión</h2>
+<div class="mb-6 hidden" id="step-1b">
+<h3 class="text-lg font-semibold mb-3 text-gray-800"><span style="color: #1F6FEB;" class="mr-2">2.</span>Tipo de sesión</h3>
 <div class="relative">
 <span class="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">healing</span>
-<select id="booking-type-select" class="w-full pl-12 pr-4 py-3 border border-border-light dark:border-border-dark rounded-full bg-transparent focus:ring-primary focus:border-primary transition">
+<select id="booking-type-select" class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-full bg-white focus:outline-none transition" style="focus:border-color: #1F6FEB;">
 <option value="">Seleccione el tipo de sesión...</option>
 </select>
 </div>
 <!-- Info box for selected type -->
-<div id="booking-type-info" class="hidden mt-4 p-4 bg-primary/10 border border-primary/30 rounded-lg">
+<div id="booking-type-info" class="hidden mt-4 p-4 rounded-lg" style="background-color: rgba(31, 111, 235, 0.1); border: 1px solid rgba(31, 111, 235, 0.3);">
 <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
 <div class="flex items-center">
-<span class="material-icons text-primary mr-2 text-lg">schedule</span>
+<span class="material-icons mr-2 text-lg" style="color: #1F6FEB;">schedule</span>
 <div>
-<p class="text-gray-500 dark:text-gray-400 text-xs">Duración</p>
-<p id="type-duration" class="font-semibold text-text-light dark:text-text-dark">-</p>
+<p class="text-gray-500 text-xs">Duración</p>
+<p id="type-duration" class="font-semibold text-gray-800">-</p>
 </div>
 </div>
 <div class="flex items-center">
-<span class="material-icons text-primary mr-2 text-lg">euro</span>
+<span class="material-icons mr-2 text-lg" style="color: #1F6FEB;">euro</span>
 <div>
-<p class="text-gray-500 dark:text-gray-400 text-xs">Precio</p>
-<p id="type-price" class="font-semibold text-text-light dark:text-text-dark">-</p>
+<p class="text-gray-500 text-xs">Precio</p>
+<p id="type-price" class="font-semibold text-gray-800">-</p>
 </div>
 </div>
 <div class="flex items-center">
-<span class="material-icons text-primary mr-2 text-lg">info</span>
+<span class="material-icons mr-2 text-lg" style="color: #1F6FEB;">info</span>
 <div>
-<p class="text-gray-500 dark:text-gray-400 text-xs">Descripción</p>
-<p id="type-description" class="font-semibold text-text-light dark:text-text-dark text-xs">-</p>
+<p class="text-gray-500 text-xs">Descripción</p>
+<p id="type-description" class="font-semibold text-gray-800 text-xs">-</p>
 </div>
 </div>
 </div>
 </div>
 </div>
-<div class="mb-8 hidden" id="step-2">
-<h2 class="text-2xl font-semibold mb-4 text-text-light dark:text-text-dark"><span class="text-primary mr-3">3.</span>Elija una fecha y una hora</h2>
-<div class="bg-gray-50 dark:bg-gray-700/50 p-6 rounded-lg">
+<div class="mb-6 hidden" id="step-2">
+<h3 class="text-lg font-semibold mb-3 text-gray-800"><span style="color: #1F6FEB;" class="mr-2">3.</span>Fecha y hora</h3>
+<div class="bg-gray-50 p-4 rounded-xl">
 <div class="flex justify-between items-center mb-4">
-<button id="prev-month" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition"><span class="material-icons">chevron_left</span></button>
-<h3 id="current-month" class="text-lg font-semibold"></h3>
-<button id="next-month" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition"><span class="material-icons">chevron_right</span></button>
+<button id="prev-month" class="p-2 rounded-full hover:bg-gray-200 transition"><span class="material-icons">chevron_left</span></button>
+<h4 id="current-month" class="text-base font-semibold text-gray-800"></h4>
+<button id="next-month" class="p-2 rounded-full hover:bg-gray-200 transition"><span class="material-icons">chevron_right</span></button>
 </div>
-<div class="grid grid-cols-7 gap-2 text-center mb-2">
-<div class="text-gray-500 text-sm font-medium">Lu</div>
-<div class="text-gray-500 text-sm font-medium">Ma</div>
-<div class="text-gray-500 text-sm font-medium">Mi</div>
-<div class="text-gray-500 text-sm font-medium">Ju</div>
-<div class="text-gray-500 text-sm font-medium">Vi</div>
-<div class="text-gray-500 text-sm font-medium">Sa</div>
-<div class="text-gray-500 text-sm font-medium">Do</div>
+<div class="grid grid-cols-7 gap-1 text-center mb-2">
+<div class="text-gray-500 text-xs font-medium">Lu</div>
+<div class="text-gray-500 text-xs font-medium">Ma</div>
+<div class="text-gray-500 text-xs font-medium">Mi</div>
+<div class="text-gray-500 text-xs font-medium">Ju</div>
+<div class="text-gray-500 text-xs font-medium">Vi</div>
+<div class="text-gray-500 text-xs font-medium">Sa</div>
+<div class="text-gray-500 text-xs font-medium">Do</div>
 </div>
-<div id="calendar-grid" class="grid grid-cols-7 gap-2 text-center">
+<div id="calendar-grid" class="grid grid-cols-7 gap-1 text-center">
 <!-- Calendar days will be generated here -->
 </div>
-<div class="mt-6" id="time-slots-section">
-<h4 class="font-semibold mb-3 text-text-light dark:text-text-dark">Horarios disponibles</h4>
-<div id="selected-date-info" class="text-sm text-gray-600 dark:text-gray-400 mb-3"></div>
+<div class="mt-4" id="time-slots-section">
+<h5 class="font-medium mb-2 text-gray-800 text-sm">Horarios disponibles</h5>
+<div id="selected-date-info" class="text-xs text-gray-600 mb-2"></div>
 <div id="time-slots" class="grid grid-cols-3 sm:grid-cols-4 gap-2">
 <!-- Time slots will be generated here -->
 </div>
 </div>
 </div>
 </div>
-<div class="mb-8 hidden" id="step-3">
-<h2 class="text-2xl font-semibold mb-4 text-text-light dark:text-text-dark"><span class="text-primary mr-3">4.</span>Sus datos</h2>
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="mb-6 hidden" id="step-3">
+<h3 class="text-lg font-semibold mb-3 text-gray-800"><span style="color: #1F6FEB;" class="mr-2">4.</span>Tus datos</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 <div class="relative">
 <span class="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">person</span>
-<input id="full-name" class="w-full pl-12 pr-4 py-3 border border-border-light dark:border-border-dark rounded-full bg-transparent focus:ring-primary focus:border-primary transition" placeholder="Nombre completo *" type="text" required/>
+<input id="full-name" class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-full bg-white focus:outline-none transition" placeholder="Nombre completo *" type="text" required/>
 </div>
 <div class="relative">
 <span class="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">email</span>
-<input id="email" class="w-full pl-12 pr-4 py-3 border border-border-light dark:border-border-dark rounded-full bg-transparent focus:ring-primary focus:border-primary transition" placeholder="Correo electrónico *" type="email" required/>
+<input id="email" class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-full bg-white focus:outline-none transition" placeholder="Correo electrónico *" type="email" required/>
 </div>
 <div class="relative md:col-span-2">
 <span class="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">phone</span>
-<input id="phone" class="w-full pl-12 pr-4 py-3 border border-border-light dark:border-border-dark rounded-full bg-transparent focus:ring-primary focus:border-primary transition" placeholder="Número de teléfono *" type="tel" required/>
+<input id="phone" class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-full bg-white focus:outline-none transition" placeholder="Número de teléfono *" type="tel" required/>
 </div>
 </div>
 </div>
 <div id="step-4" class="hidden">
-<button type="button" class="w-full bg-primary text-white py-4 px-8 rounded-full font-semibold text-lg hover:bg-opacity-90 transition-all duration-300 transform hover:scale-105 flex items-center justify-center" onclick="showConfirmation(event)">
+<button type="button" class="w-full text-white py-4 px-8 rounded-full font-semibold text-lg hover:opacity-90 transition-all duration-300 transform hover:scale-105 flex items-center justify-center" style="background-color: #F28B27;" onclick="showConfirmation(event)">
 <span class="material-icons mr-2">event_available</span> Confirmar la cita
-                  </button>
+</button>
 </div>
 </div>
 <div class="hidden flex items-center justify-center text-center" id="confirmation-message">
-<div class="py-12">
-<div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+<div class="py-8">
+<div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
 <span class="material-icons text-4xl text-green-500">check</span>
 </div>
-<h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-4">¡Cita confirmada!</h2>
-<p class="text-lg text-gray-600 dark:text-gray-300 mb-2">Se ha enviado un correo de confirmación a su dirección.</p>
-<p class="text-gray-500 dark:text-gray-400">Estaremos encantados de recibirle en el centro <strong>LaserOstop Valencia</strong> el <strong>15 de Octubre de 2025 a las 11:30</strong>.</p>
+<h2 class="text-2xl font-bold text-gray-800 mb-3">¡Cita confirmada!</h2>
+<p class="text-gray-600 mb-2">Se ha enviado un correo de confirmación.</p>
+<p class="text-gray-500 text-sm">Te esperamos en <strong>LaserOstop Valencia</strong></p>
 </div>
 </div>
 
@@ -1009,244 +809,12 @@ Cerrar
 
 </section>
 
-<!-- 3 Verified Reviews Section - Right after booking form -->
-<section class="bg-gray-50 dark:bg-gray-900/50 py-12 sm:py-16" id="reviews">
-<div class="container mx-auto px-4 sm:px-6 lg:px-8">
-<div class="text-center mb-8">
-<div class="flex items-center justify-center gap-3 mb-4">
-<img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png" alt="Google" class="h-5 opacity-80">
-<div class="flex items-baseline gap-2">
-<span class="text-2xl font-bold text-primary">4.8</span>
-<div class="flex text-yellow-400 text-lg">
-<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-</div>
-</div>
-</div>
-<p class="text-gray-500 dark:text-gray-400 text-sm">Reseñas verificadas de Google</p>
-</div>
-
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-<!-- Review 1 -->
-<article class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm">
-<div class="flex items-start gap-4 mb-4">
-<img src="https://ui-avatars.com/api/?name=Mauricio+M&background=22A9AF&color=fff&size=48" alt="Mauricio M." class="w-12 h-12 rounded-full flex-shrink-0">
-<div class="flex-1 min-w-0">
-<h3 class="font-semibold text-text-light dark:text-text-dark">Mauricio M.</h3>
-<div class="flex items-center gap-2 mt-1">
-<div class="flex text-yellow-400 text-sm">
-<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-</div>
-</div>
-</div>
-</div>
-<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
-Después de 42 años fumando logré dejarlo gracias a Nabila. El tratamiento fue cómodo, sin ansiedad y realmente efectivo.
-</p>
-</article>
-
-<!-- Review 2 -->
-<article class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm">
-<div class="flex items-start gap-4 mb-4">
-<img src="https://ui-avatars.com/api/?name=Raul+L&background=843ed4&color=fff&size=48" alt="Raul L." class="w-12 h-12 rounded-full flex-shrink-0">
-<div class="flex-1 min-w-0">
-<h3 class="font-semibold text-text-light dark:text-text-dark">Raul L.</h3>
-<div class="flex items-center gap-2 mt-1">
-<div class="flex text-yellow-400 text-sm">
-<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-</div>
-</div>
-</div>
-</div>
-<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
-Muy contento con el tratamiento de Nabila. Dejé de fumar de un día para otro y me siento completamente renovado.
-</p>
-</article>
-
-<!-- Review 3 -->
-<article class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm">
-<div class="flex items-start gap-4 mb-4">
-<img src="https://ui-avatars.com/api/?name=Alexandre+M&background=f59e0b&color=fff&size=48" alt="Alexandre M." class="w-12 h-12 rounded-full flex-shrink-0">
-<div class="flex-1 min-w-0">
-<h3 class="font-semibold text-text-light dark:text-text-dark">Alexandre M.</h3>
-<div class="flex items-center gap-2 mt-1">
-<div class="flex text-yellow-400 text-sm">
-<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-</div>
-</div>
-</div>
-</div>
-<p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
-Tras varios intentos fallidos probé el láser y funcionó de inmediato. Cero ansiedad y sin ganas de fumar. Excelente atención.
-</p>
-</article>
-</div>
-</div>
-</section>
-
-<!-- How It Works Section -->
-<section class="py-16 sm:py-24 bg-white dark:bg-gray-900" id="how-it-works">
-<div class="container mx-auto px-4 sm:px-6 lg:px-8">
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-<!-- About Video - Left on Desktop, Top on Mobile -->
-<div class="order-1 lg:order-1 flex justify-center">
-<div class="relative rounded-2xl overflow-hidden shadow-2xl aspect-[9/16] w-full max-w-sm group cursor-pointer" onclick="toggleVideoAudio(this)">
-<video
-  class="w-full h-full object-cover"
-  autoplay
-  muted
-  loop
-  playsinline
-  poster="assets/cigarettes.png"
->
-  <source src="../laserostop_espagna/assets/about-video.mp4" type="video/mp4">
-  Tu navegador no soporta el elemento de vídeo.
-</video>
-<!-- Audio Toggle Button -->
-<div class="absolute bottom-4 right-4 bg-black/70 backdrop-blur-sm rounded-full p-3 transition-all duration-300 hover:bg-black/90 hover:scale-110">
-  <span class="material-icons text-white text-2xl audio-icon">volume_off</span>
-</div>
-<!-- Tap to unmute hint -->
-<div class="absolute inset-0 bg-black/30 backdrop-blur-[1px] flex items-center justify-center transition-opacity duration-300 opacity-100 group-hover:opacity-0 pointer-events-none audio-hint">
-  <div class="bg-white/90 dark:bg-gray-900/90 px-6 py-3 rounded-full shadow-lg">
-    <div class="flex items-center gap-2">
-      <span class="material-icons text-primary">volume_up</span>
-      <p class="text-sm font-medium text-gray-800 dark:text-gray-200">Toca para activar audio</p>
-    </div>
-  </div>
-</div>
-</div>
-</div>
-
-<!-- About Content - Right on Desktop, Bottom on Mobile -->
-<div class="order-2 lg:order-2">
-<div class="max-w-xl lg:max-w-none">
-<h2 class="text-3xl sm:text-4xl font-bold text-text-light dark:text-text-dark mb-4">
-<span class="text-primary">Cómo</span> funciona
-</h2>
-<div class="h-1 w-20 bg-primary rounded mb-6"></div>
-<div class="prose prose-lg dark:prose-invert max-w-none">
-<p class="text-gray-700 dark:text-gray-300 leading-relaxed text-lg">
-LaserOstop ofrece una terapia láser <strong class="text-primary">segura, indolora y altamente eficaz</strong> para ayudar a las personas a dejar de fumar en una sola sesión. Utilizando tecnología avanzada de <strong>fotobiomodulación</strong>, este método estimula puntos específicos de la oreja con láser de baja intensidad para combatir la dependencia física a la nicotina, <strong>sin efectos secundarios, sin aumento de peso y sin síntomas de abstinencia.</strong>
-</p>
-<p class="text-gray-700 dark:text-gray-300 leading-relaxed text-lg mt-4">
-Con más de <strong class="text-primary">500,000 personas asistidas</strong> en todo el mundo, LaserOstop proporciona una solución científica, no invasiva, y respaldada por resultados reales para quienes desean superar la adicción y llevar una vida más saludable y libre de tabaco.
-</p>
-</div>
-<!-- Stats -->
-<div class="grid grid-cols-2 gap-6 mt-8">
-<div class="text-center p-4 bg-primary/10 rounded-xl">
-<div class="text-3xl font-bold text-primary mb-1">500K+</div>
-<div class="text-sm text-gray-600 dark:text-gray-400">Personas asistidas</div>
-</div>
-<div class="text-center p-4 bg-primary/10 rounded-xl">
-<div class="text-3xl font-bold text-primary mb-1">1 sesión</div>
-<div class="text-sm text-gray-600 dark:text-gray-400">Para dejar de fumar</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</section>
-
-<!-- Guarantee + Security Section -->
-<section class="bg-gray-50 dark:bg-gray-900/50 py-12 sm:py-16" id="guarantee">
-<div class="container mx-auto px-4 sm:px-6 lg:px-8">
-<div class="max-w-3xl mx-auto text-center">
-<div class="mb-6">
-<span class="material-icons text-5xl text-primary">verified_user</span>
-</div>
-<h2 class="text-2xl sm:text-3xl font-bold text-text-light dark:text-text-dark mb-4">Garantía y seguridad</h2>
-<p class="text-gray-600 dark:text-gray-400 mb-8">
-Su pago está protegido con encriptación SSL. Garantía de reembolso si cancela 24h antes de su cita.
-</p>
-
-<!-- Payment Badges -->
-<div class="flex flex-wrap items-center justify-center gap-4 mb-6">
-<img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" alt="Stripe" class="h-8 opacity-70">
-<img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" class="h-6 opacity-70">
-<img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" class="h-8 opacity-70">
-</div>
-<p class="text-sm text-gray-500 dark:text-gray-500">Pago protegido con encriptación SSL y validado por Stripe</p>
-</div>
-</div>
-</section>
-
-<!-- FAQ Section -->
-<section class="bg-white dark:bg-gray-900 py-12 sm:py-16" id="faq">
-<div class="container mx-auto px-4 sm:px-6 lg:px-8">
-<div class="max-w-3xl mx-auto">
-<h2 class="text-2xl sm:text-3xl font-bold text-center text-text-light dark:text-text-dark mb-8">Preguntas frecuentes</h2>
-
-<div class="space-y-4">
-<!-- FAQ Item 1 -->
-<details class="group bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
-<summary class="flex items-center justify-between cursor-pointer font-semibold text-text-light dark:text-text-dark">
-¿Es doloroso el tratamiento?
-<span class="material-icons text-primary group-open:rotate-180 transition-transform">expand_more</span>
-</summary>
-<p class="mt-3 text-gray-600 dark:text-gray-400 text-sm">
-No, el tratamiento con láser es completamente indoloro. Solo sentirá una ligera sensación de calor en los puntos de aplicación.
-</p>
-</details>
-
-<!-- FAQ Item 2 -->
-<details class="group bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
-<summary class="flex items-center justify-between cursor-pointer font-semibold text-text-light dark:text-text-dark">
-¿Cuántas sesiones necesito?
-<span class="material-icons text-primary group-open:rotate-180 transition-transform">expand_more</span>
-</summary>
-<p class="mt-3 text-gray-600 dark:text-gray-400 text-sm">
-La mayoría de nuestros clientes logran dejar de fumar con una sola sesión de 60 minutos. En caso de recaída, ofrecemos sesiones de refuerzo gratuitas.
-</p>
-</details>
-
-<!-- FAQ Item 3 -->
-<details class="group bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
-<summary class="flex items-center justify-between cursor-pointer font-semibold text-text-light dark:text-text-dark">
-¿Hay efectos secundarios?
-<span class="material-icons text-primary group-open:rotate-180 transition-transform">expand_more</span>
-</summary>
-<p class="mt-3 text-gray-600 dark:text-gray-400 text-sm">
-No hay efectos secundarios. A diferencia de otros métodos, no experimentará aumento de peso, ansiedad ni síntomas de abstinencia.
-</p>
-</details>
-
-<!-- FAQ Item 4 -->
-<details class="group bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
-<summary class="flex items-center justify-between cursor-pointer font-semibold text-text-light dark:text-text-dark">
-¿Puedo cancelar mi cita?
-<span class="material-icons text-primary group-open:rotate-180 transition-transform">expand_more</span>
-</summary>
-<p class="mt-3 text-gray-600 dark:text-gray-400 text-sm">
-Sí, puede cancelar o reprogramar su cita hasta 24 horas antes sin coste. Si ha pagado online, le reembolsamos el 100% del importe.
-</p>
-</details>
-</div>
-</div>
-</div>
-</section>
-
-<!-- Final CTA Section -->
-<section class="bg-primary py-12 sm:py-16" id="final-cta">
-<div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-<h2 class="text-2xl sm:text-3xl font-bold text-white mb-4">¿Listo para dejar de fumar?</h2>
-<p class="text-white/80 mb-8 max-w-2xl mx-auto">
-Más de 500,000 personas ya lo han conseguido. Reserve su cita hoy y dé el primer paso hacia una vida sin tabaco.
-</p>
-<a href="#booking" class="smooth-scroll inline-flex items-center gap-2 bg-white hover:bg-gray-100 text-primary font-semibold px-8 py-4 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
-<span class="material-icons">event_available</span>
-<span>Reservar mi cita ahora</span>
-</a>
-</div>
-</section>
-
 </main>
+
 <!-- Mobile Fixed Bottom CTA Bar -->
 <div class="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-white border-t border-gray-200 shadow-lg px-4 py-3">
-<a href="#booking" class="smooth-scroll flex items-center justify-center gap-2 w-full bg-primary hover:bg-primary/90 text-white font-semibold py-3 rounded-full shadow-md transition-all duration-300">
-<span class="material-icons text-lg">lock</span>
-<span>Reservar con -40% ahora</span>
+<a href="#booking" class="smooth-scroll flex items-center justify-center gap-2 w-full text-white font-semibold py-3 rounded-full shadow-md transition-all duration-300" style="background-color: #F28B27;">
+<span>Reservar - 130 €</span>
 </a>
 </div>
 
@@ -3140,26 +2708,12 @@ Más de 500,000 personas ya lo han conseguido. Reserve su cita hoy y dé el prim
       // Load centers from Smart Agenda API
       await loadCentersFromAPI();
 
-      // Auto-select Valencia center (hardcoded)
-      bookingState.selectedCenter = '10'; // Valencia center ID
+      // Auto-select Valencia center by triggering the hidden dropdown change event
+      // This triggers the full flow: load types -> populate dropdown -> auto-select first type
+      const centerSelect = document.getElementById('center-select');
+      centerSelect.value = '10'; // Valencia center ID
+      centerSelect.dispatchEvent(new Event('change'));
       console.log('📍 Auto-selected center: Valencia (ID: 10)');
-
-      // Load appointment types for Valencia
-      await loadAppointmentTypes('10');
-
-      // Populate dropdown and auto-select "Dejar de fumar" (first option = solo_cig)
-      populateBookingTypeDropdown(bookingState.appointmentTypes);
-
-      // Show step 1b (appointment type selection)
-      document.getElementById('step-1b').classList.remove('hidden');
-
-      // Pre-select "Dejar de fumar" in dropdown
-      const typeSelect = document.getElementById('booking-type-select');
-      if (bookingState.selectedAppointmentType) {
-        typeSelect.value = bookingState.selectedAppointmentType;
-        // Trigger change event to show type info and load availability
-        typeSelect.dispatchEvent(new Event('change'));
-      }
 
       // Show promotional popup after initialization
       // showPromoPopup(); // Disabled for now
