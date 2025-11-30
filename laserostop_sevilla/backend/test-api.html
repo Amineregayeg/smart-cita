@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Smart Agenda API Integration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        button {
+            background: #22A9AF;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+        }
+        button:hover {
+            background: #1a8b90;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        pre {
+            background: #f8f8f8;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .success {
+            color: #22A9AF;
+            font-weight: bold;
+        }
+        .error {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .loading {
+            color: #ffc107;
+        }
+        h2 {
+            color: #22A9AF;
+            border-bottom: 2px solid #22A9AF;
+            padding-bottom: 10px;
+        }
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 4px;
+            margin-left: 10px;
+            font-size: 12px;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 LaserOstop - Smart Agenda API Integration Test</h1>
+
+    <div class="test-section">
+        <h2>1. Server Health Check</h2>
+        <button onclick="testHealth()">Test Health Endpoint</button>
+        <div id="health-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. Load Centers</h2>
+        <button onclick="testCenters()">Load Centers from Smart Agenda</button>
+        <div id="centers-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. Load Appointment Types</h2>
+        <label>Select Center:</label>
+        <select id="center-select" onchange="testAppointmentTypes()">
+            <option value="">-- Select a center --</option>
+        </select>
+        <div id="types-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>4. Check Availability</h2>
+        <button onclick="testAvailability()">Test Availability API</button>
+        <p><small>Tests availability for next 7 days</small></p>
+        <div id="availability-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>5. Create Test Booking</h2>
+        <p><strong>⚠️ Warning:</strong> This will create a real booking in the dev environment!</p>
+        <button onclick="testBooking()">Create Test Booking</button>
+        <div id="booking-result"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3000/api';
+        let loadedCenters = [];
+        let selectedCenter = null;
+
+        async function testHealth() {
+            const resultDiv = document.getElementById('health-result');
+            resultDiv.innerHTML = '<p class="loading">Testing...</p>';
+
+            try {
+                const response = await fetch(`${API_BASE}/health`);
+                const data = await response.json();
+
+                resultDiv.innerHTML = `
+                    <span class="status success">✓ Success</span>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <span class="status error">✗ Error</span>
+                    <p class="error">${error.message}</p>
+                `;
+            }
+        }
+
+        async function testCenters() {
+            const resultDiv = document.getElementById('centers-result');
+            resultDiv.innerHTML = '<p class="loading">Loading centers from Smart Agenda...</p>';
+
+            try {
+                const response = await fetch(`${API_BASE}/centers`);
+                const data = await response.json();
+                loadedCenters = data;
+
+                // Populate dropdown
+                const select = document.getElementById('center-select');
+                select.innerHTML = '<option value="">-- Select a center --</option>';
+                data.forEach(center => {
+                    const option = document.createElement('option');
+                    option.value = center.id;
+                    option.textContent = `${center.name} (ID: ${center.id})`;
+                    select.appendChild(option);
+                });
+
+                resultDiv.innerHTML = `
+                    <span class="status success">✓ Success - Loaded ${data.length} centers</span>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <span class="status error">✗ Error</span>
+                    <p class="error">${error.message}</p>
+                `;
+            }
+        }
+
+        async function testAppointmentTypes() {
+            const centerId = document.getElementById('center-select').value;
+            const resultDiv = document.getElementById('types-result');
+
+            if (!centerId) {
+                resultDiv.innerHTML = '';
+                return;
+            }
+
+            selectedCenter = centerId;
+            resultDiv.innerHTML = '<p class="loading">Loading appointment types...</p>';
+
+            try {
+                const response = await fetch(`${API_BASE}/appointment-types?centerId=${centerId}`);
+                const data = await response.json();
+
+                resultDiv.innerHTML = `
+                    <span class="status success">✓ Success - Loaded ${data.length} appointment types</span>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <span class="status error">✗ Error</span>
+                    <p class="error">${error.message}</p>
+                `;
+            }
+        }
+
+        async function testAvailability() {
+            const resultDiv = document.getElementById('availability-result');
+            resultDiv.innerHTML = '<p class="loading">Loading availability...</p>';
+
+            // Get dates for next 7 days
+            const today = new Date();
+            const nextWeek = new Date(today);
+            nextWeek.setDate(nextWeek.getDate() + 7);
+
+            const startDate = formatDate(today);
+            const endDate = formatDate(nextWeek);
+
+            try {
+                const response = await fetch(
+                    `${API_BASE}/availability?startDate=${startDate}&endDate=${endDate}&centerId=1&typeId=26`
+                );
+                const data = await response.json();
+
+                resultDiv.innerHTML = `
+                    <span class="status success">✓ Success</span>
+                    <p>Date range: ${startDate} to ${endDate}</p>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <span class="status error">✗ Error</span>
+                    <p class="error">${error.message}</p>
+                `;
+            }
+        }
+
+        async function testBooking() {
+            const resultDiv = document.getElementById('booking-result');
+
+            if (!confirm('This will create a real booking in Smart Agenda dev environment. Continue?')) {
+                return;
+            }
+
+            resultDiv.innerHTML = '<p class="loading">Creating test booking...</p>';
+
+            // Create booking for tomorrow at 10:00
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const dateStr = formatDate(tomorrow);
+
+            const bookingData = {
+                fullName: 'Test Usuario API',
+                email: 'test-api@example.com',
+                phone: '+34612345678',
+                centerId: '1', // Valencia
+                typeId: '26', // Standard appointment
+                startTime: `${dateStr} 10:00:00`,
+                endTime: `${dateStr} 10:30:00`
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/booking`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(bookingData)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <span class="status success">✓ Booking Created Successfully!</span>
+                        <p>Check Smart Agenda: <a href="https://www.smartagenda.fr/pro/laserostop-esh-dev/agenda" target="_blank">Open Agenda</a></p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                        <pre>Booking data sent:\n${JSON.stringify(bookingData, null, 2)}</pre>
+                    `;
+                } else {
+                    throw new Error(data.message || 'Booking failed');
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <span class="status error">✗ Error</span>
+                    <p class="error">${error.message}</p>
+                `;
+            }
+        }
+
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        // Auto-run health check on load
+        window.addEventListener('DOMContentLoaded', () => {
+            testHealth();
+        });
+    </script>
+</body>
+</html>

@@ -35,6 +35,18 @@
   force = true
 
 [[redirects]]
+  from = "/laserostop_valencia/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/laserostop_sevilla/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/api/:splat"
   status = 200
@@ -62,6 +74,18 @@
   status = 200
   force = true
 
+[[redirects]]
+  from = "/laserostop_valencia"
+  to = "/laserostop_valencia/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/laserostop_sevilla"
+  to = "/laserostop_sevilla/index.html"
+  status = 200
+  force = true
+
 # Center-specific URLs (valencia, barcelona, etc.) - serve same index.html
 [[redirects]]
   from = "/laserostop_espagna/*"
@@ -81,6 +105,18 @@
 [[redirects]]
   from = "/laserostop_bf/*"
   to = "/laserostop_bf/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/laserostop_valencia/*"
+  to = "/laserostop_valencia/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/laserostop_sevilla/*"
+  to = "/laserostop_sevilla/index.html"
   status = 200
   force = true
 
