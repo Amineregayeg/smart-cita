@@ -2,14 +2,17 @@
 /laserostop_espagna/api/*  /.netlify/functions/api/:splat  200
 /laserostop_es/api/*  /.netlify/functions/api/:splat  200
 /laserostop_azucar/api/*  /.netlify/functions/api/:splat  200
+/laserostop_bf/api/*  /.netlify/functions/api/:splat  200
 /api/*  /.netlify/functions/api/:splat  200
 
 # Directory redirects
 /laserostop_espagna  /laserostop_espagna/index.html  200
 /laserostop_es  /laserostop_es/index.html  200
 /laserostop_azucar  /laserostop_azucar/index.html  200
+/laserostop_bf  /laserostop_bf/index.html  200
 
 # Center-specific URLs - serve same index.html
 /laserostop_espagna/*  /laserostop_espagna/index.html  200
 /laserostop_es/*  /laserostop_es/index.html  200
 /laserostop_azucar/*  /laserostop_azucar/index.html  200
+/laserostop_bf/*  /laserostop_bf/index.html  200
