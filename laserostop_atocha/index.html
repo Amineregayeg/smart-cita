@@ -366,7 +366,7 @@
     <!-- 3. CTA PRICING BLOCK - Orange Button -->
     <div class="text-center w-full">
       <a href="#booking" class="smooth-scroll inline-block text-xl sm:text-2xl font-bold text-white shadow-lg" style="background-color: #F28B27; text-align: center; letter-spacing: 0.5px; border-radius: 50px; padding: 24px 40px; max-width: 90%;">
-        Precio especial 99 €
+        Precio especial 149 €
       </a>
     </div>
   </div>
@@ -1413,16 +1413,16 @@ Cerrar
         company1: {
           // Company 1: Madrid Chamartín, Torrejón, Majadahonda, San Sebastián
           solo_cig: {
-            onetime: 'https://buy.stripe.com/4gM6oGdMjeMC4vb229awo0i',  // €99 BLACK FRIDAY
-            monthly: 'https://buy.stripe.com/28E14m6jRdIy2n3ayFawo0h'   // 3×€40 BLACK FRIDAY
+            onetime: 'https://buy.stripe.com/5kQdR85fNfQG9PvbCJawo0b',  // €149
+            monthly: 'https://buy.stripe.com/dRm6oGbEb1ZQ8LreOVawo0f'   // 3×€60
           },
           duo_cig: {
-            onetime: 'https://buy.stripe.com/aFafZg4bJ47Yd1H7mtawo0j',   // €179 BLACK FRIDAY
-            monthly: 'https://buy.stripe.com/eVqeVcfUrcEu3r7229awo0k'    // 3×€60 BLACK FRIDAY
+            onetime: 'https://buy.stripe.com/28E9AS0ZxfQGd1H4ahawo01',   // €320
+            monthly: 'https://buy.stripe.com/9B64gyeQn7kabXD9uBawo07'    // 3×€105
           },
           solo_drugs: {
-            onetime: 'https://buy.stripe.com/9B6bJ09w3bAq9Pv36dawo0d', // €189 (NEW)
-            monthly: 'https://buy.stripe.com/fZu00i0Zx47Ye5L9uBawo0e'  // 3×€70 (NEW)
+            onetime: 'https://buy.stripe.com/9B6bJ09w3bAq9Pv36dawo0d', // €189
+            monthly: 'https://buy.stripe.com/fZu00i0Zx47Ye5L9uBawo0e'  // 3×€70
           },
           solo_sugar: {
             onetime: 'https://buy.stripe.com/4gM5kCaA7dIyaTz9uBawo09', // €180
@@ -1432,16 +1432,16 @@ Cerrar
         company2: {
           // Company 2: Valencia, Barcelona Sants, Sevilla, Madrid Atocha
           solo_cig: {
-            onetime: 'https://buy.stripe.com/3cIeVdaclak52BZ8EMdby0q',  // €99 BLACK FRIDAY
-            monthly: 'https://buy.stripe.com/00weVdgAJdwh2BZ8EMdby0p'   // 3×€40 BLACK FRIDAY
+            onetime: 'https://buy.stripe.com/4gM8wPbgpcsdfoL5sAdby0j',  // €149
+            monthly: 'https://buy.stripe.com/dRm9ATckt4ZLdgDf3adby0n'   // 3×€60
           },
           duo_cig: {
-            onetime: 'https://buy.stripe.com/bJeeVd2JT0Jv90n08gdby0r',   // €179 BLACK FRIDAY
-            monthly: 'https://buy.stripe.com/eVqfZh5W54ZL4K79IQdby0s'    // 3×€60 BLACK FRIDAY
+            onetime: 'https://buy.stripe.com/8x2fZh3NX4ZL2BZ6wEdby09',   // €320
+            monthly: 'https://buy.stripe.com/7sYcN5dox3VH1xV08gdby0f'    // 3×€105
           },
           solo_drugs: {
-            onetime: 'https://buy.stripe.com/28E28rcktfEpb8vf3adby0l', // €189 (NEW)
-            monthly: 'https://buy.stripe.com/bJe4gz98h2RD0tR3ksdby0m'  // 3×€70 (NEW)
+            onetime: 'https://buy.stripe.com/28E28rcktfEpb8vf3adby0l', // €189
+            monthly: 'https://buy.stripe.com/bJe4gz98h2RD0tR3ksdby0m'  // 3×€70
           },
           solo_sugar: {
             onetime: 'https://buy.stripe.com/5kQ14n7090Jv3G39IQdby0h', // €180
@@ -1554,62 +1554,62 @@ Cerrar
      */
     // PROD APPOINTMENT TYPES - Filtered to show only original 4 types (matching TEST/DEV)
     // Source: https://www.smartagenda.fr/pro/laserostop-esh (PROD environment)
-    // BLACK FRIDAY ONLINE PRICES: Solo 99€, Duo 179€, Cannabis 250€ (unchanged), Sugar 180€
+    // STANDARD ONLINE PRICES: Solo 149€, Duo 269€, Cannabis 189€, Sugar 180€
     // Mapping: Valencia=10, Barcelona=43, Sevilla=44, Chamartin=48, Torrejon=49, Atocha=50, Majadahonda=51, San Sebastian=52
     const APPOINTMENT_TYPES = {
       '10': [ // Valencia - 5 types (added sugar)
-        { id: '1',  kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 99, deposit: 0, centerId: '10' },
-        { id: '9',  kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 179, deposit: 0, centerId: '10' },
-        { id: '18', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '10' },
+        { id: '1',  kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 149, deposit: 0, centerId: '10' },
+        { id: '9',  kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 269, deposit: 0, centerId: '10' },
+        { id: '18', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 189, deposit: 0, centerId: '10' },
         { id: '3',  kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '10' },
         { id: '98', kind: 'solo_sugar',   name: 'Adicción al azúcar (1h)', duration: 60, price: 180, deposit: 0, centerId: '10' }
       ],
       '43': [ // Barcelona - 5 types (added sugar)
-        { id: '20', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 99, deposit: 0, centerId: '43' },
-        { id: '21', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 179, deposit: 0, centerId: '43' },
-        { id: '23', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '43' },
+        { id: '20', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 149, deposit: 0, centerId: '43' },
+        { id: '21', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 269, deposit: 0, centerId: '43' },
+        { id: '23', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 189, deposit: 0, centerId: '43' },
         { id: '22', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '43' },
         { id: '91', kind: 'solo_sugar',   name: 'Adicción al azúcar (1h)', duration: 60, price: 180, deposit: 0, centerId: '43' }
       ],
       '44': [ // Sevilla - 5 types (added sugar)
-        { id: '32', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 99, deposit: 0, centerId: '44' },
-        { id: '34', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 179, deposit: 0, centerId: '44' },
-        { id: '37', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '44' },
+        { id: '32', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 149, deposit: 0, centerId: '44' },
+        { id: '34', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 269, deposit: 0, centerId: '44' },
+        { id: '37', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 189, deposit: 0, centerId: '44' },
         { id: '35', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '44' },
         { id: '96', kind: 'solo_sugar',   name: 'Adicción al azúcar (1h)', duration: 60, price: 180, deposit: 0, centerId: '44' }
       ],
       '49': [ // Torrejón - 5 types (added sugar)
-        { id: '53', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 99, deposit: 0, centerId: '49' },
-        { id: '56', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 179, deposit: 0, centerId: '49' },
-        { id: '59', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '49' },
+        { id: '53', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 149, deposit: 0, centerId: '49' },
+        { id: '56', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 269, deposit: 0, centerId: '49' },
+        { id: '59', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 189, deposit: 0, centerId: '49' },
         { id: '57', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '49' },
         { id: '97', kind: 'solo_sugar',   name: 'Adicción al azúcar (1h)', duration: 60, price: 180, deposit: 0, centerId: '49' }
       ],
       '48': [ // Madrid Chamartín - 5 types (added sugar)
-        { id: '44', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 99, deposit: 0, centerId: '48' },
-        { id: '46', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 179, deposit: 0, centerId: '48' },
-        { id: '49', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '48' },
+        { id: '44', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 149, deposit: 0, centerId: '48' },
+        { id: '46', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 269, deposit: 0, centerId: '48' },
+        { id: '49', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 189, deposit: 0, centerId: '48' },
         { id: '47', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '48' },
         { id: '93', kind: 'solo_sugar',   name: 'Adicción al azúcar (1h)', duration: 60, price: 180, deposit: 0, centerId: '48' }
       ],
       '50': [ // Madrid Atocha - 5 types (added sugar)
-        { id: '63', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 99, deposit: 0, centerId: '50' },
-        { id: '65', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 179, deposit: 0, centerId: '50' },
-        { id: '68', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '50' },
+        { id: '63', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 149, deposit: 0, centerId: '50' },
+        { id: '65', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 269, deposit: 0, centerId: '50' },
+        { id: '68', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 189, deposit: 0, centerId: '50' },
         { id: '66', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '50' },
         { id: '92', kind: 'solo_sugar',   name: 'Adicción al azúcar (1h)', duration: 60, price: 180, deposit: 0, centerId: '50' }
       ],
       '52': [ // San Sebastián - 5 types (added sugar)
-        { id: '81', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 99, deposit: 0, centerId: '52' },
-        { id: '83', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 179, deposit: 0, centerId: '52' },
-        { id: '86', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '52' },
+        { id: '81', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 149, deposit: 0, centerId: '52' },
+        { id: '83', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 269, deposit: 0, centerId: '52' },
+        { id: '86', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 189, deposit: 0, centerId: '52' },
         { id: '84', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '52' },
         { id: '95', kind: 'solo_sugar',   name: 'Adicción al azúcar (1h)', duration: 60, price: 180, deposit: 0, centerId: '52' }
       ],
       '51': [ // Majadahonda - 5 types (added sugar)
-        { id: '72', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 99, deposit: 0, centerId: '51' },
-        { id: '74', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 179, deposit: 0, centerId: '51' },
-        { id: '77', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '51' },
+        { id: '72', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 149, deposit: 0, centerId: '51' },
+        { id: '74', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 269, deposit: 0, centerId: '51' },
+        { id: '77', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 189, deposit: 0, centerId: '51' },
         { id: '75', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '51' },
         { id: '94', kind: 'solo_sugar',   name: 'Adicción al azúcar (1h)', duration: 60, price: 180, deposit: 0, centerId: '51' }
       ]
@@ -1619,8 +1619,8 @@ Cerrar
      * Price table - Single source of truth for payment UI
      */
     const PRICE_TABLE = {
-      solo_cig:   { centerOld: 190, center: 129, onlineOld: 190, online: 99, plan: [40, 40, 40] },
-      duo_cig:    { centerOld: 380, center: 340, onlineOld: 380, online: 179, plan: [60, 60, 60] },
+      solo_cig:   { centerOld: 190, center: 190, onlineOld: 190, online: 149, plan: [60, 60, 60] },
+      duo_cig:    { centerOld: 380, center: 340, onlineOld: 380, online: 269, plan: [90, 90, 90] },
       solo_drugs: { centerOld: 300, center: 250, onlineOld: 300, online: 189, plan: [70, 70, 70] },
       rechute:    { center: 0 },
       solo_sugar: { centerOld: 280, center: 200, onlineOld: 280, online: 180, plan: [60, 60, 60] }
