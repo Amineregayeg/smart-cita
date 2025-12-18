@@ -500,11 +500,11 @@
 <span class="absolute -top-4 right-4 px-4 py-1.5 text-sm font-bold text-white rounded-full" style="background-color: #38D9A9;"><span style="color: #FFD93D;">⭐</span> POPULAR</span>
 <h3 class="text-lg font-semibold text-gray-900 mb-4">Individual</h3>
 <div class="flex items-baseline gap-2 mb-1">
-<span class="text-4xl font-black" style="color: #14A3A3;">170€</span>
+<span class="text-4xl font-black" style="color: #14A3A3;">190€</span>
 </div>
 <!-- Discount Bar -->
 <div class="w-full h-3 rounded-full mb-4" style="background-color: #14A3A3;"></div>
-<!-- Online price displayed -->
+<!-- Center price displayed -->
 
 <ul class="text-sm space-y-2" style="color: #414141;">
 <li class="flex items-center gap-2"><span class="material-icons text-base" style="color: #29C473;">check_circle</span>1 sesión completa</li>
@@ -516,7 +516,7 @@
 <a href="#step-1" class="block bg-white rounded-2xl p-6 transition-all cursor-pointer smooth-scroll" style="border: 3px solid #2563EB; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
 <h3 class="text-lg font-semibold text-gray-900 mb-4">Dúo <span class="text-sm font-normal text-gray-500">(2 personas)</span></h3>
 <div class="flex items-baseline gap-2 mb-1">
-<span class="text-4xl font-black" style="color: #2563EB;">340€</span>
+<span class="text-4xl font-black" style="color: #2563EB;">360€</span>
 </div>
 <!-- Discount Bar -->
 <div class="w-full h-3 rounded-full mb-4" style="background-color: #2563EB;"></div>
@@ -1231,7 +1231,7 @@ Más de 500,000 personas ya lo han conseguido. Reserve su cita hoy y dé el prim
 <div class="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-white border-t border-gray-200 shadow-lg px-4 py-3">
 <a href="#booking" class="smooth-scroll flex items-center justify-center gap-2 w-full bg-primary hover:bg-primary/90 text-white font-semibold py-3 rounded-full shadow-md transition-all duration-300">
 <span class="material-icons text-lg">lock</span>
-<span>Reservar con -40% ahora</span>
+<span>Reservar con -20€ online</span>
 </a>
 </div>
 
@@ -2869,10 +2869,7 @@ Más de 500,000 personas ya lo han conseguido. Reserve su cita hoy y dé el prim
           const option = document.createElement('option');
           option.value = type.id;
           option.textContent = type.name;
-          // Use online price from PRICE_TABLE for display (show discounted price)
-          const priceData = PRICE_TABLE[type.kind];
-          const displayPrice = priceData && priceData.online ? priceData.online : (type.price !== undefined ? type.price : '190');
-          option.dataset.price = displayPrice;  // Show online price in form
+          option.dataset.price = type.price !== undefined ? type.price : '190';  // Show center price in form
           option.dataset.duration = type.duration || '30';
 
           // Strip HTML from description
