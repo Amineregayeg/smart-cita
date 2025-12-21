@@ -634,7 +634,7 @@
 <select id="center-select" class="w-full pl-12 pr-4 py-3 border-0 rounded-full focus:ring-primary focus:border-primary transition">
 <option value="">Seleccione un centro...</option>
 <!-- Centers are dynamically loaded from Smart Agenda API -->
-<!-- Only 8 centers available: Barcelona Sants, Madrid Atocha, Madrid Chamartín, Majadahonda, San Sebastián, Sevilla, Torrejón, Valencia -->
+<!-- Only 6 centers available: Barcelona Sants, Madrid Atocha, Madrid Chamartín, Majadahonda, Sevilla, Torrejón -->
 </select>
 </div>
 </div>
@@ -732,7 +732,7 @@
 </div>
 <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-4">¡Cita confirmada!</h2>
 <p class="text-lg text-gray-600 dark:text-gray-300 mb-2">Se ha enviado un correo de confirmación a su dirección.</p>
-<p class="text-gray-500 dark:text-gray-400">Estaremos encantados de recibirle en el centro <strong>LaserOstop Valencia</strong> el <strong>15 de Octubre de 2025 a las 11:30</strong>.</p>
+<p class="text-gray-500 dark:text-gray-400">Estaremos encantados de recibirle en el centro <strong>LaserOstop Madrid</strong> el <strong>15 de Octubre de 2025 a las 11:30</strong>.</p>
 </div>
 </div>
 
@@ -1274,7 +1274,7 @@ Más de 500,000 personas ya lo han conseguido. Reserve su cita hoy y dé el prim
   ];
 
   const cities = [
-    'Madrid', 'Barcelona', 'Valencia', 'Sevilla', 'San Sebastián de los Reyes',
+    'Madrid', 'Barcelona', 'Sevilla',
     'Majadahonda', 'Torrejón de Ardoz'
   ];
 
@@ -1326,7 +1326,7 @@ Más de 500,000 personas ya lo han conseguido. Reserve su cita hoy y dé el prim
 
 <script>
     // Centers data with real GPS coordinates
-    // Only 8 centers available in Smart Agenda (removed: Alicante, Barcelona Gràcia, Terrassa)
+    // Only 6 centers available (removed: Alicante, Barcelona Gràcia, Terrassa, Valencia, San Sebastián)
     const centers = {
       'barcelona-sants': {
         lat: 41.3784, lng: 2.1366,
@@ -1356,26 +1356,12 @@ Más de 500,000 personas ya lo han conseguido. Reserve su cita hoy y dé el prim
         hours: '09:00 - 16:00',
         phone: '+34 919 305 313'
       },
-      'san-sebastian': {
-        lat: 40.5485, lng: -3.6295,
-        name: 'LaserOstop San Sebastián de los Reyes',
-        address: 'Avenida de Murcia, 5, 28702, San Sebastián de los Reyes',
-        hours: '09:00 - 16:00',
-        phone: '+34 919 305 313'
-      },
       'torrejon': {
         lat: 40.4578, lng: -3.4763,
         name: 'LaserOstop Torrejón de Ardoz',
         address: 'Calle pesquera, 10, 28850, Torrejón de Ardoz',
         hours: '09:00 - 16:00',
         phone: '+34 919 305 313'
-      },
-      'valencia': {
-        lat: 39.4699, lng: -0.3763,
-        name: 'LaserOstop Valencia',
-        address: 'Calle San Vicente Mártir 85 planta 7, 46007, Valencia',
-        hours: '09:00 - 18:00',
-        phone: '+34 689 560 130'
       },
       'sevilla': {
         lat: 37.3891, lng: -5.9845,
@@ -1734,7 +1720,7 @@ Más de 500,000 personas ya lo han conseguido. Reserve su cita hoy y dé el prim
       // Stripe Payment Links Configuration - STANDARD PRICES Dec 2025
       const stripeLinks = {
         company1: {
-          // Company 1: Madrid Chamartín, Torrejón, Majadahonda, San Sebastián
+          // Company 1: Madrid Chamartín, Torrejón, Majadahonda
           solo_cig: {
             onetime: 'https://buy.stripe.com/14A3cueQn8oee5L36dawo0q',  // €170
             monthly: 'https://buy.stripe.com/dRm6oGbEb1ZQ8LreOVawo0f'   // 3×€60
@@ -1753,7 +1739,7 @@ Más de 500,000 personas ya lo han conseguido. Reserve su cita hoy y dé el prim
           }
         },
         company2: {
-          // Company 2: Valencia, Barcelona Sants, Sevilla, Madrid Atocha
+          // Company 2: Barcelona Sants, Sevilla, Madrid Atocha
           solo_cig: {
             onetime: 'https://buy.stripe.com/9B65kD709csd2BZcV2dby0y',  // €170
             monthly: 'https://buy.stripe.com/dRm9ATckt4ZLdgDf3adby0n'   // 3×€60
@@ -1878,15 +1864,9 @@ Más de 500,000 personas ya lo han conseguido. Reserve su cita hoy y dé el prim
     // PROD APPOINTMENT TYPES - Filtered to show only original 4 types (matching TEST/DEV)
     // Source: https://www.smartagenda.fr/pro/laserostop-esh (PROD environment)
     // STANDARD PRICES: Solo 190€, Duo 360€, Cannabis 250€, Sugar 200€
-    // Mapping: Valencia=10, Barcelona=43, Sevilla=44, Chamartin=48, Torrejon=49, Atocha=50, Majadahonda=51, San Sebastian=52
+    // Mapping: Barcelona=43, Sevilla=44, Chamartin=48, Torrejon=49, Atocha=50, Majadahonda=51
+    // Removed: Valencia=10, San Sebastian=52 (no longer accepting bookings)
     const APPOINTMENT_TYPES = {
-      '10': [ // Valencia - 5 types (added sugar)
-        { id: '1',  kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '10' },
-        { id: '9',  kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 360, deposit: 0, centerId: '10' },
-        { id: '18', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '10' },
-        { id: '3',  kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '10' },
-        { id: '98', kind: 'solo_sugar',   name: 'Adicción al azúcar (1h)', duration: 60, price: 200, deposit: 0, centerId: '10' }
-      ],
       '43': [ // Barcelona - 5 types (added sugar)
         { id: '20', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '43' },
         { id: '21', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 360, deposit: 0, centerId: '43' },
@@ -1922,13 +1902,6 @@ Más de 500,000 personas ya lo han conseguido. Reserve su cita hoy y dé el prim
         { id: '66', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '50' },
         { id: '92', kind: 'solo_sugar',   name: 'Adicción al azúcar (1h)', duration: 60, price: 200, deposit: 0, centerId: '50' }
       ],
-      '52': [ // San Sebastián - 5 types (added sugar)
-        { id: '81', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '52' },
-        { id: '83', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 360, deposit: 0, centerId: '52' },
-        { id: '86', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '52' },
-        { id: '84', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '52' },
-        { id: '95', kind: 'solo_sugar',   name: 'Adicción al azúcar (1h)', duration: 60, price: 200, deposit: 0, centerId: '52' }
-      ],
       '51': [ // Majadahonda - 5 types (added sugar)
         { id: '72', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '51' },
         { id: '74', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 360, deposit: 0, centerId: '51' },
@@ -1953,8 +1926,8 @@ Más de 500,000 personas ya lo han conseguido. Reserve su cita hoy y dé el prim
      * Company routing - determines which Stripe account to use
      * FIXED: Using correct pdo_agenda IDs
      */
-    const COMPANY1_CENTERS = new Set(['48', '49', '51', '52']); // Madrid Chamartín, Torrejón, Majadahonda, San Sebastián
-    const COMPANY2_CENTERS = new Set(['10', '43', '44', '50']);  // Valencia, Barcelona Sants, Sevilla, Madrid Atocha
+    const COMPANY1_CENTERS = new Set(['48', '49', '51']); // Madrid Chamartín, Torrejón, Majadahonda
+    const COMPANY2_CENTERS = new Set(['43', '44', '50']);  // Barcelona Sants, Sevilla, Madrid Atocha
 
     function getCompany(centerId) {
       return COMPANY1_CENTERS.has(String(centerId)) ? 'company1' : 'company2';
@@ -2037,14 +2010,8 @@ Más de 500,000 personas ya lo han conseguido. Reserve su cita hoy y dé el prim
         'Barcelona': [
           { id: '43', name: 'Barcelona' }
         ],
-        'San Sebastián': [
-          { id: '52', name: 'San Sebastián' }
-        ],
         'Sevilla': [
           { id: '44', name: 'Sevilla' }
-        ],
-        'Valencia': [
-          { id: '10', name: 'Valencia' }
         ]
       };
 
@@ -3042,15 +3009,14 @@ Más de 500,000 personas ya lo han conseguido. Reserve su cita hoy y dé el prim
     }
 
     // URL slug to center ID mapping (PROD pdo_agenda IDs)
+    // Removed: valencia, san-sebastian (no longer accepting bookings)
     const CENTER_URL_MAPPING = {
       'barcelona-sants': '43',       // Barcelona Sants
       'barcelona': '43',             // Barcelona (alias)
-      'valencia': '10',              // Valencia
       'madrid-atocha': '50',         // Madrid Atocha
       'madrid-chamartin': '48',      // Madrid Chamartín
       'sevilla': '44',               // Sevilla
       'majadahonda': '51',           // Majadahonda
-      'san-sebastian': '52',         // San Sebastián de Los Reyes
       'torrejon': '49'               // Torrejón de Ardoz
     };
 

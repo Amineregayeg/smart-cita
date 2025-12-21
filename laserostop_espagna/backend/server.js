@@ -160,7 +160,11 @@ app.get('/api/centers', async (req, res) => {
 
     // List of internal/system center IDs to exclude from user-facing lists
     // These are used internally by Smart Agenda but should not appear in booking forms
-    const excludedCenterIds = ['53']; // 53 = "RDV ANNULE" (cancelled appointments)
+    const excludedCenterIds = [
+      '53',  // RDV ANNULE (cancelled appointments - internal)
+      '10',  // Valencia (no longer accepting bookings)
+      '52'   // San Sebastián (no longer accepting bookings)
+    ];
 
     // Filter active centers (affiche_agenda === "O") and exclude internal centers
     // Note: PROD API uses 'nom' field for names (not 'libelle')
