@@ -16,6 +16,7 @@ class GPTHandler {
       apiKey: process.env.OPENAI_API_KEY
     });
     this.kbLoader = new KnowledgeBaseLoader();
+    this.lastTokenCount = 0; // Track last call's token usage for stats
 
     if (!process.env.OPENAI_API_KEY) {
       console.warn('[GPT] OPENAI_API_KEY not configured - responses will fail');
@@ -81,6 +82,9 @@ class GPTHandler {
 
       const response = completion.choices[0]?.message?.content || '';
       const usage = completion.usage || {};
+
+      // Track token count for stats
+      this.lastTokenCount = usage.total_tokens || 0;
 
       // Step 6: Track token usage
       await incrementTokenCounter(usage.prompt_tokens || 0, usage.completion_tokens || 0);

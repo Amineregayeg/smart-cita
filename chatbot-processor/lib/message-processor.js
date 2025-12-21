@@ -4,9 +4,10 @@
  */
 
 const { GPTHandler } = require('./gpt-handler');
-const { getSessionContext, setSessionContext } = require('./redis-client');
+const { getSessionContext, setSessionContext, logMessageStats } = require('./redis-client');
 const WhatsAppAdapter = require('./platform-adapters/whatsapp-adapter');
 const MetaAdapter = require('./platform-adapters/meta-adapter');
+const { v4: uuidv4 } = require('uuid');
 
 // Initialize handlers
 const gptHandler = new GPTHandler();
@@ -84,6 +85,23 @@ async function processMessage(queueItem) {
 
     const totalTime = Date.now() - receivedAt;
     console.log(`[PROCESSOR] Response sent in ${totalTime}ms total`);
+
+    // Step 7: Log stats for admin dashboard
+    await logMessageStats({
+      platform: platform,
+      responseTime: totalTime,
+      tokens: gptHandler.lastTokenCount || 0,
+      logEntry: {
+        id: uuidv4(),
+        timestamp: new Date().toISOString(),
+        platform: platform,
+        userId: userId.slice(-4), // Anonymize - last 4 chars only
+        userMessage: userText,
+        botResponse: response,
+        tokens: gptHandler.lastTokenCount || 0,
+        responseTime: totalTime
+      }
+    });
 
   } catch (error) {
     console.error(`[PROCESSOR] Error processing message:`, error.message);

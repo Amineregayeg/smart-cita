@@ -141,11 +141,214 @@ async function setCachedResponse(questionHash, response, ttlSeconds = 86400) {
   }
 }
 
+/**
+ * Log message stats for admin dashboard
+ * @param {object} stats - Stats object
+ */
+async function logMessageStats(stats) {
+  const client = await getRedisClient();
+  if (!client) return;
+
+  try {
+    const today = new Date().toISOString().split('T')[0];
+    const pipeline = client.pipeline();
+
+    // Increment message counters
+    pipeline.incr('chatbot:stats:messages:total');
+    pipeline.incr(`chatbot:stats:messages:${today}`);
+    pipeline.expire(`chatbot:stats:messages:${today}`, 604800); // 7 days TTL
+
+    // Increment platform counter
+    if (stats.platform) {
+      pipeline.incr(`chatbot:stats:platform:${stats.platform}`);
+    }
+
+    // Update response time tracking
+    if (stats.responseTime) {
+      pipeline.incrby('chatbot:stats:response_time:sum', stats.responseTime);
+      pipeline.incr('chatbot:stats:response_time:count');
+    }
+
+    // Track token usage for today
+    if (stats.tokens) {
+      pipeline.incrby(`chatbot:stats:tokens:${today}`, stats.tokens);
+      pipeline.expire(`chatbot:stats:tokens:${today}`, 604800);
+    }
+
+    // Log conversation entry (keep last 1000)
+    if (stats.logEntry) {
+      const logJson = JSON.stringify(stats.logEntry);
+      pipeline.lpush('chatbot:logs:recent', logJson);
+      pipeline.ltrim('chatbot:logs:recent', 0, 999);
+    }
+
+    await pipeline.exec();
+  } catch (error) {
+    console.error('[REDIS] Stats logging error:', error.message);
+  }
+}
+
+/**
+ * Get stats for admin dashboard
+ * @returns {Promise<object>} - Stats object
+ */
+async function getAdminStats() {
+  const client = await getRedisClient();
+  if (!client) return null;
+
+  try {
+    const today = new Date().toISOString().split('T')[0];
+    const pipeline = client.pipeline();
+
+    // Get message counts
+    pipeline.get('chatbot:stats:messages:total');
+    pipeline.get(`chatbot:stats:messages:${today}`);
+
+    // Get token count for today
+    pipeline.get(`chatbot:stats:tokens:${today}`);
+
+    // Get response time stats
+    pipeline.get('chatbot:stats:response_time:sum');
+    pipeline.get('chatbot:stats:response_time:count');
+
+    // Get platform breakdown
+    pipeline.get('chatbot:stats:platform:whatsapp');
+    pipeline.get('chatbot:stats:platform:messenger');
+    pipeline.get('chatbot:stats:platform:instagram');
+
+    // Get daily messages for last 7 days
+    for (let i = 0; i < 7; i++) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      const dateStr = date.toISOString().split('T')[0];
+      pipeline.get(`chatbot:stats:messages:${dateStr}`);
+    }
+
+    // Get daily tokens for last 7 days
+    for (let i = 0; i < 7; i++) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      const dateStr = date.toISOString().split('T')[0];
+      pipeline.get(`chatbot:stats:tokens:${dateStr}`);
+    }
+
+    const results = await pipeline.exec();
+
+    // Parse results
+    const messagesTotal = parseInt(results[0][1]) || 0;
+    const messagesToday = parseInt(results[1][1]) || 0;
+    const tokensToday = parseInt(results[2][1]) || 0;
+    const responseTimeSum = parseInt(results[3][1]) || 0;
+    const responseTimeCount = parseInt(results[4][1]) || 1;
+    const platformWhatsApp = parseInt(results[5][1]) || 0;
+    const platformMessenger = parseInt(results[6][1]) || 0;
+    const platformInstagram = parseInt(results[7][1]) || 0;
+
+    // Calculate daily messages
+    const dailyMessages = [];
+    for (let i = 0; i < 7; i++) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      const dateStr = date.toISOString().split('T')[0];
+      dailyMessages.push({
+        date: dateStr,
+        count: parseInt(results[8 + i][1]) || 0
+      });
+    }
+
+    // Calculate daily tokens
+    const dailyTokens = [];
+    for (let i = 0; i < 7; i++) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      const dateStr = date.toISOString().split('T')[0];
+      dailyTokens.push({
+        date: dateStr,
+        tokens: parseInt(results[15 + i][1]) || 0
+      });
+    }
+
+    // GPT-5 Nano pricing
+    const costPerInputToken = 0.05 / 1000000;
+    const costPerOutputToken = 0.40 / 1000000;
+    // Estimate: 70% input, 30% output tokens
+    const estimatedCost = tokensToday * (0.7 * costPerInputToken + 0.3 * costPerOutputToken);
+
+    return {
+      messagesTotal,
+      messagesToday,
+      tokensToday,
+      costToday: Math.round(estimatedCost * 100) / 100,
+      avgResponseTime: Math.round(responseTimeSum / responseTimeCount),
+      platformBreakdown: {
+        whatsapp: platformWhatsApp,
+        messenger: platformMessenger,
+        instagram: platformInstagram
+      },
+      dailyMessages: dailyMessages.reverse(),
+      dailyTokens: dailyTokens.reverse()
+    };
+  } catch (error) {
+    console.error('[REDIS] Get stats error:', error.message);
+    return null;
+  }
+}
+
+/**
+ * Get conversation logs for admin dashboard
+ * @param {object} options - Query options
+ * @returns {Promise<object>} - Logs with pagination
+ */
+async function getConversationLogs(options = {}) {
+  const client = await getRedisClient();
+  if (!client) return { conversations: [], total: 0, page: 1, pages: 1 };
+
+  try {
+    const { page = 1, limit = 20, platform, search } = options;
+    const start = (page - 1) * limit;
+    const end = start + limit - 1;
+
+    // Get total count
+    const total = await client.llen('chatbot:logs:recent');
+
+    // Get logs
+    const logs = await client.lrange('chatbot:logs:recent', start, end);
+    let conversations = logs.map(log => JSON.parse(log));
+
+    // Filter by platform if specified
+    if (platform) {
+      conversations = conversations.filter(c => c.platform === platform);
+    }
+
+    // Filter by search term if specified
+    if (search) {
+      const searchLower = search.toLowerCase();
+      conversations = conversations.filter(c =>
+        c.userMessage?.toLowerCase().includes(searchLower) ||
+        c.botResponse?.toLowerCase().includes(searchLower)
+      );
+    }
+
+    return {
+      conversations,
+      total,
+      page,
+      pages: Math.ceil(total / limit)
+    };
+  } catch (error) {
+    console.error('[REDIS] Get logs error:', error.message);
+    return { conversations: [], total: 0, page: 1, pages: 1 };
+  }
+}
+
 module.exports = {
   getRedisClient,
   getSessionContext,
   setSessionContext,
   incrementTokenCounter,
   getCachedResponse,
-  setCachedResponse
+  setCachedResponse,
+  logMessageStats,
+  getAdminStats,
+  getConversationLogs
 };

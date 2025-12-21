@@ -21,6 +21,43 @@
   status = 200
   force = true
 
+# Admin dashboard redirects
+[[redirects]]
+  from = "/admin"
+  to = "/laserostop_bf/admin.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/admin.js"
+  to = "/laserostop_bf/admin.js"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/admin-auth"
+  to = "/.netlify/functions/admin-auth"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/admin-stats"
+  to = "/.netlify/functions/admin-stats"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/admin-conversations"
+  to = "/.netlify/functions/admin-conversations"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/admin-test-chat"
+  to = "/.netlify/functions/admin-test-chat"
+  status = 200
+  force = true
+
 # API endpoint redirects
 # Route API calls to Netlify Functions
 [[redirects]]
@@ -148,4 +185,4 @@
   [headers.values]
     Access-Control-Allow-Origin = "*"
     Access-Control-Allow-Methods = "GET, POST, OPTIONS"
-    Access-Control-Allow-Headers = "Content-Type"
+    Access-Control-Allow-Headers = "Content-Type, Authorization"
