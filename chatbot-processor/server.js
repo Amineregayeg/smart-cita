@@ -2,13 +2,35 @@
  * LaserOstop Chatbot Processor - Background Worker
  * Polls Redis queue for incoming messages and processes them with GPT-5 Nano
  *
- * Deploy on Render.com as a Background Worker
+ * Deploy on Render.com as Web Service (with health endpoint for monitoring)
  */
 
 require('dotenv').config();
+const http = require('http');
 
 const { getRedisClient } = require('./lib/redis-client');
 const { processMessage } = require('./lib/message-processor');
+
+// HTTP Health Check Server (required for Render web service)
+const PORT = process.env.PORT || 10000;
+const healthServer = http.createServer((req, res) => {
+  if (req.url === '/health' || req.url === '/') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({
+      status: 'ok',
+      messagesProcessed,
+      uptime: Math.floor((Date.now() - startTime) / 1000),
+      timestamp: new Date().toISOString()
+    }));
+  } else {
+    res.writeHead(404);
+    res.end('Not found');
+  }
+});
+
+healthServer.listen(PORT, () => {
+  console.log(`[HEALTH] Health check server running on port ${PORT}`);
+});
 
 // Configuration
 const POLL_INTERVAL_MS = parseInt(process.env.POLL_INTERVAL_MS) || 1000;
