@@ -11,11 +11,6 @@ let redisClient = null;
  * @returns {Promise<object>} - Redis client instance
  */
 async function getRedisClient() {
-  // Return cached client if available
-  if (redisClient) {
-    return redisClient;
-  }
-
   // Check for required environment variable
   const redisUrl = process.env.UPSTASH_REDIS_URL;
   if (!redisUrl) {
@@ -29,17 +24,15 @@ async function getRedisClient() {
       Redis = require('ioredis');
     }
 
-    redisClient = new Redis(redisUrl, {
+    // Create new client for each invocation in serverless environment
+    // ioredis handles connection automatically when commands are executed
+    const client = new Redis(redisUrl, {
       maxRetriesPerRequest: 3,
-      retryDelayOnFailover: 100,
-      enableReadyCheck: false,
-      lazyConnect: true
+      connectTimeout: 5000,
+      commandTimeout: 5000
     });
 
-    await redisClient.connect();
-    console.log('[REDIS] Connected to Upstash Redis');
-
-    return redisClient;
+    return client;
   } catch (error) {
     console.error('[REDIS] Connection error:', error.message);
     return null;
