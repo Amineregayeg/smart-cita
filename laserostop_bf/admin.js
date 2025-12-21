@@ -4,7 +4,7 @@
  */
 
 // Configuration
-const API_BASE = '/api';
+const API_BASE = '/.netlify/functions';
 const REFRESH_INTERVAL = 30000; // 30 seconds
 const SESSION_KEY = 'laserostop_admin_session';
 
