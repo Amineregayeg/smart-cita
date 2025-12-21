@@ -8,7 +8,20 @@
   directory = "netlify/functions"
   node_bundler = "esbuild"
 
-# API endpoint redirects - MUST COME FIRST (order matters!)
+# Chatbot webhook redirects - MUST COME FIRST (order matters!)
+[[redirects]]
+  from = "/webhook/whatsapp"
+  to = "/.netlify/functions/webhook-whatsapp"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/webhook/meta"
+  to = "/.netlify/functions/webhook-meta"
+  status = 200
+  force = true
+
+# API endpoint redirects
 # Route API calls to Netlify Functions
 [[redirects]]
   from = "/laserostop_espagna/api/*"
