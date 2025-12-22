@@ -12,6 +12,7 @@ const SESSION_KEY = 'laserostop_admin_session';
 let currentPage = 1;
 let refreshTimer = null;
 let charts = {};
+let chartsInitialized = false;
 
 // ==================== AUTHENTICATION ====================
 
@@ -27,9 +28,9 @@ async function hashPassword(password) {
 }
 
 /**
- * Check if user is authenticated
+ * Check if user has a session token (doesn't validate it)
  */
-function isAuthenticated() {
+function hasSessionToken() {
   const session = localStorage.getItem(SESSION_KEY);
   if (!session) return false;
 
@@ -39,7 +40,7 @@ function isAuthenticated() {
       localStorage.removeItem(SESSION_KEY);
       return false;
     }
-    return true;
+    return !!token;
   } catch {
     return false;
   }
@@ -55,6 +56,23 @@ function getToken() {
     return JSON.parse(session).token;
   } catch {
     return null;
+  }
+}
+
+/**
+ * Validate session with server
+ */
+async function validateSession() {
+  const token = getToken();
+  if (!token) return false;
+
+  try {
+    const response = await fetch(`${API_BASE}/admin-stats`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    return response.ok;
+  } catch {
+    return false;
   }
 }
 
@@ -84,12 +102,19 @@ async function handleLogin(event) {
     const data = await response.json();
 
     if (data.success) {
+      // Clear any old session first
+      localStorage.removeItem(SESSION_KEY);
+
+      // Store new session
       localStorage.setItem(SESSION_KEY, JSON.stringify({
         token: data.token,
         expiresAt: data.expiresAt
       }));
+
+      console.log('Login successful, token stored');
       showDashboard();
     } else {
+      errorEl.textContent = data.error || 'Contrasena incorrecta';
       errorEl.classList.remove('hidden');
     }
   } catch (error) {
@@ -108,6 +133,7 @@ async function handleLogin(event) {
 function handleLogout() {
   localStorage.removeItem(SESSION_KEY);
   stopAutoRefresh();
+  destroyCharts();
   document.getElementById('dashboard').classList.add('hidden');
   document.getElementById('login-screen').classList.remove('hidden');
   document.getElementById('password-input').value = '';
@@ -122,17 +148,41 @@ function showDashboard() {
   document.getElementById('login-screen').classList.add('hidden');
   document.getElementById('dashboard').classList.remove('hidden');
 
-  // Initialize
+  // Initialize charts (destroy first if they exist)
+  destroyCharts();
   initCharts();
+
+  // Load data
   loadStats();
   loadConversations();
   startAutoRefresh();
 }
 
 /**
+ * Destroy existing charts
+ */
+function destroyCharts() {
+  if (charts.messages) {
+    charts.messages.destroy();
+    charts.messages = null;
+  }
+  if (charts.platform) {
+    charts.platform.destroy();
+    charts.platform = null;
+  }
+  if (charts.tokens) {
+    charts.tokens.destroy();
+    charts.tokens = null;
+  }
+  chartsInitialized = false;
+}
+
+/**
  * Initialize Chart.js charts
  */
 function initCharts() {
+  if (chartsInitialized) return;
+
   // Messages per day chart
   const messagesCtx = document.getElementById('messages-chart').getContext('2d');
   charts.messages = new Chart(messagesCtx, {
@@ -200,6 +250,8 @@ function initCharts() {
       }
     }
   });
+
+  chartsInitialized = true;
 }
 
 /**
@@ -213,6 +265,7 @@ async function loadStats() {
 
     if (!response.ok) {
       if (response.status === 401) {
+        console.log('Session invalid, logging out');
         handleLogout();
         return;
       }
@@ -242,6 +295,8 @@ function updateStatsDisplay(stats) {
  * Update charts with new data
  */
 function updateCharts(stats) {
+  if (!charts.messages || !charts.platform || !charts.tokens) return;
+
   // Messages chart
   const msgLabels = stats.dailyMessages.map(d => formatDate(d.date));
   const msgData = stats.dailyMessages.map(d => d.count);
@@ -461,6 +516,8 @@ function clearChat() {
  * Start auto-refresh timer
  */
 function startAutoRefresh() {
+  stopAutoRefresh(); // Clear any existing timer
+
   let countdown = 30;
   const countdownEl = document.getElementById('refresh-countdown');
 
@@ -546,12 +603,21 @@ function escapeHtml(text) {
   return div.innerHTML;
 }
 
-// ==================== EVENT LISTENERS ====================
+// ==================== INITIALIZATION ====================
 
-document.addEventListener('DOMContentLoaded', () => {
-  // Check authentication
-  if (isAuthenticated()) {
-    showDashboard();
+document.addEventListener('DOMContentLoaded', async () => {
+  // Clear any stale sessions on fresh page load
+  // and validate existing session with server
+  if (hasSessionToken()) {
+    console.log('Found existing session, validating...');
+    const isValid = await validateSession();
+    if (isValid) {
+      console.log('Session valid, showing dashboard');
+      showDashboard();
+    } else {
+      console.log('Session invalid, clearing and showing login');
+      localStorage.removeItem(SESSION_KEY);
+    }
   }
 
   // Login form
