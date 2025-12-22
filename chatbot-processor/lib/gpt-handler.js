@@ -194,10 +194,18 @@ class GPTHandler {
   }
 
   /**
-   * Build system prompt with knowledge base injection
+   * Build system prompt with knowledge base and current date injection
    */
   buildSystemPrompt(knowledgeBase) {
-    return SYSTEM_PROMPT_TEMPLATE.replace('{KNOWLEDGE_BASE}', knowledgeBase);
+    const currentDate = new Date().toLocaleDateString('es-ES', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+    return SYSTEM_PROMPT_TEMPLATE
+      .replace('{KNOWLEDGE_BASE}', knowledgeBase)
+      .replace('{CURRENT_DATE}', currentDate);
   }
 
   /**
