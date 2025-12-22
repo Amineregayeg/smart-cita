@@ -368,12 +368,18 @@ async function getConversationLogs(options = {}) {
  */
 async function setAdminSession(token, ttlSeconds = 86400) {
   const client = await getRedisClient();
-  if (!client) return;
+  if (!client) {
+    console.error('[REDIS] No client available for session storage');
+    return false;
+  }
 
   try {
-    await client.setex(`admin:session:${token}`, ttlSeconds, '1');
+    const result = await client.setex(`admin:session:${token}`, ttlSeconds, '1');
+    console.log(`[REDIS] Session stored for token ${token.substring(0,8)}...: ${result}`);
+    return result === 'OK';
   } catch (error) {
     console.error('[REDIS] Admin session set error:', error.message);
+    return false;
   }
 }
 
@@ -383,12 +389,18 @@ async function setAdminSession(token, ttlSeconds = 86400) {
  * @returns {Promise<boolean>} - True if valid
  */
 async function validateAdminSession(token) {
+  if (!token) return false;
+
   const client = await getRedisClient();
-  if (!client) return false;
+  if (!client) {
+    console.error('[REDIS] No client available for session validation');
+    return false;
+  }
 
   try {
-    const exists = await client.get(`admin:session:${token}`);
-    return exists === '1';
+    const exists = await client.exists(`admin:session:${token}`);
+    console.log(`[REDIS] Session check for token ${token.substring(0,8)}...: exists=${exists}`);
+    return exists === 1;
   } catch (error) {
     console.error('[REDIS] Admin session validate error:', error.message);
     return false;

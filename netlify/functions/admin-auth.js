@@ -94,7 +94,8 @@ exports.handler = async (event) => {
     const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(); // 24 hours
 
     // Store in Redis
-    await setAdminSession(token);
+    const sessionStored = await setAdminSession(token);
+    console.log('[ADMIN-AUTH] Session storage result:', sessionStored);
 
     console.log('[ADMIN-AUTH] Login successful from', clientIP);
 
