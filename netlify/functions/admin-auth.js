@@ -93,9 +93,21 @@ exports.handler = async (event) => {
     const token = crypto.randomBytes(32).toString('hex');
     const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(); // 24 hours
 
-    // Store in Redis
+    // Store in Redis - MUST succeed for login to work
     const sessionStored = await setAdminSession(token);
     console.log('[ADMIN-AUTH] Session storage result:', sessionStored);
+
+    if (!sessionStored) {
+      console.error('[ADMIN-AUTH] Failed to store session in Redis - check UPSTASH_REDIS_URL');
+      return {
+        statusCode: 500,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          success: false,
+          error: 'Error del servidor - Redis no configurado'
+        })
+      };
+    }
 
     console.log('[ADMIN-AUTH] Login successful from', clientIP);
 
