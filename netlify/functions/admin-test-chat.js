@@ -203,7 +203,10 @@ async function getSmartAgendaToken() {
 async function smartAgendaRequest(endpoint, options = {}) {
   const token = await getSmartAgendaToken();
   const baseUrl = process.env.SMART_AGENDA_BASE_URL || 'https://www.smartagenda.fr/pro/laserostop-esh/api';
-  return fetch(`${baseUrl}${endpoint}`, {
+
+  console.log(`[ADMIN-TEST-CHAT] Smart Agenda request: ${options.method || 'GET'} ${endpoint}`);
+
+  const response = await fetch(`${baseUrl}${endpoint}`, {
     ...options,
     headers: {
       'X-SMARTAPI-TOKEN': token,
@@ -211,6 +214,10 @@ async function smartAgendaRequest(endpoint, options = {}) {
       ...options.headers
     }
   });
+
+  console.log(`[ADMIN-TEST-CHAT] Smart Agenda response: ${response.status}`);
+
+  return response;
 }
 
 function formatSpanishDate(dateStr) {
@@ -310,8 +317,20 @@ async function executeToolCall(toolName, args) {
       }
 
       try {
+        // Check if Smart Agenda credentials are configured
+        if (!process.env.SMART_AGENDA_LOGIN || !process.env.SMART_AGENDA_PWD) {
+          console.error('[ADMIN-TEST-CHAT] Smart Agenda credentials not configured!');
+          return { success: false, error: 'config_error', message: 'Smart Agenda no está configurado. Contacta al administrador.' };
+        }
+
         // Get or create client
+        console.log('[ADMIN-TEST-CHAT] Fetching clients...');
         const clientsResponse = await smartAgendaRequest('/pdo_client');
+        if (!clientsResponse.ok) {
+          const errorText = await clientsResponse.text();
+          console.error('[ADMIN-TEST-CHAT] Failed to get clients:', clientsResponse.status, errorText);
+          throw new Error(`Failed to get clients: ${clientsResponse.status}`);
+        }
         const clients = await clientsResponse.json();
         let client = clients.find(c => c.mail === email);
 
@@ -320,21 +339,31 @@ async function executeToolCall(toolName, args) {
           const lastName = nameParts[nameParts.length - 1];
           const firstName = nameParts.slice(0, -1).join(' ') || lastName;
 
+          console.log('[ADMIN-TEST-CHAT] Creating new client:', { firstName, lastName, email, phone });
           const createResponse = await smartAgendaRequest('/pdo_client', {
             method: 'POST',
             body: JSON.stringify({ nom: lastName, prenom: firstName, mail: email, telephone: phone })
           });
+          if (!createResponse.ok) {
+            const errorText = await createResponse.text();
+            console.error('[ADMIN-TEST-CHAT] Failed to create client:', createResponse.status, errorText);
+            throw new Error(`Failed to create client: ${createResponse.status}`);
+          }
           client = await createResponse.json();
+          console.log('[ADMIN-TEST-CHAT] Client created:', client.id);
+        } else {
+          console.log('[ADMIN-TEST-CHAT] Existing client found:', client.id);
         }
 
         if (!client?.id) {
-          throw new Error('Failed to create/get client');
+          throw new Error('Failed to create/get client - no ID returned');
         }
 
         // Get resource
         const resourcesResponse = await smartAgendaRequest('/pdo_ressource');
         const resources = await resourcesResponse.json();
         const resourceId = resources.find(r => r.id === '-1')?.id || resources[0]?.id || '-1';
+        console.log('[ADMIN-TEST-CHAT] Using resource ID:', resourceId);
 
         // Create appointment
         const duration = TREATMENTS[treatment.toLowerCase()]?.duration || 60;
@@ -342,24 +371,37 @@ async function executeToolCall(toolName, args) {
         const endDate = new Date(startDateTime);
         endDate.setMinutes(endDate.getMinutes() + duration);
 
+        const appointmentPayload = {
+          client_id: client.id,
+          presta_id: typeId,
+          ressource_id: resourceId,
+          start_date: startDateTime,
+          end_date: endDate.toISOString().slice(0, 19),
+          equipe_id: centerInfo.agendaId,
+          internet: 'O'
+        };
+        console.log('[ADMIN-TEST-CHAT] Creating appointment:', JSON.stringify(appointmentPayload));
+
         const appointmentResponse = await smartAgendaRequest('/pdo_events', {
           method: 'POST',
-          body: JSON.stringify({
-            client_id: client.id,
-            presta_id: typeId,
-            ressource_id: resourceId,
-            start_date: startDateTime,
-            end_date: endDate.toISOString().slice(0, 19),
-            equipe_id: centerInfo.agendaId,
-            internet: 'O'
-          })
+          body: JSON.stringify(appointmentPayload)
         });
 
+        if (!appointmentResponse.ok) {
+          const errorText = await appointmentResponse.text();
+          console.error('[ADMIN-TEST-CHAT] Failed to create appointment:', appointmentResponse.status, errorText);
+          throw new Error(`Failed to create appointment: ${appointmentResponse.status} - ${errorText}`);
+        }
+
         const appointment = await appointmentResponse.json();
+        console.log('[ADMIN-TEST-CHAT] Appointment response:', JSON.stringify(appointment));
 
         if (!appointment?.id) {
+          console.error('[ADMIN-TEST-CHAT] No appointment ID in response:', JSON.stringify(appointment));
           throw new Error('No appointment ID returned');
         }
+
+        console.log('[ADMIN-TEST-CHAT] Booking SUCCESS! Appointment ID:', appointment.id);
 
         // Log booking stats
         try {
