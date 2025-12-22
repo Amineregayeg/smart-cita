@@ -13,6 +13,7 @@ let currentPage = 1;
 let refreshTimer = null;
 let charts = {};
 let chartsInitialized = false;
+let chatHistory = []; // For multi-turn booking conversations
 
 // ==================== AUTHENTICATION ====================
 
@@ -289,6 +290,10 @@ function updateStatsDisplay(stats) {
   document.getElementById('tokens-today').textContent = formatNumber(stats.tokensToday);
   document.getElementById('cost-today').textContent = `$${stats.costToday.toFixed(2)}`;
   document.getElementById('avg-response-time').textContent = formatNumber(stats.avgResponseTime);
+
+  // Booking stats
+  document.getElementById('bookings-today').textContent = formatNumber(stats.bookingsToday || 0);
+  document.getElementById('bookings-total').textContent = `Total: ${formatNumber(stats.bookingsTotal || 0)}`;
 }
 
 /**
@@ -434,7 +439,10 @@ async function handleChatSubmit(event) {
   const messagesContainer = document.getElementById('chat-messages');
   const statsEl = document.getElementById('chat-stats');
 
-  // Add user message
+  // Add user message to history
+  chatHistory.push({ role: 'user', content: message });
+
+  // Add user message to UI
   messagesContainer.innerHTML += `
     <div class="chat-bubble user">${escapeHtml(message)}</div>
   `;
@@ -458,7 +466,10 @@ async function handleChatSubmit(event) {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${getToken()}`
       },
-      body: JSON.stringify({ message })
+      body: JSON.stringify({
+        message,
+        conversationHistory: chatHistory.slice(-8) // Send last 8 messages for context
+      })
     });
 
     if (!response.ok) {
@@ -470,6 +481,9 @@ async function handleChatSubmit(event) {
     }
 
     const data = await response.json();
+
+    // Add assistant response to history
+    chatHistory.push({ role: 'assistant', content: data.response });
 
     // Remove loading, add bot response
     document.getElementById(loadingId).remove();
@@ -502,9 +516,10 @@ async function handleChatSubmit(event) {
  * Clear chat history
  */
 function clearChat() {
+  chatHistory = []; // Reset conversation history
   document.getElementById('chat-messages').innerHTML = `
     <div class="chat-bubble bot">
-      Hola! Soy el asistente virtual de LaserOstop Espana. Como puedo ayudarte?
+      Hola! Soy el asistente virtual de LaserOstop Espana. Puedo ayudarte a consultar disponibilidad y reservar citas. Como puedo ayudarte?
     </div>
   `;
   document.getElementById('chat-stats').classList.add('hidden');

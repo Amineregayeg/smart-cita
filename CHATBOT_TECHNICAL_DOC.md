@@ -140,22 +140,36 @@ TONO:
 - Máximo 1 emoji por respuesta
 - NO repitas información innecesariamente
 
-INFORMACIÓN CLAVE:
+PRECIOS:
 - Tratamiento individual tabaco: 170€ online / 190€ centro
-- Tratamiento dúo (2 personas): 340€ online / 360€ centro
-- Cannabis: 230€ online / 250€ centro
-- Azúcar: 180€ online / 200€ centro
+- Tratamiento dúo (2 personas): 160-170€ por persona
+- Cannabis: 170-250€ según centro
 - Sesión recaída: GRATIS durante 1 año
 - Duración sesión: 60-90 minutos, normalmente 1 sesión
 - Tasa éxito: aproximadamente 80%
 
-CENTROS:
+CENTROS ACTIVOS (6 centros):
 - Barcelona Sants
-- Madrid: Atocha, Chamartín, Majadahonda, Torrejón
 - Sevilla
+- Madrid Chamartín
+- Madrid Atocha
+- Majadahonda
+- Torrejón de Ardoz
 
-Web reservas: https://smart-cita.com/laserostop_bf/
-WhatsApp: +34 689 560 130
+EQUIPO POR ZONA:
+- Madrid (todos los centros): Nabila
+- Sevilla: Emily
+- Barcelona: Argi
+
+PARA RESERVAR:
+Cuando alguien quiera reservar, ofrece estas opciones:
+1. Reservar online: https://smart-cita.com/laserostop_bf/
+2. WhatsApp: +34 689 560 130
+
+Si quieren que les llamemos, pregunta:
+- Centro preferido
+- Fecha y hora aproximada que les viene bien
+- Nombre y teléfono de contacto
 
 REGLAS ESTRICTAS:
 1. Respuestas de MÁXIMO 2 párrafos cortos (60-80 palabras total)
@@ -369,7 +383,6 @@ smart-cita-deployment/
 │       ├── admin-stats.js      # Analytics endpoint
 │       ├── admin-conversations.js  # Logs endpoint
 │       ├── admin-test-chat.js  # Chat testing endpoint
-│       ├── redis-test.js       # Debug endpoint (can remove)
 │       └── shared/
 │           └── redis-client.js # Redis connection utilities
 ├── netlify.toml                # Netlify configuration
@@ -473,11 +486,11 @@ Must be set in Netlify Dashboard → Site settings → Environment variables
 ## Next Steps
 
 1. [ ] Get WhatsApp/Meta API credentials from CM
-2. [ ] Create webhook functions
+2. [x] Create webhook functions (webhook-whatsapp.js, webhook-meta.js)
 3. [ ] Set up Render.com worker for message processing
 4. [ ] Configure webhooks in Meta Business Suite
 5. [ ] Test end-to-end flow
-6. [ ] Remove redis-test.js debug endpoint
+6. [x] Remove redis-test.js debug endpoint
 7. [ ] Production launch
 
 ---

@@ -248,6 +248,10 @@ async function getAdminStats() {
     pipeline.get('chatbot:stats:platform:messenger');
     pipeline.get('chatbot:stats:platform:instagram');
 
+    // Get booking stats
+    pipeline.get('chatbot:stats:bookings:total');
+    pipeline.get(`chatbot:stats:bookings:${today}`);
+
     // Get daily messages for last 7 days
     for (let i = 0; i < 7; i++) {
       const date = new Date();
@@ -264,6 +268,14 @@ async function getAdminStats() {
       pipeline.get(`chatbot:stats:tokens:${dateStr}`);
     }
 
+    // Get daily bookings for last 7 days
+    for (let i = 0; i < 7; i++) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      const dateStr = date.toISOString().split('T')[0];
+      pipeline.get(`chatbot:stats:bookings:${dateStr}`);
+    }
+
     const results = await pipeline.exec();
 
     // Parse results
@@ -275,8 +287,10 @@ async function getAdminStats() {
     const platformWhatsApp = parseInt(results[5][1]) || 0;
     const platformMessenger = parseInt(results[6][1]) || 0;
     const platformInstagram = parseInt(results[7][1]) || 0;
+    const bookingsTotal = parseInt(results[8][1]) || 0;
+    const bookingsToday = parseInt(results[9][1]) || 0;
 
-    // Calculate daily messages
+    // Calculate daily messages (starts at index 10)
     const dailyMessages = [];
     for (let i = 0; i < 7; i++) {
       const date = new Date();
@@ -284,11 +298,11 @@ async function getAdminStats() {
       const dateStr = date.toISOString().split('T')[0];
       dailyMessages.push({
         date: dateStr,
-        count: parseInt(results[8 + i][1]) || 0
+        count: parseInt(results[10 + i][1]) || 0
       });
     }
 
-    // Calculate daily tokens
+    // Calculate daily tokens (starts at index 17)
     const dailyTokens = [];
     for (let i = 0; i < 7; i++) {
       const date = new Date();
@@ -296,13 +310,25 @@ async function getAdminStats() {
       const dateStr = date.toISOString().split('T')[0];
       dailyTokens.push({
         date: dateStr,
-        tokens: parseInt(results[15 + i][1]) || 0
+        tokens: parseInt(results[17 + i][1]) || 0
       });
     }
 
-    // GPT-5 Nano pricing
-    const costPerInputToken = 0.05 / 1000000;
-    const costPerOutputToken = 0.40 / 1000000;
+    // Calculate daily bookings (starts at index 24)
+    const dailyBookings = [];
+    for (let i = 0; i < 7; i++) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      const dateStr = date.toISOString().split('T')[0];
+      dailyBookings.push({
+        date: dateStr,
+        count: parseInt(results[24 + i][1]) || 0
+      });
+    }
+
+    // GPT-4o-mini pricing
+    const costPerInputToken = 0.15 / 1000000;
+    const costPerOutputToken = 0.60 / 1000000;
     // Estimate: 70% input, 30% output tokens
     const estimatedCost = tokensToday * (0.7 * costPerInputToken + 0.3 * costPerOutputToken);
 
@@ -317,8 +343,11 @@ async function getAdminStats() {
         messenger: platformMessenger,
         instagram: platformInstagram
       },
+      bookingsTotal,
+      bookingsToday,
       dailyMessages: dailyMessages.reverse(),
-      dailyTokens: dailyTokens.reverse()
+      dailyTokens: dailyTokens.reverse(),
+      dailyBookings: dailyBookings.reverse()
     };
   } catch (error) {
     console.error('[REDIS] Get stats error:', error.message);

@@ -320,7 +320,7 @@
       <!-- Analytics Tab -->
       <div id="tab-analytics" class="tab-content active">
         <!-- Metrics Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
           <div class="metric-card">
             <div class="flex items-center justify-between">
               <div>
@@ -341,6 +341,19 @@
               </div>
               <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
                 <span class="material-icons text-blue-600">mark_chat_read</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-gray-500 text-sm">Reservas Hoy</p>
+                <p class="text-3xl font-bold text-gray-800" id="bookings-today">-</p>
+                <p class="text-sm text-gray-500" id="bookings-total">Total: -</p>
+              </div>
+              <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                <span class="material-icons text-green-600">event_available</span>
               </div>
             </div>
           </div>

@@ -189,53 +189,6 @@ async function logMessageStats(stats) {
 }
 
 /**
- * Log booking stats for admin dashboard
- * @param {object} bookingData - Booking details
- */
-async function logBookingStats(bookingData) {
-  const client = await getRedisClient();
-  if (!client) return;
-
-  try {
-    const today = new Date().toISOString().split('T')[0];
-    const pipeline = client.pipeline();
-
-    // Increment booking counters
-    pipeline.incr('chatbot:stats:bookings:total');
-    pipeline.incr(`chatbot:stats:bookings:${today}`);
-    pipeline.expire(`chatbot:stats:bookings:${today}`, 604800); // 7 days TTL
-
-    // Track by center
-    if (bookingData.center) {
-      pipeline.incr(`chatbot:stats:bookings:center:${bookingData.center}`);
-    }
-
-    // Track by treatment
-    if (bookingData.treatment) {
-      pipeline.incr(`chatbot:stats:bookings:treatment:${bookingData.treatment}`);
-    }
-
-    // Log booking entry (keep last 100)
-    const logEntry = {
-      timestamp: new Date().toISOString(),
-      center: bookingData.center,
-      treatment: bookingData.treatment,
-      date: bookingData.date,
-      time: bookingData.time,
-      eventId: bookingData.eventId,
-      platform: bookingData.platform || 'unknown'
-    };
-    pipeline.lpush('chatbot:logs:bookings', JSON.stringify(logEntry));
-    pipeline.ltrim('chatbot:logs:bookings', 0, 99);
-
-    await pipeline.exec();
-    console.log('[REDIS] Booking stats logged');
-  } catch (error) {
-    console.error('[REDIS] Booking stats error:', error.message);
-  }
-}
-
-/**
  * Get stats for admin dashboard
  * @returns {Promise<object>} - Stats object
  */
@@ -396,7 +349,6 @@ module.exports = {
   getCachedResponse,
   setCachedResponse,
   logMessageStats,
-  logBookingStats,
   getAdminStats,
   getConversationLogs
 };

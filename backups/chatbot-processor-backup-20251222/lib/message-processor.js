@@ -59,13 +59,13 @@ async function processMessage(queueItem) {
       timestamp: Date.now()
     });
 
-    // Keep only last 8 messages (4 exchanges) for booking context
-    if (session.conversationHistory.length > 8) {
-      session.conversationHistory = session.conversationHistory.slice(-8);
+    // Keep only last 6 messages (3 exchanges) for context
+    if (session.conversationHistory.length > 6) {
+      session.conversationHistory = session.conversationHistory.slice(-6);
     }
 
-    // Step 3: Generate response with GPT (with tool calling for availability/booking)
-    const response = await gptHandler.generateResponse(userText, session.conversationHistory, session, platform);
+    // Step 3: Generate response with GPT
+    const response = await gptHandler.generateResponse(userText, session.conversationHistory);
 
     // Step 4: Add assistant response to history
     session.conversationHistory.push({
