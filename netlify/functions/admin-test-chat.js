@@ -27,7 +27,7 @@ CENTROS:
 - Madrid: Atocha, Chamartín, Majadahonda, Torrejón
 - Sevilla
 
-Web reservas: https://laserostop-bf.netlify.app
+Web reservas: https://smart-cita.com/laserostop_bf/
 WhatsApp: +34 689 560 130
 
 REGLAS:
