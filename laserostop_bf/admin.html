@@ -25,25 +25,47 @@
 
     /* Dashboard tabs */
     .tab-btn {
-      padding: 0.75rem 1.5rem;
+      padding: 0.5rem 1rem;
       border-radius: 0.5rem 0.5rem 0 0;
       font-weight: 500;
       transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      font-size: 0.9rem;
+    }
+
+    @media (min-width: 640px) {
+      .tab-btn {
+        padding: 0.75rem 1.5rem;
+      }
     }
 
     .tab-btn.active {
-      background: white;
-      color: #22A9AF;
+      background: white !important;
+      color: #14b8a6 !important;
     }
 
     .tab-btn:not(.active) {
-      background: rgba(255,255,255,0.2);
-      color: white;
-      border: 1px solid rgba(255,255,255,0.3);
+      background: rgba(255,255,255,0.25) !important;
+      color: white !important;
     }
 
     .tab-btn:not(.active):hover {
-      background: rgba(255,255,255,0.3);
+      background: rgba(255,255,255,0.35) !important;
+    }
+
+    /* Responsive utilities */
+    .hidden {
+      display: none !important;
+    }
+
+    @media (min-width: 640px) {
+      .sm\:inline {
+        display: inline !important;
+      }
+      .sm\:hidden {
+        display: none !important;
+      }
     }
 
     .tab-content {
@@ -273,18 +295,21 @@
         </div>
 
         <!-- Tabs -->
-        <div class="flex gap-2 mt-6" style="background: transparent;">
-          <button class="tab-btn active" data-tab="analytics">
-            <span class="material-icons align-middle mr-1">analytics</span>
-            Estadisticas
+        <div class="flex flex-wrap gap-2 mt-6" style="background: transparent;">
+          <button class="tab-btn active" data-tab="analytics" style="background: white; color: #14b8a6;">
+            <span class="material-icons align-middle mr-1" style="font-size: 18px;">analytics</span>
+            <span class="hidden sm:inline">Estadisticas</span>
+            <span class="sm:hidden">Stats</span>
           </button>
           <button class="tab-btn" data-tab="conversations" style="background: rgba(255,255,255,0.25); color: #fff;">
-            <span class="material-icons align-middle mr-1">forum</span>
-            Conversaciones
+            <span class="material-icons align-middle mr-1" style="font-size: 18px;">forum</span>
+            <span class="hidden sm:inline">Conversaciones</span>
+            <span class="sm:hidden">Chats</span>
           </button>
           <button class="tab-btn" data-tab="chat-tester" style="background: rgba(255,255,255,0.25); color: #fff;">
-            <span class="material-icons align-middle mr-1">chat</span>
-            Probar Chat
+            <span class="material-icons align-middle mr-1" style="font-size: 18px;">chat</span>
+            <span class="hidden sm:inline">Probar Chat</span>
+            <span class="sm:hidden">Test</span>
           </button>
         </div>
       </div>
@@ -492,7 +517,10 @@
                   />
                   <button
                     type="submit"
-                    class="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition flex items-center"
+                    class="px-4 py-2 text-white rounded-lg transition flex items-center"
+                    style="background: #14b8a6;"
+                    onmouseover="this.style.background='#0d9488'"
+                    onmouseout="this.style.background='#14b8a6'"
                   >
                     <span class="material-icons">send</span>
                   </button>
