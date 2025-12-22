@@ -18,23 +18,35 @@ async function getRedisClient() {
     return null;
   }
 
+  console.log('[REDIS] Connecting to:', redisUrl.replace(/:[^:@]+@/, ':***@'));
+
   try {
     // Dynamic import for ioredis
     if (!Redis) {
+      console.log('[REDIS] Loading ioredis module...');
       Redis = require('ioredis');
+      console.log('[REDIS] ioredis loaded successfully');
     }
 
     // Create new client for each invocation in serverless environment
     // ioredis handles connection automatically when commands are executed
     const client = new Redis(redisUrl, {
       maxRetriesPerRequest: 3,
-      connectTimeout: 5000,
-      commandTimeout: 5000
+      connectTimeout: 10000,
+      commandTimeout: 10000,
+      tls: {
+        rejectUnauthorized: false
+      }
+    });
+
+    // Add error handler
+    client.on('error', (err) => {
+      console.error('[REDIS] Client error:', err.message);
     });
 
     return client;
   } catch (error) {
-    console.error('[REDIS] Connection error:', error.message);
+    console.error('[REDIS] Connection error:', error.message, error.stack);
     return null;
   }
 }
@@ -367,6 +379,7 @@ async function getConversationLogs(options = {}) {
  * @param {number} ttlSeconds - Time to live (default: 24h)
  */
 async function setAdminSession(token, ttlSeconds = 86400) {
+  console.log('[REDIS] setAdminSession called');
   const client = await getRedisClient();
   if (!client) {
     console.error('[REDIS] No client available for session storage');
@@ -374,11 +387,14 @@ async function setAdminSession(token, ttlSeconds = 86400) {
   }
 
   try {
+    console.log('[REDIS] Attempting to store session...');
     const result = await client.setex(`admin:session:${token}`, ttlSeconds, '1');
     console.log(`[REDIS] Session stored for token ${token.substring(0,8)}...: ${result}`);
+    await client.quit();
     return result === 'OK';
   } catch (error) {
-    console.error('[REDIS] Admin session set error:', error.message);
+    console.error('[REDIS] Admin session set error:', error.message, error.stack);
+    try { await client.quit(); } catch (e) { /* ignore */ }
     return false;
   }
 }
@@ -391,6 +407,7 @@ async function setAdminSession(token, ttlSeconds = 86400) {
 async function validateAdminSession(token) {
   if (!token) return false;
 
+  console.log('[REDIS] validateAdminSession called');
   const client = await getRedisClient();
   if (!client) {
     console.error('[REDIS] No client available for session validation');
@@ -400,9 +417,11 @@ async function validateAdminSession(token) {
   try {
     const exists = await client.exists(`admin:session:${token}`);
     console.log(`[REDIS] Session check for token ${token.substring(0,8)}...: exists=${exists}`);
+    await client.quit();
     return exists === 1;
   } catch (error) {
-    console.error('[REDIS] Admin session validate error:', error.message);
+    console.error('[REDIS] Admin session validate error:', error.message, error.stack);
+    try { await client.quit(); } catch (e) { /* ignore */ }
     return false;
   }
 }
