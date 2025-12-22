@@ -238,16 +238,16 @@
   <!-- Dashboard (hidden until login) -->
   <div id="dashboard" class="hidden">
     <!-- Header -->
-    <header class="bg-gradient-to-r from-teal-500 to-teal-600 text-white">
+    <header class="text-white" style="background: linear-gradient(to right, #14b8a6, #0d9488);">
       <div class="container mx-auto px-4 py-4">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background: rgba(255,255,255,0.2);">
               <span class="material-icons">smart_toy</span>
             </div>
             <div>
               <h1 class="text-xl font-bold">Chatbot Admin</h1>
-              <p class="text-teal-100 text-sm">LaserOstop Espana</p>
+              <p class="text-sm" style="color: rgba(255,255,255,0.8);">LaserOstop Espana</p>
             </div>
           </div>
 
@@ -258,7 +258,10 @@
             </div>
             <button
               id="logout-btn"
-              class="flex items-center gap-2 px-4 py-2 bg-white/20 rounded-lg hover:bg-white/30 transition"
+              class="flex items-center gap-2 px-4 py-2 rounded-lg transition"
+              style="background: rgba(255,255,255,0.2);"
+              onmouseover="this.style.background='rgba(255,255,255,0.3)'"
+              onmouseout="this.style.background='rgba(255,255,255,0.2)'"
             >
               <span class="material-icons text-sm">logout</span>
               Salir
