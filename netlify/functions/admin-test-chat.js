@@ -102,20 +102,25 @@ const CHATBOT_TOOLS = [
     type: "function",
     function: {
       name: "create_booking",
-      description: "Crear una reserva de cita. Solo llamar después de confirmación explícita del usuario.",
+      description: "OBLIGATORIO: Debes llamar a esta función para confirmar cualquier reserva. Sin llamar a esta función, la reserva NO se crea. Llama cuando el usuario confirme con 'sí', 'confirmo', 'ok', 'adelante', etc.",
       parameters: {
         type: "object",
         properties: {
           center: {
             type: "string",
-            enum: ["barcelona", "sevilla", "chamartin", "atocha", "torrejon", "majadahonda"]
+            enum: ["barcelona", "sevilla", "chamartin", "atocha", "torrejon", "majadahonda"],
+            description: "Código del centro: barcelona, sevilla, chamartin, atocha, torrejon, majadahonda"
           },
-          treatment: { type: "string", enum: ["tabaco", "duo", "cannabis", "azucar"] },
-          date: { type: "string", description: "Fecha YYYY-MM-DD" },
-          time: { type: "string", description: "Hora HH:MM" },
-          full_name: { type: "string" },
-          email: { type: "string" },
-          phone: { type: "string" }
+          treatment: {
+            type: "string",
+            enum: ["tabaco", "duo", "cannabis", "azucar"],
+            description: "Tipo de tratamiento"
+          },
+          date: { type: "string", description: "Fecha en formato YYYY-MM-DD (ej: 2025-12-23)" },
+          time: { type: "string", description: "Hora en formato HH:MM (ej: 15:00)" },
+          full_name: { type: "string", description: "Nombre completo del cliente" },
+          email: { type: "string", description: "Email del cliente" },
+          phone: { type: "string", description: "Teléfono del cliente (mínimo 9 dígitos)" }
         },
         required: ["center", "treatment", "date", "time", "full_name", "email", "phone"]
       }
@@ -527,9 +532,15 @@ exports.handler = async (event) => {
     let totalTokens = data.usage?.total_tokens || 0;
     let responseMessage = data.choices?.[0]?.message;
 
+    console.log(`[ADMIN-TEST-CHAT] User message: "${message.substring(0, 50)}..."`);
+    console.log(`[ADMIN-TEST-CHAT] GPT finish_reason: ${data.choices?.[0]?.finish_reason}`);
+
     // Handle tool calls
     if (responseMessage?.tool_calls && responseMessage.tool_calls.length > 0) {
       console.log(`[ADMIN-TEST-CHAT] Tool calls: ${responseMessage.tool_calls.length}`);
+      responseMessage.tool_calls.forEach(tc => {
+        console.log(`[ADMIN-TEST-CHAT] - Tool: ${tc.function.name}, Args: ${tc.function.arguments.substring(0, 100)}...`);
+      });
 
       const toolResults = [];
       for (const toolCall of responseMessage.tool_calls) {
@@ -569,10 +580,22 @@ exports.handler = async (event) => {
       data = await response.json();
       totalTokens += data.usage?.total_tokens || 0;
       responseMessage = data.choices?.[0]?.message;
+    } else {
+      // No tool calls - log warning if response looks like a booking confirmation
+      const content = responseMessage?.content || '';
+      const looksLikeConfirmation = content.toLowerCase().includes('confirmad') ||
+                                     content.toLowerCase().includes('reserva') ||
+                                     content.includes('🎉');
+      if (looksLikeConfirmation && message.toLowerCase().match(/^(si|sí|ok|confirmo|adelante|yes)/)) {
+        console.log(`[ADMIN-TEST-CHAT] WARNING: No create_booking tool called but response looks like confirmation!`);
+        console.log(`[ADMIN-TEST-CHAT] Response preview: "${content.substring(0, 100)}..."`);
+      }
     }
 
     const responseTime = Date.now() - startTime;
     const botResponse = responseMessage?.content || 'No response generated';
+
+    console.log(`[ADMIN-TEST-CHAT] Final response (${totalTokens} tokens, ${responseTime}ms)`);
 
     return {
       statusCode: 200,
