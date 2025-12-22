@@ -9,8 +9,18 @@ exports.handler = async (event) => {
     moduleLoad: null,
     connection: null,
     pingTest: null,
-    error: null
+    error: null,
+    allEnvKeys: null
   };
+
+  // List all env var keys (not values) that start with UPSTASH or REDIS
+  const relevantKeys = Object.keys(process.env).filter(k =>
+    k.includes('UPSTASH') || k.includes('REDIS') || k.includes('upstash') || k.includes('redis')
+  );
+  results.allEnvKeys = relevantKeys.length > 0 ? relevantKeys : 'No UPSTASH/REDIS env vars found';
+
+  // Also check total env var count
+  results.totalEnvVars = Object.keys(process.env).length;
 
   // Step 1: Check environment variable
   const redisUrl = process.env.UPSTASH_REDIS_URL;
