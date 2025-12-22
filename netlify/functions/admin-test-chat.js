@@ -508,6 +508,19 @@ exports.handler = async (event) => {
       { role: 'user', content: message }
     ];
 
+    // Detect if user is confirming a booking (simple pattern match)
+    const isConfirmation = message.toLowerCase().match(/^(si|sí|ok|confirmo|adelante|yes|vale|claro|por supuesto|de acuerdo)/);
+    const historyHasBookingData = conversationHistory.some(m =>
+      m.content && (m.content.includes('¿Confirmo') || m.content.includes('resumen'))
+    );
+
+    // Force create_booking tool if user is confirming after a booking summary
+    let toolChoice = 'auto';
+    if (isConfirmation && historyHasBookingData) {
+      console.log('[ADMIN-TEST-CHAT] Detected confirmation after booking summary - forcing create_booking tool');
+      toolChoice = { type: 'function', function: { name: 'create_booking' } };
+    }
+
     // Call OpenAI with tools
     let response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -518,7 +531,7 @@ exports.handler = async (event) => {
         max_tokens: 300,
         temperature: 0.7,
         tools: CHATBOT_TOOLS,
-        tool_choice: 'auto'
+        tool_choice: toolChoice
       })
     });
 
