@@ -341,11 +341,12 @@ async function executeToolCall(toolName, args) {
         const clients = await clientsResponse.json();
         let client = clients.find(c => c.mail === email);
 
-        if (!client) {
-          const nameParts = full_name.trim().split(' ');
-          const lastName = nameParts[nameParts.length - 1];
-          const firstName = nameParts.slice(0, -1).join(' ') || lastName;
+        // Parse name (needed for both new client and appointment)
+        const nameParts = full_name.trim().split(' ');
+        const lastName = nameParts[nameParts.length - 1];
+        const firstName = nameParts.slice(0, -1).join(' ') || lastName;
 
+        if (!client) {
           console.log('[ADMIN-TEST-CHAT] Creating new client:', { firstName, lastName, email, phone });
           const createResponse = await smartAgendaRequest('/pdo_client', {
             method: 'POST',
@@ -380,6 +381,7 @@ async function executeToolCall(toolName, args) {
 
         const appointmentPayload = {
           client_id: client.id,
+          client_nom: lastName,  // Required by API (matches working laserostop_bf)
           presta_id: typeId,
           ressource_id: resourceId,
           start_date: startDateTime,

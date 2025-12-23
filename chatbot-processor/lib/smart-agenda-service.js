@@ -347,6 +347,10 @@ class SmartAgendaService {
       endDate.setMinutes(endDate.getMinutes() + duration);
       const endDateTime = endDate.toISOString().slice(0, 19);
 
+      // Parse name for appointment
+      const nameParts = full_name.trim().split(' ');
+      const lastName = nameParts[nameParts.length - 1];
+
       // Step 1: Check/Create client
       const clientResult = await this.getOrCreateClient(full_name, email, phone);
       if (!clientResult.success) {
@@ -361,6 +365,7 @@ class SmartAgendaService {
       // Step 3: Create appointment
       const appointmentData = {
         client_id: clientResult.clientId,
+        client_nom: lastName,  // Required by API (matches working laserostop_bf)
         presta_id: typeId,
         ressource_id: resourceId,
         start_date: startDateTime,

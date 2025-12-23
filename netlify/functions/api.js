@@ -422,6 +422,7 @@ async function createBooking(bookingData) {
   console.log('📅 Creating appointment...');
   const appointmentData = {
     client_id: client.id,     // Client ID
+    client_nom: lastName,     // Required by API (matches working laserostop_bf)
     presta_id: typeId,        // IMPORTANT: presta_id = appointment TYPE (prestation/service), not practitioner!
     ressource_id: resourceId, // Resource/practitioner ID
     start_date: startTime,    // Start date/time
