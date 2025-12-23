@@ -366,7 +366,7 @@ class SmartAgendaService {
         start_date: startDateTime,
         end_date: endDateTime,
         equipe_id: centerInfo.agendaId,
-        statut: 'C'  // Status: C = Confirmed (appears directly in agenda)
+        internet: 'O'
       };
 
       console.log('[SMART-AGENDA] Creating appointment:', appointmentData);

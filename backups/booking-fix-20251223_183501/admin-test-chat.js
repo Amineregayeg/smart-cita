@@ -385,7 +385,7 @@ async function executeToolCall(toolName, args) {
           start_date: startDateTime,
           end_date: endDate.toISOString().slice(0, 19),
           equipe_id: centerInfo.agendaId,
-          statut: 'C'  // Status: C = Confirmed (appears directly in agenda)
+          internet: 'O'
         };
         console.log('[ADMIN-TEST-CHAT] Creating appointment:', JSON.stringify(appointmentPayload));
 

@@ -427,7 +427,7 @@ async function createBooking(bookingData) {
     start_date: startTime,    // Start date/time
     end_date: endTime,        // End date/time
     equipe_id: agendaId,      // CRITICAL: Now using pdo_agenda.id (10, 43-53) not pdo_groupe.id
-    statut: 'C'               // Status: C = Confirmed (appears directly in agenda)
+    internet: 'O'             // CRITICAL: 'O' = Online booking by client (per documentation)
   };
   console.log('Appointment data:', appointmentData);
 
