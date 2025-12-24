@@ -5,6 +5,37 @@
 
 const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
 
+/**
+ * Strip markdown formatting from text for plain WhatsApp display
+ * @param {string} text - Text potentially containing markdown
+ * @returns {string} - Clean text without markdown symbols
+ */
+function stripMarkdown(text) {
+  if (!text) return text;
+
+  return text
+    // Remove bold **text** or __text__
+    .replace(/\*\*(.+?)\*\*/g, '$1')
+    .replace(/__(.+?)__/g, '$1')
+    // Remove italic *text* or _text_ (but not single _ in words)
+    .replace(/\*([^*\n]+)\*/g, '$1')
+    // Remove headers # ## ###
+    .replace(/^#{1,6}\s+/gm, '')
+    // Remove bullet points - and * at start of lines, keep content
+    .replace(/^[\s]*[-*]\s+/gm, '')
+    // Remove numbered list formatting but keep numbers
+    .replace(/^(\d+)\.\s+/gm, '$1. ')
+    // Remove code blocks ```
+    .replace(/```[\s\S]*?```/g, '')
+    // Remove inline code `text`
+    .replace(/`([^`]+)`/g, '$1')
+    // Remove blockquotes >
+    .replace(/^>\s+/gm, '')
+    // Clean up extra whitespace
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
 class WhatsAppAdapter {
   constructor() {
     this.apiVersion = 'v18.0';
@@ -26,6 +57,9 @@ class WhatsAppAdapter {
       throw new Error('WhatsApp API not configured');
     }
 
+    // Strip any markdown formatting from the text
+    const cleanText = stripMarkdown(text);
+
     const url = `${this.baseUrl}/${this.apiVersion}/${phoneNumberId}/messages`;
 
     const payload = {
@@ -35,7 +69,7 @@ class WhatsAppAdapter {
       type: 'text',
       text: {
         preview_url: true, // Enable link previews
-        body: text
+        body: cleanText
       }
     };
 
