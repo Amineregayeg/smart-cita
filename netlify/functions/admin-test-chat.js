@@ -69,12 +69,21 @@ Tienes acceso a estas herramientas que DEBES usar:
 2. create_booking - Para crear reservas (OBLIGATORIO para confirmar citas)
 3. get_center_info - Para información de centros
 
+## REGLA CRÍTICA - DISPONIBILIDAD
+
+- SOLO muestra los horarios EXACTOS que devuelve check_availability
+- Si check_availability devuelve slots: [] (vacío), DEBES decir "No hay disponibilidad en este momento"
+- NUNCA inventes horarios que no aparecen en la respuesta de la herramienta
+- Si no hay slots, recomienda otro centro o contactar por WhatsApp: +34 689 560 130
+- Los horarios mostrados DEBEN corresponder exactamente a los de la respuesta de check_availability
+
 ## REGLA CRÍTICA - CREAR RESERVAS
 
 NUNCA digas que una reserva está confirmada sin haber llamado a create_booking
 DEBES llamar a create_booking con TODOS los parámetros para crear una reserva real
 Solo puedes confirmar una reserva cuando create_booking devuelve success: true
 SIEMPRE incluye el número de reserva (appointmentId) en la confirmación
+Si create_booking devuelve un error, DEBES informar al usuario del problema
 
 Parámetros OBLIGATORIOS para create_booking:
 - center: código del centro (barcelona, sevilla, chamartin, atocha, torrejon, majadahonda)
@@ -306,21 +315,36 @@ async function executeToolCall(toolName, args) {
       endDate.setDate(endDate.getDate() + (args.days_ahead || 14));
 
       try {
+        const requestBody = {
+          pdo_type_rdv_id: typeId,
+          pdo_agenda_id: center.agendaId,
+          date_a_partir_de: startDate.toISOString().split('T')[0],
+          date_fin: endDate.toISOString().split('T')[0]
+        };
+        console.log('[ADMIN-TEST-CHAT] Availability request:', JSON.stringify(requestBody));
+
         const response = await smartAgendaRequest('/service/getAvailabilities', {
           method: 'POST',
-          body: JSON.stringify({
-            pdo_type_rdv_id: typeId,
-            pdo_agenda_id: center.agendaId,
-            date_a_partir_de: startDate.toISOString().split('T')[0],
-            date_fin: endDate.toISOString().split('T')[0]
-          })
+          body: JSON.stringify(requestBody)
         });
 
+        console.log('[ADMIN-TEST-CHAT] Availability response status:', response.status);
+
         if (response.status === 404) {
+          console.log('[ADMIN-TEST-CHAT] NO SLOTS AVAILABLE - 404 response');
           return { success: true, center: center.name, treatment: TREATMENTS[treatment]?.name, slots: [], message: `No hay disponibilidad en ${center.name} en los próximos días.` };
         }
 
-        const data = await response.json();
+        const rawData = await response.text();
+        console.log('[ADMIN-TEST-CHAT] Availability raw response:', rawData.substring(0, 500));
+
+        let data;
+        try {
+          data = JSON.parse(rawData);
+        } catch (e) {
+          console.error('[ADMIN-TEST-CHAT] Failed to parse availability response:', e.message);
+          return { success: true, center: center.name, treatment: TREATMENTS[treatment]?.name, slots: [], message: `Error al consultar disponibilidad en ${center.name}.` };
+        }
         const dayNames = { 'Monday': 'Lunes', 'Tuesday': 'Martes', 'Wednesday': 'Miércoles', 'Thursday': 'Jueves', 'Friday': 'Viernes', 'Saturday': 'Sábado', 'Sunday': 'Domingo' };
         const slots = [];
 
@@ -337,12 +361,20 @@ async function executeToolCall(toolName, args) {
           }
         }
 
+        console.log(`[ADMIN-TEST-CHAT] Availability result: ${slots.length} days with slots found`);
+        if (slots.length === 0) {
+          console.log('[ADMIN-TEST-CHAT] NO SLOTS AVAILABLE - empty result');
+        } else {
+          slots.forEach(s => console.log(`[ADMIN-TEST-CHAT]   ${s.date}: ${s.times.join(', ')}`));
+        }
+
         return {
           success: true,
           center: center.name,
           treatment: TREATMENTS[treatment]?.name || treatment,
           price: TREATMENTS[treatment]?.price || 0,
-          slots
+          slots,
+          message: slots.length === 0 ? `No hay disponibilidad en ${center.name} actualmente. Te recomendamos consultar otro centro o contactar por WhatsApp: +34 689 560 130` : null
         };
       } catch (error) {
         console.error('[ADMIN-TEST-CHAT] Availability error:', error.message);
@@ -426,6 +458,38 @@ async function executeToolCall(toolName, args) {
         const resourceId = resources.find(r => r.id === '-1')?.id || resources[0]?.id || '-1';
         console.log('[ADMIN-TEST-CHAT] Using resource ID:', resourceId);
 
+        // VALIDATION: Check if slot is actually available before booking
+        console.log('[ADMIN-TEST-CHAT] Validating slot availability before booking...');
+        const availCheckResponse = await smartAgendaRequest('/service/getAvailabilities', {
+          method: 'POST',
+          body: JSON.stringify({
+            pdo_type_rdv_id: typeId,
+            pdo_agenda_id: centerInfo.agendaId,
+            date_a_partir_de: date,
+            date_fin: date
+          })
+        });
+
+        if (availCheckResponse.ok) {
+          const availCheckData = await availCheckResponse.json();
+          const daySlots = Array.isArray(availCheckData) ? availCheckData.find(d => d.dj === date) : null;
+          const isTimeAvailable = daySlots?.det?.some(s => s.idp === time);
+
+          console.log(`[ADMIN-TEST-CHAT] Slot validation: date=${date}, time=${time}, available=${isTimeAvailable}`);
+          console.log(`[ADMIN-TEST-CHAT] Available times for ${date}:`, daySlots?.det?.map(s => s.idp).join(', ') || 'none');
+
+          if (!isTimeAvailable) {
+            console.log('[ADMIN-TEST-CHAT] SLOT NOT AVAILABLE - blocking booking');
+            return {
+              success: false,
+              error: 'slot_unavailable',
+              message: `El horario ${time} del ${date} ya no está disponible. Por favor consulta la disponibilidad nuevamente.`
+            };
+          }
+        } else {
+          console.log('[ADMIN-TEST-CHAT] WARNING: Could not validate slot availability, proceeding anyway');
+        }
+
         // Create appointment
         const duration = TREATMENTS[treatment.toLowerCase()]?.duration || 60;
         const startDateTime = `${date}T${time}:00`;
@@ -463,7 +527,18 @@ async function executeToolCall(toolName, args) {
           throw new Error('No appointment ID returned');
         }
 
-        console.log('[ADMIN-TEST-CHAT] Booking SUCCESS! Appointment ID:', appointment.id);
+        console.log('[ADMIN-TEST-CHAT] Booking created with ID:', appointment.id);
+
+        // CRITICAL: Verify the booking was actually created by fetching it back
+        console.log('[ADMIN-TEST-CHAT] Verifying booking exists...');
+        const verifyResponse = await smartAgendaRequest(`/pdo_events/${appointment.id}`);
+        if (!verifyResponse.ok) {
+          console.error(`[ADMIN-TEST-CHAT] CRITICAL: Booking verification FAILED! ID ${appointment.id} not found (status: ${verifyResponse.status})`);
+          throw new Error(`Booking created but verification failed - ID ${appointment.id} does not exist`);
+        }
+        const verifiedBooking = await verifyResponse.json();
+        console.log('[ADMIN-TEST-CHAT] Booking VERIFIED:', JSON.stringify(verifiedBooking));
+        console.log(`[ADMIN-TEST-CHAT] BOOKING SUCCESS! Verified ID: ${verifiedBooking.id}, Client: ${verifiedBooking.client_id}, Date: ${verifiedBooking.start_date}`);
 
         // Log booking stats
         try {
@@ -631,6 +706,12 @@ exports.handler = async (event) => {
           createBookingCalled = true;
           bookingResult = result;
           console.log(`[ADMIN-TEST-CHAT] create_booking called - success: ${result.success}, appointmentId: ${result.appointmentId || 'none'}`);
+        }
+
+        // CRITICAL: Add explicit instruction if no availability found
+        if (toolCall.function.name === 'check_availability' && result.success && (!result.slots || result.slots.length === 0)) {
+          console.log('[ADMIN-TEST-CHAT] Empty availability - adding explicit instruction to GPT');
+          result.instruction = 'IMPORTANTE: No hay horarios disponibles. DEBES informar al usuario que no hay disponibilidad en este centro actualmente y ofrecer consultar otro centro o contactar por WhatsApp: +34 689 560 130. NO inventes horarios.';
         }
 
         toolResults.push({
