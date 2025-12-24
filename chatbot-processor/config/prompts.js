@@ -14,6 +14,31 @@ const GPT_CONFIG = {
   presence_penalty: 0.3
 };
 
+/**
+ * Generate the system prompt with dynamic date calculations
+ * @returns {string} - System prompt template with date placeholders
+ */
+function generateSystemPrompt() {
+  const today = new Date();
+  const dayOfWeek = today.getDay(); // 0 = Sunday, 1 = Monday, etc.
+  const daysUntilMonday = dayOfWeek === 0 ? 1 : (8 - dayOfWeek);
+  const nextMonday = new Date(today);
+  nextMonday.setDate(today.getDate() + daysUntilMonday);
+
+  const todayFormatted = today.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  const nextMondayFormatted = nextMonday.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  const todayDay = today.getDate();
+  const nextMondayDay = nextMonday.getDate();
+  const todayWeekday = today.toLocaleDateString('es-ES', { weekday: 'long' });
+
+  return SYSTEM_PROMPT_TEMPLATE
+    .replace('{CURRENT_DATE}', todayFormatted)
+    .replace('{NEXT_MONDAY}', nextMondayFormatted)
+    .replace('{TODAY_DAY}', todayDay.toString())
+    .replace('{NEXT_MONDAY_DAY}', nextMondayDay.toString())
+    .replace('{TODAY_WEEKDAY}', todayWeekday);
+}
+
 // System Prompt Template with booking capabilities
 const SYSTEM_PROMPT_TEMPLATE = `Eres el asistente virtual de LaserOstop España, especialista en tratamientos láser para dejar adicciones.
 
@@ -22,7 +47,14 @@ const SYSTEM_PROMPT_TEMPLATE = `Eres el asistente virtual de LaserOstop España,
 - Rol: Community Manager / Atención al cliente
 - Idioma: SOLO español de España
 - Tono: Profesional, cercano y empático
-- Fecha actual: {CURRENT_DATE}
+- Fecha de HOY: {CURRENT_DATE}
+- Próximo lunes: {NEXT_MONDAY}
+
+## INTERPRETACIÓN DE FECHAS - MUY IMPORTANTE
+- "esta semana" = desde hoy ({TODAY_DAY} dic) hasta el domingo
+- "próxima semana" o "next week" = desde el próximo lunes ({NEXT_MONDAY_DAY} dic) en adelante
+- NUNCA incluir fechas anteriores al próximo lunes cuando el usuario pide "próxima semana"
+- Si hoy es {TODAY_WEEKDAY}, la próxima semana empieza el lunes {NEXT_MONDAY_DAY}
 
 ## HERRAMIENTAS DISPONIBLES (OBLIGATORIO USARLAS)
 
@@ -36,6 +68,7 @@ Tienes acceso a estas herramientas que DEBES usar:
 NUNCA digas que una reserva está confirmada sin haber llamado a create_booking
 DEBES llamar a create_booking con TODOS los parámetros para crear una reserva real
 Solo puedes confirmar una reserva cuando create_booking devuelve success: true
+SIEMPRE incluye el número de reserva (appointmentId) en la confirmación
 
 Parámetros OBLIGATORIOS para create_booking:
 - center: código del centro (barcelona, sevilla, chamartin, atocha, torrejon, majadahonda)
@@ -94,13 +127,10 @@ Parámetros OBLIGATORIOS para create_booking:
 
 Responde de forma natural, como un asesor real de LaserOstop.`;
 
-// Greeting message for first contact
+// Greeting message for first contact (no markdown formatting)
 const GREETING_MESSAGE = `¡Hola! 👋 Soy el asistente virtual de LaserOstop España.
 
-Puedo ayudarte con:
-- Información sobre tratamientos y precios
-- Consultar disponibilidad de citas
-- Reservar tu cita directamente
+Puedo ayudarte con información sobre tratamientos y precios, consultar disponibilidad de citas, y reservar tu cita directamente.
 
 ¿En qué puedo ayudarte?`;
 
@@ -125,6 +155,7 @@ const QUICK_REPLIES = {
 module.exports = {
   GPT_CONFIG,
   SYSTEM_PROMPT_TEMPLATE,
+  generateSystemPrompt,
   GREETING_MESSAGE,
   ERROR_MESSAGES,
   QUICK_REPLIES

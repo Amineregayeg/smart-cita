@@ -7,6 +7,44 @@
 
 const { validateAdminSession } = require('./shared/redis-client');
 
+/**
+ * Strip markdown formatting from text for plain display
+ * @param {string} text - Text potentially containing markdown
+ * @returns {string} - Clean text without markdown symbols
+ */
+function stripMarkdown(text) {
+  if (!text) return text;
+
+  return text
+    // Remove bold **text** or __text__
+    .replace(/\*\*(.+?)\*\*/g, '$1')
+    .replace(/__(.+?)__/g, '$1')
+    // Remove italic *text* or _text_ (but not single _ in words)
+    .replace(/\*([^*\n]+)\*/g, '$1')
+    // Remove headers # ## ###
+    .replace(/^#{1,6}\s+/gm, '')
+    // Remove bullet points - and * at start of lines, keep content
+    .replace(/^[\s]*[-*]\s+/gm, '')
+    // Remove numbered list formatting but keep numbers
+    .replace(/^(\d+)\.\s+/gm, '$1. ')
+    // Remove code blocks ```
+    .replace(/```[\s\S]*?```/g, '')
+    // Remove inline code `text`
+    .replace(/`([^`]+)`/g, '$1')
+    // Remove blockquotes >
+    .replace(/^>\s+/gm, '')
+    // Clean up extra whitespace
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
+// Calculate dates for system prompt
+const today = new Date();
+const dayOfWeek = today.getDay(); // 0 = Sunday, 1 = Monday, etc.
+const daysUntilMonday = dayOfWeek === 0 ? 1 : (8 - dayOfWeek);
+const nextMonday = new Date(today);
+nextMonday.setDate(today.getDate() + daysUntilMonday);
+
 // System prompt with booking capabilities
 const SYSTEM_PROMPT = `Eres el asistente virtual de LaserOstop España, especialista en tratamientos láser para dejar adicciones.
 
@@ -15,11 +53,14 @@ const SYSTEM_PROMPT = `Eres el asistente virtual de LaserOstop España, especial
 - Rol: Community Manager / Atención al cliente
 - Idioma: SOLO español de España
 - Tono: Profesional, cercano y empático
-- Fecha actual: ${new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
-- IMPORTANTE sobre fechas:
-  * "esta semana" = desde hoy hasta el domingo
-  * "próxima semana" o "next week" = desde el LUNES que viene (NO incluir días de esta semana)
-  * Cuando el usuario pide "próxima semana", muestra SOLO fechas a partir del próximo lunes
+- Fecha de HOY: ${today.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+- Próximo lunes: ${nextMonday.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+
+## INTERPRETACIÓN DE FECHAS - MUY IMPORTANTE
+- "esta semana" = desde hoy (${today.getDate()} dic) hasta el domingo
+- "próxima semana" o "next week" = desde el próximo lunes (${nextMonday.getDate()} dic) en adelante
+- NUNCA incluir fechas anteriores al próximo lunes cuando el usuario pide "próxima semana"
+- Si hoy es ${today.toLocaleDateString('es-ES', { weekday: 'long' })}, la próxima semana empieza el lunes ${nextMonday.getDate()}
 
 ## HERRAMIENTAS DISPONIBLES (OBLIGATORIO USARLAS)
 
@@ -33,6 +74,7 @@ Tienes acceso a estas herramientas que DEBES usar:
 NUNCA digas que una reserva está confirmada sin haber llamado a create_booking
 DEBES llamar a create_booking con TODOS los parámetros para crear una reserva real
 Solo puedes confirmar una reserva cuando create_booking devuelve success: true
+SIEMPRE incluye el número de reserva (appointmentId) en la confirmación
 
 Parámetros OBLIGATORIOS para create_booking:
 - center: código del centro (barcelona, sevilla, chamartin, atocha, torrejon, majadahonda)
@@ -562,6 +604,10 @@ exports.handler = async (event) => {
     console.log(`[ADMIN-TEST-CHAT] User message: "${message.substring(0, 50)}..."`);
     console.log(`[ADMIN-TEST-CHAT] GPT finish_reason: ${data.choices?.[0]?.finish_reason}`);
 
+    // Track if create_booking was called
+    let createBookingCalled = false;
+    let bookingResult = null;
+
     // Handle tool calls
     if (responseMessage?.tool_calls && responseMessage.tool_calls.length > 0) {
       console.log(`[ADMIN-TEST-CHAT] Tool calls: ${responseMessage.tool_calls.length}`);
@@ -579,6 +625,14 @@ exports.handler = async (event) => {
         }
 
         const result = await executeToolCall(toolCall.function.name, args);
+
+        // Track create_booking results
+        if (toolCall.function.name === 'create_booking') {
+          createBookingCalled = true;
+          bookingResult = result;
+          console.log(`[ADMIN-TEST-CHAT] create_booking called - success: ${result.success}, appointmentId: ${result.appointmentId || 'none'}`);
+        }
+
         toolResults.push({
           tool_call_id: toolCall.id,
           role: 'tool',
@@ -611,7 +665,7 @@ exports.handler = async (event) => {
       // No tool calls - log warning if response looks like a booking confirmation
       const content = responseMessage?.content || '';
       const looksLikeConfirmation = content.toLowerCase().includes('confirmad') ||
-                                     content.toLowerCase().includes('reserva') ||
+                                     content.toLowerCase().includes('reserva creada') ||
                                      content.includes('🎉');
       if (looksLikeConfirmation && message.toLowerCase().match(/^(si|sí|ok|confirmo|adelante|yes)/)) {
         console.log(`[ADMIN-TEST-CHAT] WARNING: No create_booking tool called but response looks like confirmation!`);
@@ -620,9 +674,17 @@ exports.handler = async (event) => {
     }
 
     const responseTime = Date.now() - startTime;
-    const botResponse = responseMessage?.content || 'No response generated';
+    let botResponse = responseMessage?.content || 'No response generated';
+
+    // Strip markdown from response
+    botResponse = stripMarkdown(botResponse);
 
     console.log(`[ADMIN-TEST-CHAT] Final response (${totalTokens} tokens, ${responseTime}ms)`);
+
+    // Log if booking was confirmed
+    if (createBookingCalled && bookingResult?.success) {
+      console.log(`[ADMIN-TEST-CHAT] BOOKING CONFIRMED - ID: ${bookingResult.appointmentId}`);
+    }
 
     return {
       statusCode: 200,
@@ -630,7 +692,9 @@ exports.handler = async (event) => {
       body: JSON.stringify({
         response: botResponse,
         tokens: totalTokens,
-        responseTime
+        responseTime,
+        bookingCreated: createBookingCalled && bookingResult?.success,
+        appointmentId: bookingResult?.appointmentId || null
       })
     };
 

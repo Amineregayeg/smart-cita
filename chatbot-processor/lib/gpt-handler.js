@@ -9,7 +9,7 @@ const crypto = require('crypto');
 const { KnowledgeBaseLoader } = require('./knowledge-loader');
 const { SmartAgendaService } = require('./smart-agenda-service');
 const { incrementTokenCounter, getCachedResponse, setCachedResponse } = require('./redis-client');
-const { SYSTEM_PROMPT_TEMPLATE, GPT_CONFIG } = require('../config/prompts');
+const { generateSystemPrompt, GPT_CONFIG } = require('../config/prompts');
 const { CHATBOT_TOOLS, executeToolCall } = require('../config/tools');
 
 class GPTHandler {
@@ -194,18 +194,11 @@ class GPTHandler {
   }
 
   /**
-   * Build system prompt with knowledge base and current date injection
+   * Build system prompt with knowledge base and dynamic date injection
    */
   buildSystemPrompt(knowledgeBase) {
-    const currentDate = new Date().toLocaleDateString('es-ES', {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    });
-    return SYSTEM_PROMPT_TEMPLATE
-      .replace('{KNOWLEDGE_BASE}', knowledgeBase)
-      .replace('{CURRENT_DATE}', currentDate);
+    // generateSystemPrompt handles date calculations dynamically
+    return generateSystemPrompt().replace('{KNOWLEDGE_BASE}', knowledgeBase);
   }
 
   /**

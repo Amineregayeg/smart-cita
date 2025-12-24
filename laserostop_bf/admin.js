@@ -485,11 +485,18 @@ async function handleChatSubmit(event) {
     // Add assistant response to history
     chatHistory.push({ role: 'assistant', content: data.response });
 
+    // Build booking indicator if a booking was created
+    let bookingBadge = '';
+    if (data.bookingCreated && data.appointmentId) {
+      bookingBadge = `<div class="booking-badge">✅ Reserva creada: ID ${data.appointmentId}</div>`;
+    }
+
     // Remove loading, add bot response
     document.getElementById(loadingId).remove();
     messagesContainer.innerHTML += `
       <div class="chat-bubble bot">
-        ${escapeHtml(data.response)}
+        ${bookingBadge}
+        ${escapeHtml(data.response).replace(/\n/g, '<br>')}
         <div class="chat-meta">${data.tokens} tokens | ${data.responseTime}ms</div>
       </div>
     `;
