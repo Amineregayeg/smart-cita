@@ -6,7 +6,7 @@
  */
 
 const { verifyWhatsAppSignature, isTimestampValid } = require('./shared/crypto-utils');
-const { pushToQueue, isMessageProcessed, checkRateLimit } = require('./shared/redis-client');
+const { pushToQueue, isMessageProcessed, checkRateLimit, isPlatformEnabled } = require('./shared/redis-client');
 
 // CORS headers for responses
 const headers = {
@@ -120,7 +120,18 @@ exports.handler = async (event, context) => {
 
       console.log('[WEBHOOK-WHATSAPP] Signature verified');
 
-      // Step 2: Parse body and extract messages
+      // Step 2: Check if WhatsApp platform is enabled
+      const platformEnabled = await isPlatformEnabled('whatsapp');
+      if (!platformEnabled) {
+        console.log('[WEBHOOK-WHATSAPP] Platform disabled - ignoring messages');
+        return {
+          statusCode: 200,
+          headers,
+          body: JSON.stringify({ status: 'ok', message: 'Platform disabled' })
+        };
+      }
+
+      // Step 3: Parse body and extract messages
       const body = JSON.parse(event.body);
       const messages = extractMessages(body);
 
@@ -132,7 +143,7 @@ exports.handler = async (event, context) => {
 
       console.log(`[WEBHOOK-WHATSAPP] Extracted ${messages.length} message(s)`);
 
-      // Step 3: Process each message
+      // Step 4: Process each message
       let queuedCount = 0;
 
       for (const message of messages) {

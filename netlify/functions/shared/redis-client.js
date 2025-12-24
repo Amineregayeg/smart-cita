@@ -455,6 +455,89 @@ async function validateAdminSession(token) {
   }
 }
 
+/**
+ * Get platform configuration (enabled/disabled status)
+ * @returns {Promise<object>} - Platform status {whatsapp, messenger, instagram}
+ */
+async function getPlatformConfig() {
+  const client = await getRedisClient();
+  if (!client) {
+    // Default: all enabled
+    return { whatsapp: true, messenger: true, instagram: true };
+  }
+
+  try {
+    const pipeline = client.pipeline();
+    pipeline.get('chatbot:config:platform:whatsapp:enabled');
+    pipeline.get('chatbot:config:platform:messenger:enabled');
+    pipeline.get('chatbot:config:platform:instagram:enabled');
+
+    const results = await pipeline.exec();
+    await client.quit();
+
+    // Default to true if not set
+    return {
+      whatsapp: results[0][1] !== 'false',
+      messenger: results[1][1] !== 'false',
+      instagram: results[2][1] !== 'false'
+    };
+  } catch (error) {
+    console.error('[REDIS] Get platform config error:', error.message);
+    try { await client.quit(); } catch (e) { /* ignore */ }
+    return { whatsapp: true, messenger: true, instagram: true };
+  }
+}
+
+/**
+ * Set platform enabled/disabled status
+ * @param {string} platform - 'whatsapp', 'messenger', or 'instagram'
+ * @param {boolean} enabled - Whether platform is enabled
+ * @returns {Promise<boolean>} - True if successful
+ */
+async function setPlatformConfig(platform, enabled) {
+  const validPlatforms = ['whatsapp', 'messenger', 'instagram'];
+  if (!validPlatforms.includes(platform)) {
+    console.error('[REDIS] Invalid platform:', platform);
+    return false;
+  }
+
+  const client = await getRedisClient();
+  if (!client) return false;
+
+  try {
+    const key = `chatbot:config:platform:${platform}:enabled`;
+    await client.set(key, enabled ? 'true' : 'false');
+    console.log(`[REDIS] Platform ${platform} set to ${enabled ? 'enabled' : 'disabled'}`);
+    await client.quit();
+    return true;
+  } catch (error) {
+    console.error('[REDIS] Set platform config error:', error.message);
+    try { await client.quit(); } catch (e) { /* ignore */ }
+    return false;
+  }
+}
+
+/**
+ * Check if a specific platform is enabled
+ * @param {string} platform - 'whatsapp', 'messenger', or 'instagram'
+ * @returns {Promise<boolean>} - True if enabled
+ */
+async function isPlatformEnabled(platform) {
+  const client = await getRedisClient();
+  if (!client) return true; // Default to enabled if no Redis
+
+  try {
+    const key = `chatbot:config:platform:${platform}:enabled`;
+    const value = await client.get(key);
+    await client.quit();
+    return value !== 'false'; // Default to true if not set
+  } catch (error) {
+    console.error('[REDIS] Check platform enabled error:', error.message);
+    try { await client.quit(); } catch (e) { /* ignore */ }
+    return true; // Default to enabled on error
+  }
+}
+
 module.exports = {
   getRedisClient,
   pushToQueue,
@@ -467,5 +550,8 @@ module.exports = {
   getAdminStats,
   getConversationLogs,
   setAdminSession,
-  validateAdminSession
+  validateAdminSession,
+  getPlatformConfig,
+  setPlatformConfig,
+  isPlatformEnabled
 };

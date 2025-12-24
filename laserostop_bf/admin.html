@@ -215,6 +215,117 @@
       border-radius: 50%;
       background: #94a3b8;
     }
+
+    /* Toggle switch styles */
+    .toggle-switch {
+      position: relative;
+      width: 60px;
+      height: 32px;
+      flex-shrink: 0;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #cbd5e1;
+      transition: .3s;
+      border-radius: 32px;
+    }
+
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 24px;
+      width: 24px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    input:checked + .toggle-slider {
+      background-color: #22c55e;
+    }
+
+    input:checked + .toggle-slider:before {
+      transform: translateX(28px);
+    }
+
+    input:disabled + .toggle-slider {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Platform-specific toggle colors */
+    .toggle-whatsapp input:checked + .toggle-slider {
+      background-color: #25D366;
+    }
+
+    .toggle-messenger input:checked + .toggle-slider {
+      background-color: #0084FF;
+    }
+
+    .toggle-instagram input:checked + .toggle-slider {
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+    }
+
+    /* Platform card */
+    .platform-card {
+      background: white;
+      border-radius: 1rem;
+      padding: 1.5rem;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .platform-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+
+    .platform-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .platform-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 24px;
+    }
+
+    .platform-icon.whatsapp { background: #25D366; }
+    .platform-icon.messenger { background: #0084FF; }
+    .platform-icon.instagram { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
+
+    .platform-status {
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+    }
+
+    .platform-status.enabled { color: #22c55e; }
+    .platform-status.disabled { color: #ef4444; }
   </style>
 </head>
 <body>
@@ -310,6 +421,11 @@
             <span class="material-icons align-middle mr-1" style="font-size: 18px;">chat</span>
             <span class="hidden sm:inline">Probar Chat</span>
             <span class="sm:hidden">Test</span>
+          </button>
+          <button class="tab-btn" data-tab="settings" style="background: rgba(255,255,255,0.25); color: #fff;">
+            <span class="material-icons align-middle mr-1" style="font-size: 18px;">settings</span>
+            <span class="hidden sm:inline">Configuracion</span>
+            <span class="sm:hidden">Config</span>
           </button>
         </div>
       </div>
@@ -554,6 +670,89 @@
                 <p class="font-semibold" id="stat-time">-</p>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings Tab -->
+      <div id="tab-settings" class="tab-content">
+        <div class="max-w-2xl mx-auto">
+          <!-- Platform Settings Header -->
+          <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <div class="flex items-center gap-3 mb-2">
+              <span class="material-icons text-teal-600">tune</span>
+              <h2 class="text-xl font-semibold text-gray-800">Configuracion de Plataformas</h2>
+            </div>
+            <p class="text-gray-500 text-sm">Activa o desactiva la recepcion de mensajes por plataforma</p>
+          </div>
+
+          <!-- Platform Toggle Cards -->
+          <div class="space-y-4">
+            <!-- WhatsApp -->
+            <div class="platform-card">
+              <div class="platform-info">
+                <div class="platform-icon whatsapp">
+                  <span class="material-icons">chat</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-gray-800">WhatsApp</h3>
+                  <p id="whatsapp-status" class="platform-status enabled">Activo</p>
+                </div>
+              </div>
+              <label class="toggle-switch toggle-whatsapp">
+                <input type="checkbox" id="toggle-whatsapp" checked onchange="togglePlatform('whatsapp', this.checked)">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <!-- Messenger -->
+            <div class="platform-card">
+              <div class="platform-info">
+                <div class="platform-icon messenger">
+                  <span class="material-icons">messenger</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-gray-800">Facebook Messenger</h3>
+                  <p id="messenger-status" class="platform-status enabled">Activo</p>
+                </div>
+              </div>
+              <label class="toggle-switch toggle-messenger">
+                <input type="checkbox" id="toggle-messenger" checked onchange="togglePlatform('messenger', this.checked)">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <!-- Instagram -->
+            <div class="platform-card">
+              <div class="platform-info">
+                <div class="platform-icon instagram">
+                  <span class="material-icons">photo_camera</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-gray-800">Instagram</h3>
+                  <p id="instagram-status" class="platform-status enabled">Activo</p>
+                </div>
+              </div>
+              <label class="toggle-switch toggle-instagram">
+                <input type="checkbox" id="toggle-instagram" checked onchange="togglePlatform('instagram', this.checked)">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Info Note -->
+          <div class="mt-6 bg-blue-50 rounded-lg p-4 flex items-start gap-3">
+            <span class="material-icons text-blue-500">info</span>
+            <div class="text-sm text-blue-700">
+              <p class="font-medium">Nota</p>
+              <p>Cuando una plataforma esta desactivada, los mensajes entrantes seran ignorados silenciosamente. Las estadisticas no se actualizaran para mensajes ignorados.</p>
+            </div>
+          </div>
+
+          <!-- Save Status -->
+          <div id="settings-save-status" class="mt-4 text-center text-sm text-gray-500 hidden">
+            <span class="material-icons text-green-500 align-middle text-sm">check_circle</span>
+            Configuracion guardada
           </div>
         </div>
       </div>

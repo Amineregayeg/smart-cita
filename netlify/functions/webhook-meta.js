@@ -7,7 +7,7 @@
  */
 
 const { verifyMetaSignature, isTimestampValid } = require('./shared/crypto-utils');
-const { pushToQueue, isMessageProcessed, checkRateLimit } = require('./shared/redis-client');
+const { pushToQueue, isMessageProcessed, checkRateLimit, isPlatformEnabled } = require('./shared/redis-client');
 
 // CORS headers for responses
 const headers = {
@@ -158,8 +158,17 @@ exports.handler = async (event, context) => {
 
       // Step 3: Process each message
       let queuedCount = 0;
+      let skippedDisabled = 0;
 
       for (const message of messages) {
+        // Check if platform is enabled
+        const platformEnabled = await isPlatformEnabled(message.platform);
+        if (!platformEnabled) {
+          console.log(`[WEBHOOK-META] Platform ${message.platform} disabled - skipping message`);
+          skippedDisabled++;
+          continue;
+        }
+
         // Check timestamp validity (reject messages older than 5 minutes)
         // Convert to seconds if timestamp is in milliseconds
         const timestamp = message.timestamp > 9999999999
@@ -185,6 +194,10 @@ exports.handler = async (event, context) => {
         // Queue message for processing
         const queued = await pushToQueue('meta', message);
         if (queued) queuedCount++;
+      }
+
+      if (skippedDisabled > 0) {
+        console.log(`[WEBHOOK-META] Skipped ${skippedDisabled} messages due to disabled platform`);
       }
 
       const processingTime = Date.now() - startTime;

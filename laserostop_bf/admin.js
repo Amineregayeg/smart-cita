@@ -525,6 +525,119 @@ function clearChat() {
   document.getElementById('chat-stats').classList.add('hidden');
 }
 
+// ==================== SETTINGS ====================
+
+/**
+ * Load platform settings from API
+ */
+async function loadSettings() {
+  try {
+    const response = await fetch(`${API_BASE}/admin-settings`, {
+      headers: { 'Authorization': `Bearer ${getToken()}` }
+    });
+
+    if (!response.ok) {
+      if (response.status === 401) {
+        handleLogout();
+        return;
+      }
+      throw new Error('Failed to load settings');
+    }
+
+    const data = await response.json();
+    updateSettingsDisplay(data.platforms);
+  } catch (error) {
+    console.error('Error loading settings:', error);
+  }
+}
+
+/**
+ * Update settings display with platform status
+ */
+function updateSettingsDisplay(platforms) {
+  // WhatsApp
+  const whatsappToggle = document.getElementById('toggle-whatsapp');
+  const whatsappStatus = document.getElementById('whatsapp-status');
+  if (whatsappToggle && whatsappStatus) {
+    whatsappToggle.checked = platforms.whatsapp;
+    whatsappStatus.textContent = platforms.whatsapp ? 'Activo' : 'Inactivo';
+    whatsappStatus.className = `platform-status ${platforms.whatsapp ? 'enabled' : 'disabled'}`;
+  }
+
+  // Messenger
+  const messengerToggle = document.getElementById('toggle-messenger');
+  const messengerStatus = document.getElementById('messenger-status');
+  if (messengerToggle && messengerStatus) {
+    messengerToggle.checked = platforms.messenger;
+    messengerStatus.textContent = platforms.messenger ? 'Activo' : 'Inactivo';
+    messengerStatus.className = `platform-status ${platforms.messenger ? 'enabled' : 'disabled'}`;
+  }
+
+  // Instagram
+  const instagramToggle = document.getElementById('toggle-instagram');
+  const instagramStatus = document.getElementById('instagram-status');
+  if (instagramToggle && instagramStatus) {
+    instagramToggle.checked = platforms.instagram;
+    instagramStatus.textContent = platforms.instagram ? 'Activo' : 'Inactivo';
+    instagramStatus.className = `platform-status ${platforms.instagram ? 'enabled' : 'disabled'}`;
+  }
+}
+
+/**
+ * Toggle platform enabled/disabled
+ */
+async function togglePlatform(platform, enabled) {
+  const toggle = document.getElementById(`toggle-${platform}`);
+  const statusEl = document.getElementById(`${platform}-status`);
+  const saveStatus = document.getElementById('settings-save-status');
+
+  // Disable toggle while saving
+  if (toggle) toggle.disabled = true;
+
+  try {
+    const response = await fetch(`${API_BASE}/admin-settings`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${getToken()}`
+      },
+      body: JSON.stringify({ platform, enabled })
+    });
+
+    if (!response.ok) {
+      if (response.status === 401) {
+        handleLogout();
+        return;
+      }
+      throw new Error('Failed to update settings');
+    }
+
+    const data = await response.json();
+
+    // Update status text
+    if (statusEl) {
+      statusEl.textContent = enabled ? 'Activo' : 'Inactivo';
+      statusEl.className = `platform-status ${enabled ? 'enabled' : 'disabled'}`;
+    }
+
+    // Show save confirmation
+    if (saveStatus) {
+      saveStatus.classList.remove('hidden');
+      setTimeout(() => saveStatus.classList.add('hidden'), 2000);
+    }
+
+    console.log(`Platform ${platform} ${enabled ? 'enabled' : 'disabled'}`);
+
+  } catch (error) {
+    console.error('Error toggling platform:', error);
+    // Revert toggle on error
+    if (toggle) toggle.checked = !enabled;
+    alert('Error al actualizar la configuracion');
+  } finally {
+    if (toggle) toggle.disabled = false;
+  }
+}
+
 // ==================== AUTO-REFRESH ====================
 
 /**
@@ -576,6 +689,8 @@ function switchTab(tabId) {
   // Load tab-specific data
   if (tabId === 'conversations') {
     loadConversations();
+  } else if (tabId === 'settings') {
+    loadSettings();
   }
 }
 
