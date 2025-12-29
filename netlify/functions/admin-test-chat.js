@@ -134,15 +134,20 @@ Si el cliente proporciona su teléfono sin completar una reserva:
 - NO redirijas a ningún sitio web
 - Para más información, ofrece siempre WhatsApp: +34 689 560 130
 
-## FLUJO DE RESERVA
+## FLUJO DE RESERVA - MUY IMPORTANTE
 
 1. Usuario pide cita → Pregunta centro y tratamiento si no los dice
 2. Usa check_availability para obtener horarios REALES
-3. Usuario elige horario → Recoge nombre, email, teléfono
-4. Cuando tengas TODOS los datos → Muestra resumen y pregunta EXACTAMENTE: "¿Confirmo la reserva?"
-5. Usuario dice sí → LLAMA INMEDIATAMENTE a create_booking con todos los parámetros
-6. Si create_booking devuelve success → Confirma con el número de reserva
-7. Si create_booking falla → Informa del error y ofrece WhatsApp: +34 689 560 130
+3. Usuario elige horario → Pide nombre, email y teléfono
+4. Cuando tengas TODOS los datos → Muestra resumen y pregunta: "¿Confirmo la reserva?"
+5. ESPERA a que el usuario diga "sí", "confirmo", "ok" o similar
+6. SOLO cuando el usuario confirme explícitamente → Llama a create_booking
+7. Si create_booking devuelve success → Confirma con el número de reserva
+
+⚠️ CRÍTICO: NO llames a create_booking hasta que el usuario confirme explícitamente.
+Después de recibir los datos (nombre, email, teléfono), SOLO muestra el resumen y pregunta si confirma.
+NO crees la reserva automáticamente al recibir los datos.
+8. Si create_booking falla → Informa del error y ofrece WhatsApp: +34 689 560 130
 
 ## REGLA CRÍTICA DE CONFIRMACIÓN
 
@@ -751,6 +756,35 @@ exports.handler = async (event) => {
     // Detect if user is confirming a booking (simple pattern match)
     const isConfirmation = message.toLowerCase().match(/^(si|sí|ok|confirmo|adelante|yes|vale|claro|por supuesto|de acuerdo|perfecto|genial)/);
 
+    // Check if a booking was ALREADY created in this conversation
+    // Look for appointment IDs or confirmation patterns
+    const bookingAlreadyCreated = conversationHistory.some(m => {
+      if (!m.content || m.role !== 'assistant') return false;
+      const content = m.content.toLowerCase();
+      return (
+        content.includes('número de reserva') ||
+        content.includes('reserva:') ||
+        /reserva[^\d]*\d{4,}/.test(m.content) ||  // "reserva: 7970" pattern
+        (content.includes('confirmad') && content.includes('reserva'))
+      );
+    });
+
+    if (bookingAlreadyCreated && isConfirmation) {
+      console.log('[ADMIN-TEST-CHAT] Booking already exists in conversation - returning acknowledgment');
+      return {
+        statusCode: 200,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          response: '¡Tu reserva ya está confirmada! Si necesitas hacer algún cambio o tienes alguna pregunta, no dudes en contactarnos por WhatsApp: +34 689 560 130',
+          tokens: 0,
+          responseTime: Date.now() - startTime,
+          bookingCreated: false,
+          appointmentId: null,
+          debug: { toolsCalled: [], note: 'Booking already existed in conversation' }
+        })
+      };
+    }
+
     // Check if conversation history suggests we're in a booking flow
     // Look for: confirmation questions, email/phone patterns, booking summaries
     const historyHasBookingData = conversationHistory.some(m => {
@@ -769,8 +803,9 @@ exports.handler = async (event) => {
     });
 
     // Force create_booking tool if user is confirming after booking data was collected
+    // BUT only if no booking was already created
     let toolChoice = 'auto';
-    if (isConfirmation && historyHasBookingData) {
+    if (isConfirmation && historyHasBookingData && !bookingAlreadyCreated) {
       console.log('[ADMIN-TEST-CHAT] Detected confirmation after booking data - forcing create_booking tool');
       toolChoice = { type: 'function', function: { name: 'create_booking' } };
     }
