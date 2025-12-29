@@ -102,21 +102,56 @@ Parámetros OBLIGATORIOS para create_booking:
 - Majadahonda → código: "majadahonda"
 - Torrejón de Ardoz → código: "torrejon"
 
-## TRATAMIENTOS Y PRECIOS
-- tabaco (individual): 190€
-- duo (2 personas): 360€ total
-- cannabis: 250€
-- azucar: 200€
+## TRATAMIENTOS, PRECIOS Y SESIONES
+- Tabaco (individual): 190€ - 1 sesión de 60 min
+- Duo (2 personas): 360€ total - 1 sesión de 90 min
+- Cannabis: 250€ - 2 sesiones de 60 min
+- Azúcar: 200€ - 4 sesiones de 60 min
+
+## EFECTOS SECUNDARIOS - MUY IMPORTANTE
+- El tratamiento NO tiene efectos secundarios
+- NUNCA menciones efectos secundarios, náuseas, mareos, irritabilidad, etc.
+- Si preguntan: "No hay efectos secundarios. El tratamiento es completamente seguro."
+- Excepciones SOLO si el cliente pregunta expresamente: contraindicado con marcapasos
+- Los síntomas de desintoxicación del THC se explican en la consulta presencial, NO por chatbot
+
+## PACIENTES CON CÁNCER
+- Podemos ayudar a pacientes con cáncer a dejar de fumar
+- NO es necesario que consulten con su médico antes
+- No menciones que deben hablar con su oncólogo o médico
+
+## RECAÍDAS (SESIONES DE REFUERZO)
+- Las sesiones de recaída/refuerzo las gestiona el equipo directamente
+- Si el cliente pregunta por recaída, indicar: "Para sesiones de refuerzo, contacta por WhatsApp: +34 689 560 130"
+- NO ofrezcas reservar recaídas por este chat
+
+## CALLBACK - CUANDO DEJAN SU NÚMERO
+Si el cliente proporciona su teléfono sin completar una reserva:
+- Confirma que un agente le llamará
+- Di: "Perfecto, un agente de LaserOstop te llamará lo antes posible al [número que dio]"
+
+## SITIO WEB
+- NO redirijas a ningún sitio web
+- Para más información, ofrece siempre WhatsApp: +34 689 560 130
 
 ## FLUJO DE RESERVA
 
 1. Usuario pide cita → Pregunta centro y tratamiento si no los dice
 2. Usa check_availability para obtener horarios REALES
 3. Usuario elige horario → Recoge nombre, email, teléfono
-4. Cuando tengas TODOS los datos → Muestra resumen y pregunta "¿Confirmo?"
-5. Usuario dice sí → LLAMA A create_booking con todos los parámetros
-6. Si create_booking devuelve success → Confirma la reserva con los datos reales
+4. Cuando tengas TODOS los datos → Muestra resumen y pregunta EXACTAMENTE: "¿Confirmo la reserva?"
+5. Usuario dice sí → LLAMA INMEDIATAMENTE a create_booking con todos los parámetros
+6. Si create_booking devuelve success → Confirma con el número de reserva
 7. Si create_booking falla → Informa del error y ofrece WhatsApp: +34 689 560 130
+
+## REGLA CRÍTICA DE CONFIRMACIÓN
+
+NUNCA digas "confirmado", "reservado", "listo" o similar SIN haber llamado a create_booking primero.
+Cuando el usuario diga "sí", "ok", "confirmo", "adelante" después de ver el resumen:
+- DEBES llamar a create_booking INMEDIATAMENTE en esa misma respuesta
+- NO pidas más confirmaciones adicionales
+- Si create_booking devuelve success: true, ENTONCES puedes decir que está confirmado
+- Si no llamaste a create_booking, NO está confirmado aunque el usuario haya dicho "sí"
 
 ## FORMATO DE RESPUESTAS - MUY IMPORTANTE
 - NUNCA uses formato markdown (**, *, #, -, etc.)
@@ -228,19 +263,19 @@ const APPOINTMENT_TYPES = {
 };
 
 const TREATMENTS = {
-  'tabaco': { name: 'Dejar de fumar (individual)', duration: 60, price: 190 },
-  'duo': { name: 'Dejar de fumar (dúo)', duration: 90, price: 360 },
-  'cannabis': { name: 'Adicción al cannabis', duration: 60, price: 250 },
-  'azucar': { name: 'Adicción al azúcar', duration: 60, price: 200 }
+  'tabaco': { name: 'Dejar de fumar (individual)', duration: 60, price: 190, sessions: 1 },
+  'duo': { name: 'Dejar de fumar (dúo)', duration: 90, price: 360, sessions: 1 },
+  'cannabis': { name: 'Adicción al cannabis', duration: 60, price: 250, sessions: 2 },
+  'azucar': { name: 'Adicción al azúcar', duration: 60, price: 200, sessions: 4 }
 };
 
 const CENTER_DETAILS = {
-  'barcelona': { name: 'LaserOstop Barcelona Sants', address: 'Carrer de Galileu, 65, Sants-Montjuïc, 08028 Barcelona', phone: '+34 689 560 130' },
-  'sevilla': { name: 'LaserOstop Sevilla', address: 'Avenida Eduardo Dato 85, 41005 Sevilla', phone: '+34 689 560 130' },
-  'chamartin': { name: 'LaserOstop Madrid Chamartín', address: 'Calle de Oruro, 9, Chamartín, 28016 Madrid', phone: '+34 919 305 313' },
-  'atocha': { name: 'LaserOstop Madrid Atocha', address: 'Calle Canarias 26, Atocha, 28045 Madrid', phone: '+34 613 255 948' },
-  'torrejon': { name: 'LaserOstop Torrejón de Ardoz', address: 'Calle Pesquera, 10, 28850 Torrejón de Ardoz', phone: '+34 919 305 313' },
-  'majadahonda': { name: 'LaserOstop Majadahonda', address: 'Calle del Dr Calero, 19, Centro comercial Tutti, 28220 Majadahonda', phone: '+34 919 305 313' }
+  'barcelona': { name: 'LaserOstop Barcelona Sants', address: 'Carrer de Galileu, 65, Sants-Montjuïc, 08028 Barcelona', phone: '+34 689 560 130', hours: 'Martes a Sábado: 11:00 - 20:00' },
+  'sevilla': { name: 'LaserOstop Sevilla', address: 'Avenida Eduardo Dato 85, 41005 Sevilla', phone: '+34 689 560 130', hours: 'Lunes a Viernes: 9:00-13:00 y 14:00-18:00, Sábado: 10:00-14:00' },
+  'chamartin': { name: 'LaserOstop Madrid Chamartín', address: 'Calle de Oruro, 9, Chamartín, 28016 Madrid', phone: '+34 919 305 313', hours: 'Martes a Sábado: 11:00 - 20:00' },
+  'atocha': { name: 'LaserOstop Madrid Atocha', address: 'Calle Canarias 26, Atocha, 28045 Madrid', phone: '+34 613 255 948', hours: 'Martes a Sábado: 11:00 - 20:00' },
+  'torrejon': { name: 'LaserOstop Torrejón de Ardoz', address: 'Calle Pesquera, 10, 28850 Torrejón de Ardoz', phone: '+34 919 305 313', hours: 'Martes a Sábado: 11:00 - 20:00' },
+  'majadahonda': { name: 'LaserOstop Majadahonda', address: 'Calle del Dr Calero, 19, Centro comercial Tutti, 28220 Majadahonda', phone: '+34 919 305 313', hours: 'Martes a Sábado: 11:00 - 20:00' }
 };
 
 // Token cache for Smart Agenda
@@ -292,6 +327,49 @@ async function smartAgendaRequest(endpoint, options = {}) {
 function formatSpanishDate(dateStr) {
   const date = new Date(dateStr + 'T00:00:00');
   return date.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
+}
+
+/**
+ * Filter slots to show max 3 days with 3 spaced-out times per day
+ * Selects morning (9-11), midday (12-14), afternoon (15-18) when possible
+ */
+function filterOptimalSlots(slots, maxDays = 3, slotsPerDay = 3) {
+  // Take first maxDays days that have availability
+  const limitedDays = slots.slice(0, maxDays);
+
+  return limitedDays.map(day => {
+    // CRITICAL: Filter to only full hours (:00) to prevent overlapping with 1-hour sessions
+    const fullHourTimes = day.times.filter(t => t.endsWith(':00'));
+
+    if (fullHourTimes.length === 0) {
+      // If no full hours, skip this day
+      return null;
+    }
+
+    if (fullHourTimes.length <= slotsPerDay) {
+      return { ...day, times: fullHourTimes, timesFormatted: fullHourTimes.join(', ') };
+    }
+
+    // Select spaced slots: morning (9-11), midday (12-14), afternoon (15-19)
+    const morning = fullHourTimes.find(t => t >= '09:00' && t <= '11:00');
+    const midday = fullHourTimes.find(t => t >= '12:00' && t <= '14:00');
+    const afternoon = fullHourTimes.find(t => t >= '15:00' && t <= '19:00');
+
+    const selected = [morning, midday, afternoon].filter(Boolean);
+
+    // If we have 3 spaced slots, use them
+    if (selected.length >= slotsPerDay) {
+      return { ...day, times: selected.slice(0, slotsPerDay), timesFormatted: selected.slice(0, slotsPerDay).join(', ') };
+    }
+
+    // Otherwise, distribute evenly across available full-hour times
+    const step = Math.max(1, Math.floor(fullHourTimes.length / slotsPerDay));
+    const distributed = [];
+    for (let i = 0; i < slotsPerDay && i * step < fullHourTimes.length; i++) {
+      distributed.push(fullHourTimes[i * step]);
+    }
+    return { ...day, times: distributed, timesFormatted: distributed.join(', ') };
+  }).filter(Boolean); // Remove null days (days with no full-hour slots)
 }
 
 async function executeToolCall(toolName, args) {
@@ -361,11 +439,16 @@ async function executeToolCall(toolName, args) {
           }
         }
 
-        console.log(`[ADMIN-TEST-CHAT] Availability result: ${slots.length} days with slots found`);
-        if (slots.length === 0) {
+        console.log(`[ADMIN-TEST-CHAT] Availability result: ${slots.length} days with slots found (before filtering)`);
+
+        // Apply optimal slot filtering: max 3 days, 3 spaced slots per day
+        const filteredSlots = filterOptimalSlots(slots);
+
+        if (filteredSlots.length === 0) {
           console.log('[ADMIN-TEST-CHAT] NO SLOTS AVAILABLE - empty result');
         } else {
-          slots.forEach(s => console.log(`[ADMIN-TEST-CHAT]   ${s.date}: ${s.times.join(', ')}`));
+          console.log(`[ADMIN-TEST-CHAT] Filtered to ${filteredSlots.length} days:`);
+          filteredSlots.forEach(s => console.log(`[ADMIN-TEST-CHAT]   ${s.date}: ${s.times.join(', ')}`));
         }
 
         return {
@@ -373,8 +456,8 @@ async function executeToolCall(toolName, args) {
           center: center.name,
           treatment: TREATMENTS[treatment]?.name || treatment,
           price: TREATMENTS[treatment]?.price || 0,
-          slots,
-          message: slots.length === 0 ? `No hay disponibilidad en ${center.name} actualmente. Te recomendamos consultar otro centro o contactar por WhatsApp: +34 689 560 130` : null
+          slots: filteredSlots,
+          message: filteredSlots.length === 0 ? `No hay disponibilidad en ${center.name} actualmente. Te recomendamos consultar otro centro o contactar por WhatsApp: +34 689 560 130` : null
         };
       } catch (error) {
         console.error('[ADMIN-TEST-CHAT] Availability error:', error.message);
@@ -387,6 +470,15 @@ async function executeToolCall(toolName, args) {
 
       if (!center || !treatment || !date || !time || !full_name || !email || !phone) {
         return { success: false, error: 'missing_fields', message: 'Faltan datos para la reserva.' };
+      }
+
+      // Block recaida bookings - must be managed by staff
+      if (treatment.toLowerCase() === 'recaida') {
+        return {
+          success: false,
+          error: 'recaida_not_allowed',
+          message: 'Las sesiones de recaída las gestiona el equipo directamente. Por favor, contacta por WhatsApp: +34 689 560 130'
+        };
       }
 
       if (!email.includes('@')) {
@@ -640,15 +732,29 @@ exports.handler = async (event) => {
     ];
 
     // Detect if user is confirming a booking (simple pattern match)
-    const isConfirmation = message.toLowerCase().match(/^(si|sí|ok|confirmo|adelante|yes|vale|claro|por supuesto|de acuerdo)/);
-    const historyHasBookingData = conversationHistory.some(m =>
-      m.content && (m.content.includes('¿Confirmo') || m.content.includes('resumen'))
-    );
+    const isConfirmation = message.toLowerCase().match(/^(si|sí|ok|confirmo|adelante|yes|vale|claro|por supuesto|de acuerdo|perfecto|genial)/);
 
-    // Force create_booking tool if user is confirming after a booking summary
+    // Check if conversation history suggests we're in a booking flow
+    // Look for: confirmation questions, email/phone patterns, booking summaries
+    const historyHasBookingData = conversationHistory.some(m => {
+      if (!m.content) return false;
+      const content = m.content.toLowerCase();
+      return (
+        content.includes('¿confirmo') ||
+        content.includes('confirmo la reserva') ||
+        content.includes('resumen') ||
+        content.includes('@') ||  // Email was mentioned
+        /\d{9}/.test(m.content) ||  // Phone number pattern
+        content.includes('nombre completo') ||
+        content.includes('correo') ||
+        content.includes('teléfono')
+      );
+    });
+
+    // Force create_booking tool if user is confirming after booking data was collected
     let toolChoice = 'auto';
     if (isConfirmation && historyHasBookingData) {
-      console.log('[ADMIN-TEST-CHAT] Detected confirmation after booking summary - forcing create_booking tool');
+      console.log('[ADMIN-TEST-CHAT] Detected confirmation after booking data - forcing create_booking tool');
       toolChoice = { type: 'function', function: { name: 'create_booking' } };
     }
 
@@ -743,14 +849,20 @@ exports.handler = async (event) => {
       totalTokens += data.usage?.total_tokens || 0;
       responseMessage = data.choices?.[0]?.message;
     } else {
-      // No tool calls - log warning if response looks like a booking confirmation
+      // No tool calls - detect and fix fake confirmations
       const content = responseMessage?.content || '';
       const looksLikeConfirmation = content.toLowerCase().includes('confirmad') ||
                                      content.toLowerCase().includes('reserva creada') ||
+                                     content.toLowerCase().includes('reserva lista') ||
+                                     content.toLowerCase().includes('cita confirmada') ||
                                      content.includes('🎉');
-      if (looksLikeConfirmation && message.toLowerCase().match(/^(si|sí|ok|confirmo|adelante|yes)/)) {
-        console.log(`[ADMIN-TEST-CHAT] WARNING: No create_booking tool called but response looks like confirmation!`);
-        console.log(`[ADMIN-TEST-CHAT] Response preview: "${content.substring(0, 100)}..."`);
+      const userSaidYes = message.toLowerCase().match(/^(si|sí|ok|confirmo|adelante|yes|vale|claro)/);
+
+      if (looksLikeConfirmation && userSaidYes && !createBookingCalled) {
+        console.log(`[ADMIN-TEST-CHAT] CRITICAL: Fake confirmation detected! Fixing response...`);
+        console.log(`[ADMIN-TEST-CHAT] Original response: "${content.substring(0, 100)}..."`);
+        // Override the fake confirmation with a proper message
+        responseMessage.content = 'Hubo un problema al procesar la reserva. Por favor, proporciona de nuevo tus datos (nombre, email y teléfono) para que pueda completar la reserva correctamente.';
       }
     }
 
