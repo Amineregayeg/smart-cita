@@ -421,8 +421,17 @@ async function executeToolCall(toolName, args) {
           data = JSON.parse(rawData);
         } catch (e) {
           console.error('[ADMIN-TEST-CHAT] Failed to parse availability response:', e.message);
-          return { success: true, center: center.name, treatment: TREATMENTS[treatment]?.name, slots: [], message: `Error al consultar disponibilidad en ${center.name}.` };
+          return { success: true, center: center.name, treatment: TREATMENTS[treatment]?.name, slots: [], apiDebug: { status: response.status, rawPreview: rawData.substring(0, 200) }, message: `Error al consultar disponibilidad en ${center.name}.` };
         }
+
+        // Store API debug info for troubleshooting
+        const apiDebug = {
+          status: response.status,
+          requestBody: requestBody,
+          rawDaysCount: Array.isArray(data) ? data.length : 0,
+          rawFirstDay: Array.isArray(data) && data.length > 0 ? data[0].dj : null,
+          rawFirstDaySlots: Array.isArray(data) && data.length > 0 ? data[0].det?.length : 0
+        };
         const dayNames = { 'Monday': 'Lunes', 'Tuesday': 'Martes', 'Wednesday': 'Miércoles', 'Thursday': 'Jueves', 'Friday': 'Viernes', 'Saturday': 'Sábado', 'Sunday': 'Domingo' };
         const slots = [];
 
@@ -459,6 +468,7 @@ async function executeToolCall(toolName, args) {
           slots: filteredSlots,
           slotsBeforeFilter: slots.length,  // DEBUG: How many days before filtering
           rawSlotCount: slots.reduce((sum, d) => sum + (d.times?.length || 0), 0),  // DEBUG: Total raw slots
+          apiDebug: apiDebug,  // DEBUG: Raw API response info
           message: filteredSlots.length === 0 ? `No hay disponibilidad en ${center.name} actualmente. Te recomendamos consultar otro centro o contactar por WhatsApp: +34 689 560 130` : null
         };
       } catch (error) {
@@ -828,7 +838,8 @@ exports.handler = async (event) => {
             slotsFound: result.slots?.length || 0,
             slotsBeforeFilter: result.slotsBeforeFilter || 0,
             rawSlotCount: result.rawSlotCount || 0,
-            firstSlot: result.slots?.[0] ? `${result.slots[0].date} ${result.slots[0].times?.[0]}` : null
+            firstSlot: result.slots?.[0] ? `${result.slots[0].date} ${result.slots[0].times?.[0]}` : null,
+            apiDebug: result.apiDebug || null
           };
           console.log(`[ADMIN-TEST-CHAT] Availability debug: ${JSON.stringify(availabilityDebug)}`);
         }
