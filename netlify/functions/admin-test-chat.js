@@ -173,7 +173,7 @@ const CHATBOT_TOOLS = [
     type: "function",
     function: {
       name: "check_availability",
-      description: "Consultar disponibilidad de citas en un centro LaserOstop.",
+      description: "Consultar disponibilidad de citas en un centro LaserOstop. Siempre consulta 14 días hacia adelante.",
       parameters: {
         type: "object",
         properties: {
@@ -186,10 +186,6 @@ const CHATBOT_TOOLS = [
             type: "string",
             enum: ["tabaco", "duo", "cannabis", "azucar"],
             description: "Tipo de tratamiento"
-          },
-          days_ahead: {
-            type: "number",
-            description: "Número de días a consultar"
           }
         },
         required: ["center"]
@@ -390,7 +386,7 @@ async function executeToolCall(toolName, args) {
 
       const startDate = new Date();
       const endDate = new Date();
-      endDate.setDate(endDate.getDate() + (args.days_ahead || 14));
+      endDate.setDate(endDate.getDate() + 14);  // Always check 14 days ahead
 
       try {
         const requestBody = {
