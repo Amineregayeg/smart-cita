@@ -410,7 +410,16 @@ async function executeToolCall(toolName, args) {
 
         if (response.status === 404) {
           console.log('[ADMIN-TEST-CHAT] NO SLOTS AVAILABLE - 404 response');
-          return { success: true, center: center.name, treatment: TREATMENTS[treatment]?.name, slots: [], message: `No hay disponibilidad en ${center.name} en los próximos días.` };
+          return {
+            success: true,
+            center: center.name,
+            treatment: TREATMENTS[treatment]?.name,
+            slots: [],
+            slotsBeforeFilter: 0,
+            rawSlotCount: 0,
+            apiDebug: { status: 404, requestBody: requestBody, reason: '404 from Smart Agenda API' },
+            message: `No hay disponibilidad en ${center.name} en los próximos días.`
+          };
         }
 
         const rawData = await response.text();

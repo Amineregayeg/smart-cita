@@ -35,7 +35,13 @@ async function test() {
 
     console.log('\n--- DEBUG INFO ---');
     console.log('Tools called:', data.debug?.toolsCalled || 'none');
-    console.log('Availability:', JSON.stringify(data.debug?.availability, null, 2));
+    const avail = data.debug?.availability;
+    if (avail) {
+      console.log('Center:', avail.center);
+      console.log('Slots found (after filter):', avail.slotsFound);
+      console.log('Slots before filter:', avail.slotsBeforeFilter);
+      console.log('API Debug:', JSON.stringify(avail.apiDebug, null, 2));
+    }
 
     console.log('\n--- RESPONSE ---');
     const hasSlots = data.response?.includes(':00');
