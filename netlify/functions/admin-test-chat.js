@@ -788,6 +788,8 @@ exports.handler = async (event) => {
     // Track if create_booking was called
     let createBookingCalled = false;
     let bookingResult = null;
+    let availabilityDebug = null;  // Debug info for availability
+    let toolsCalled = [];  // Track which tools were called
 
     // Handle tool calls
     if (responseMessage?.tool_calls && responseMessage.tool_calls.length > 0) {
@@ -798,6 +800,8 @@ exports.handler = async (event) => {
 
       const toolResults = [];
       for (const toolCall of responseMessage.tool_calls) {
+        toolsCalled.push(toolCall.function.name);  // Track tool name
+
         let args;
         try {
           args = JSON.parse(toolCall.function.arguments);
@@ -812,6 +816,17 @@ exports.handler = async (event) => {
           createBookingCalled = true;
           bookingResult = result;
           console.log(`[ADMIN-TEST-CHAT] create_booking called - success: ${result.success}, appointmentId: ${result.appointmentId || 'none'}`);
+        }
+
+        // Capture debug info for check_availability
+        if (toolCall.function.name === 'check_availability') {
+          availabilityDebug = {
+            center: result.center,
+            treatment: result.treatment,
+            slotsFound: result.slots?.length || 0,
+            firstSlot: result.slots?.[0] ? `${result.slots[0].date} ${result.slots[0].times?.[0]}` : null
+          };
+          console.log(`[ADMIN-TEST-CHAT] Availability debug: ${JSON.stringify(availabilityDebug)}`);
         }
 
         // CRITICAL: Add explicit instruction if no availability found
@@ -829,6 +844,16 @@ exports.handler = async (event) => {
 
       // Send tool results back to GPT
       const finalMessages = [...messages, responseMessage, ...toolResults];
+
+      // DEBUG: Log what we're sending to GPT
+      console.log('[ADMIN-TEST-CHAT] Tool results being sent to GPT:');
+      toolResults.forEach(tr => {
+        const parsed = JSON.parse(tr.content);
+        console.log(`[ADMIN-TEST-CHAT]   Tool result - success: ${parsed.success}, slots: ${parsed.slots?.length || 0}, center: ${parsed.center}`);
+        if (parsed.slots?.length > 0) {
+          console.log(`[ADMIN-TEST-CHAT]   First slot: ${parsed.slots[0]?.date} ${parsed.slots[0]?.times?.[0]}`);
+        }
+      });
 
       response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
@@ -848,6 +873,10 @@ exports.handler = async (event) => {
       data = await response.json();
       totalTokens += data.usage?.total_tokens || 0;
       responseMessage = data.choices?.[0]?.message;
+
+      // DEBUG: Log GPT's response after processing tool results
+      console.log('[ADMIN-TEST-CHAT] GPT response after tool results:');
+      console.log(`[ADMIN-TEST-CHAT]   Content preview: ${responseMessage?.content?.substring(0, 150)}...`);
     } else {
       // No tool calls - detect and fix fake confirmations
       const content = responseMessage?.content || '';
@@ -879,6 +908,12 @@ exports.handler = async (event) => {
       console.log(`[ADMIN-TEST-CHAT] BOOKING CONFIRMED - ID: ${bookingResult.appointmentId}`);
     }
 
+    // Capture debug info about tool calls
+    const debugInfo = {
+      toolsCalled: toolsCalled,
+      availability: availabilityDebug
+    };
+
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
@@ -887,7 +922,8 @@ exports.handler = async (event) => {
         tokens: totalTokens,
         responseTime,
         bookingCreated: createBookingCalled && bookingResult?.success,
-        appointmentId: bookingResult?.appointmentId || null
+        appointmentId: bookingResult?.appointmentId || null,
+        debug: debugInfo
       })
     };
 
