@@ -757,16 +757,14 @@ exports.handler = async (event) => {
     const isConfirmation = message.toLowerCase().match(/^(si|sí|ok|confirmo|adelante|yes|vale|claro|por supuesto|de acuerdo|perfecto|genial)/);
 
     // Check if a booking was ALREADY created in this conversation
-    // Look for appointment IDs or confirmation patterns
+    // Look for actual booking confirmation patterns with appointment IDs
     const bookingAlreadyCreated = conversationHistory.some(m => {
       if (!m.content || m.role !== 'assistant') return false;
-      const content = m.content.toLowerCase();
-      return (
-        content.includes('número de reserva') ||
-        content.includes('reserva:') ||
-        /reserva[^\d]*\d{4,}/.test(m.content) ||  // "reserva: 7970" pattern
-        (content.includes('confirmad') && content.includes('reserva'))
-      );
+      // Must have an actual booking ID number (4+ digits after "reserva")
+      const hasBookingId = /(?:número de reserva|reserva)[:\s]+(\d{4,})/i.test(m.content);
+      // Or explicit "ha sido confirmada" with a number
+      const hasConfirmWithId = m.content.toLowerCase().includes('ha sido confirmada') && /\d{4,}/.test(m.content);
+      return hasBookingId || hasConfirmWithId;
     });
 
     if (bookingAlreadyCreated && isConfirmation) {
