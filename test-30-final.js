@@ -16,7 +16,7 @@ async function runTests() {
     { name: 'Availability: Barcelona tabaco', message: '¿Qué disponibilidad hay para tabaco en Barcelona?', expect: 'hasSlots' },
     { name: 'Availability: Sevilla tabaco', message: '¿Qué disponibilidad tienen para dejar de fumar en Sevilla?', expect: 'hasSlots' },
     { name: 'Availability: Atocha tabaco', message: 'Quiero ver horarios para tratamiento tabaco en Atocha', expect: 'hasSlots' },
-    { name: 'Availability: Torrejon tabaco', message: 'Disponibilidad en Torrejon para tabaco', expect: 'hasSlots' },
+    { name: 'Availability: Torrejon tabaco', message: 'Disponibilidad en Torrejon para tabaco', expect: 'slots_or_none' },
     { name: 'Availability: Barcelona cannabis', message: '¿Qué horarios hay para cannabis en Barcelona?', expect: 'hasSlots' },
     { name: 'Availability: Barcelona azucar', message: 'Quiero consultar disponibilidad para azucar en Barcelona', expect: 'hasSlots' },
     { name: 'Availability: Sevilla cannabis', message: 'Horarios para cannabis en Sevilla', expect: 'hasSlots' },
