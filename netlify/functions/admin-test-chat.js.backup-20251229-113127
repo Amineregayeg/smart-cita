@@ -102,37 +102,11 @@ Parámetros OBLIGATORIOS para create_booking:
 - Majadahonda → código: "majadahonda"
 - Torrejón de Ardoz → código: "torrejon"
 
-## TRATAMIENTOS, PRECIOS Y SESIONES
-- Tabaco (individual): 190€ - 1 sesión de 60 min
-- Duo (2 personas): 360€ total - 1 sesión de 90 min
-- Cannabis: 250€ - 2 sesiones de 60 min
-- Azúcar: 200€ - 4 sesiones de 60 min
-
-## EFECTOS SECUNDARIOS - MUY IMPORTANTE
-- El tratamiento NO tiene efectos secundarios
-- NUNCA menciones efectos secundarios, náuseas, mareos, irritabilidad, etc.
-- Si preguntan: "No hay efectos secundarios. El tratamiento es completamente seguro."
-- Excepciones SOLO si el cliente pregunta expresamente: contraindicado con marcapasos
-- Los síntomas de desintoxicación del THC se explican en la consulta presencial, NO por chatbot
-
-## PACIENTES CON CÁNCER
-- Podemos ayudar a pacientes con cáncer a dejar de fumar
-- NO es necesario que consulten con su médico antes
-- No menciones que deben hablar con su oncólogo o médico
-
-## RECAÍDAS (SESIONES DE REFUERZO)
-- Las sesiones de recaída/refuerzo las gestiona el equipo directamente
-- Si el cliente pregunta por recaída, indicar: "Para sesiones de refuerzo, contacta por WhatsApp: +34 689 560 130"
-- NO ofrezcas reservar recaídas por este chat
-
-## CALLBACK - CUANDO DEJAN SU NÚMERO
-Si el cliente proporciona su teléfono sin completar una reserva:
-- Confirma que un agente le llamará
-- Di: "Perfecto, un agente de LaserOstop te llamará lo antes posible al [número que dio]"
-
-## SITIO WEB
-- NO redirijas a ningún sitio web
-- Para más información, ofrece siempre WhatsApp: +34 689 560 130
+## TRATAMIENTOS Y PRECIOS
+- tabaco (individual): 190€
+- duo (2 personas): 360€ total
+- cannabis: 250€
+- azucar: 200€
 
 ## FLUJO DE RESERVA
 
@@ -263,19 +237,19 @@ const APPOINTMENT_TYPES = {
 };
 
 const TREATMENTS = {
-  'tabaco': { name: 'Dejar de fumar (individual)', duration: 60, price: 190, sessions: 1 },
-  'duo': { name: 'Dejar de fumar (dúo)', duration: 90, price: 360, sessions: 1 },
-  'cannabis': { name: 'Adicción al cannabis', duration: 60, price: 250, sessions: 2 },
-  'azucar': { name: 'Adicción al azúcar', duration: 60, price: 200, sessions: 4 }
+  'tabaco': { name: 'Dejar de fumar (individual)', duration: 60, price: 190 },
+  'duo': { name: 'Dejar de fumar (dúo)', duration: 90, price: 360 },
+  'cannabis': { name: 'Adicción al cannabis', duration: 60, price: 250 },
+  'azucar': { name: 'Adicción al azúcar', duration: 60, price: 200 }
 };
 
 const CENTER_DETAILS = {
-  'barcelona': { name: 'LaserOstop Barcelona Sants', address: 'Carrer de Galileu, 65, Sants-Montjuïc, 08028 Barcelona', phone: '+34 689 560 130', hours: 'Martes a Sábado: 11:00 - 20:00' },
-  'sevilla': { name: 'LaserOstop Sevilla', address: 'Avenida Eduardo Dato 85, 41005 Sevilla', phone: '+34 689 560 130', hours: 'Lunes a Viernes: 9:00-13:00 y 14:00-18:00, Sábado: 10:00-14:00' },
-  'chamartin': { name: 'LaserOstop Madrid Chamartín', address: 'Calle de Oruro, 9, Chamartín, 28016 Madrid', phone: '+34 919 305 313', hours: 'Martes a Sábado: 11:00 - 20:00' },
-  'atocha': { name: 'LaserOstop Madrid Atocha', address: 'Calle Canarias 26, Atocha, 28045 Madrid', phone: '+34 613 255 948', hours: 'Martes a Sábado: 11:00 - 20:00' },
-  'torrejon': { name: 'LaserOstop Torrejón de Ardoz', address: 'Calle Pesquera, 10, 28850 Torrejón de Ardoz', phone: '+34 919 305 313', hours: 'Martes a Sábado: 11:00 - 20:00' },
-  'majadahonda': { name: 'LaserOstop Majadahonda', address: 'Calle del Dr Calero, 19, Centro comercial Tutti, 28220 Majadahonda', phone: '+34 919 305 313', hours: 'Martes a Sábado: 11:00 - 20:00' }
+  'barcelona': { name: 'LaserOstop Barcelona Sants', address: 'Carrer de Galileu, 65, Sants-Montjuïc, 08028 Barcelona', phone: '+34 689 560 130' },
+  'sevilla': { name: 'LaserOstop Sevilla', address: 'Avenida Eduardo Dato 85, 41005 Sevilla', phone: '+34 689 560 130' },
+  'chamartin': { name: 'LaserOstop Madrid Chamartín', address: 'Calle de Oruro, 9, Chamartín, 28016 Madrid', phone: '+34 919 305 313' },
+  'atocha': { name: 'LaserOstop Madrid Atocha', address: 'Calle Canarias 26, Atocha, 28045 Madrid', phone: '+34 613 255 948' },
+  'torrejon': { name: 'LaserOstop Torrejón de Ardoz', address: 'Calle Pesquera, 10, 28850 Torrejón de Ardoz', phone: '+34 919 305 313' },
+  'majadahonda': { name: 'LaserOstop Majadahonda', address: 'Calle del Dr Calero, 19, Centro comercial Tutti, 28220 Majadahonda', phone: '+34 919 305 313' }
 };
 
 // Token cache for Smart Agenda
@@ -338,22 +312,13 @@ function filterOptimalSlots(slots, maxDays = 3, slotsPerDay = 3) {
   const limitedDays = slots.slice(0, maxDays);
 
   return limitedDays.map(day => {
-    // CRITICAL: Filter to only full hours (:00) to prevent overlapping with 1-hour sessions
-    const fullHourTimes = day.times.filter(t => t.endsWith(':00'));
+    const times = day.times;
+    if (times.length <= slotsPerDay) return day;
 
-    if (fullHourTimes.length === 0) {
-      // If no full hours, skip this day
-      return null;
-    }
-
-    if (fullHourTimes.length <= slotsPerDay) {
-      return { ...day, times: fullHourTimes, timesFormatted: fullHourTimes.join(', ') };
-    }
-
-    // Select spaced slots: morning (9-11), midday (12-14), afternoon (15-19)
-    const morning = fullHourTimes.find(t => t >= '09:00' && t <= '11:00');
-    const midday = fullHourTimes.find(t => t >= '12:00' && t <= '14:00');
-    const afternoon = fullHourTimes.find(t => t >= '15:00' && t <= '19:00');
+    // Select spaced slots: morning (9-11:30), midday (12-14:30), afternoon (15-19)
+    const morning = times.find(t => t >= '09:00' && t <= '11:30');
+    const midday = times.find(t => t >= '12:00' && t <= '14:30');
+    const afternoon = times.find(t => t >= '15:00' && t <= '19:00');
 
     const selected = [morning, midday, afternoon].filter(Boolean);
 
@@ -362,14 +327,14 @@ function filterOptimalSlots(slots, maxDays = 3, slotsPerDay = 3) {
       return { ...day, times: selected.slice(0, slotsPerDay), timesFormatted: selected.slice(0, slotsPerDay).join(', ') };
     }
 
-    // Otherwise, distribute evenly across available full-hour times
-    const step = Math.max(1, Math.floor(fullHourTimes.length / slotsPerDay));
+    // Otherwise, distribute evenly across available times
+    const step = Math.max(1, Math.floor(times.length / slotsPerDay));
     const distributed = [];
-    for (let i = 0; i < slotsPerDay && i * step < fullHourTimes.length; i++) {
-      distributed.push(fullHourTimes[i * step]);
+    for (let i = 0; i < slotsPerDay && i * step < times.length; i++) {
+      distributed.push(times[i * step]);
     }
     return { ...day, times: distributed, timesFormatted: distributed.join(', ') };
-  }).filter(Boolean); // Remove null days (days with no full-hour slots)
+  });
 }
 
 async function executeToolCall(toolName, args) {
@@ -470,15 +435,6 @@ async function executeToolCall(toolName, args) {
 
       if (!center || !treatment || !date || !time || !full_name || !email || !phone) {
         return { success: false, error: 'missing_fields', message: 'Faltan datos para la reserva.' };
-      }
-
-      // Block recaida bookings - must be managed by staff
-      if (treatment.toLowerCase() === 'recaida') {
-        return {
-          success: false,
-          error: 'recaida_not_allowed',
-          message: 'Las sesiones de recaída las gestiona el equipo directamente. Por favor, contacta por WhatsApp: +34 689 560 130'
-        };
       }
 
       if (!email.includes('@')) {
@@ -766,7 +722,7 @@ exports.handler = async (event) => {
         model: 'gpt-4o-mini',
         messages,
         max_tokens: 300,
-        temperature: 0.2,  // Low temperature for reliable tool calling
+        temperature: 0.7,
         tools: CHATBOT_TOOLS,
         tool_choice: toolChoice
       })
@@ -837,7 +793,7 @@ exports.handler = async (event) => {
           model: 'gpt-4o-mini',
           messages: finalMessages,
           max_tokens: 300,
-          temperature: 0.2  // Low temperature for consistent responses
+          temperature: 0.7
         })
       });
 
