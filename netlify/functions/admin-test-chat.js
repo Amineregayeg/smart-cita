@@ -457,6 +457,8 @@ async function executeToolCall(toolName, args) {
           treatment: TREATMENTS[treatment]?.name || treatment,
           price: TREATMENTS[treatment]?.price || 0,
           slots: filteredSlots,
+          slotsBeforeFilter: slots.length,  // DEBUG: How many days before filtering
+          rawSlotCount: slots.reduce((sum, d) => sum + (d.times?.length || 0), 0),  // DEBUG: Total raw slots
           message: filteredSlots.length === 0 ? `No hay disponibilidad en ${center.name} actualmente. Te recomendamos consultar otro centro o contactar por WhatsApp: +34 689 560 130` : null
         };
       } catch (error) {
@@ -824,6 +826,8 @@ exports.handler = async (event) => {
             center: result.center,
             treatment: result.treatment,
             slotsFound: result.slots?.length || 0,
+            slotsBeforeFilter: result.slotsBeforeFilter || 0,
+            rawSlotCount: result.rawSlotCount || 0,
             firstSlot: result.slots?.[0] ? `${result.slots[0].date} ${result.slots[0].times?.[0]}` : null
           };
           console.log(`[ADMIN-TEST-CHAT] Availability debug: ${JSON.stringify(availabilityDebug)}`);
