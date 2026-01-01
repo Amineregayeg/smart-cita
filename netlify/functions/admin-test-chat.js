@@ -158,6 +158,26 @@ Cuando el usuario diga "sí", "ok", "confirmo", "adelante" después de ver el re
 - Si create_booking devuelve success: true, ENTONCES puedes decir que está confirmado
 - Si no llamaste a create_booking, NO está confirmado aunque el usuario haya dicho "sí"
 
+## PAGO ONLINE - DESPUÉS DE CONFIRMAR RESERVA
+
+Cuando create_booking devuelve success: true con paymentLinks, DEBES incluir las opciones de pago:
+
+Formato de confirmación con pago:
+"Tu reserva ha sido confirmada. Número de reserva: [appointmentId]
+
+Centro: [center]
+Tratamiento: [treatment]
+Fecha: [displayDate]
+Hora: [time]
+
+💳 Opciones de pago online:
+Pago único ([precio onetime]€): [url onetime]
+Pago en 3 cuotas (3x[precio monthly]€): [url monthly]
+
+También puedes pagar en el centro el día de tu cita. ¡Te esperamos!"
+
+IMPORTANTE: Usa los enlaces EXACTOS de paymentLinks. NO inventes enlaces de pago.
+
 ## FORMATO DE RESPUESTAS - MUY IMPORTANTE
 - NUNCA uses formato markdown (**, *, #, -, etc.)
 - Escribe en texto plano sin símbolos de formato
@@ -279,8 +299,125 @@ const CENTER_DETAILS = {
   'majadahonda': { name: 'LaserOstop Majadahonda', address: 'Calle del Dr Calero, 19, Centro comercial Tutti, 28220 Majadahonda', phone: '+34 919 305 313', hours: 'Martes a Sábado: 11:00 - 20:00' }
 };
 
+// Stripe Payment Links by Company
+// Company 1: Chamartín (48), Torrejón (49), Majadahonda (51)
+// Company 2: Barcelona (43), Sevilla (44), Atocha (50)
+const STRIPE_PAYMENT_LINKS = {
+  company1: {
+    centers: ['48', '49', '51'],
+    treatments: {
+      tabaco: {
+        onetime: { url: 'https://buy.stripe.com/5kQdR85fNfQG9PvbCJawo0b', price: 149 },
+        monthly: { url: 'https://buy.stripe.com/dRm6oGbEb1ZQ8LreOVawo0f', price: 60, installments: 3 }
+      },
+      duo: {
+        onetime: { url: 'https://buy.stripe.com/28E9AS0ZxfQGd1H4ahawo01', price: 320 },
+        monthly: { url: 'https://buy.stripe.com/9B64gyeQn7kabXD9uBawo07', price: 105, installments: 3 }
+      },
+      cannabis: {
+        onetime: { url: 'https://buy.stripe.com/9B6bJ09w3bAq9Pv36dawo0d', price: 189 },
+        monthly: { url: 'https://buy.stripe.com/fZu00i0Zx47Ye5L9uBawo0e', price: 70, installments: 3 }
+      },
+      azucar: {
+        onetime: { url: 'https://buy.stripe.com/4gM5kCaA7dIyaTz9uBawo09', price: 180 },
+        monthly: { url: 'https://buy.stripe.com/8x214maA7fQG7Hn36dawo0a', price: 60, installments: 3 }
+      }
+    }
+  },
+  company2: {
+    centers: ['43', '44', '50'],
+    treatments: {
+      tabaco: {
+        onetime: { url: 'https://buy.stripe.com/4gM8wPbgpcsdfoL5sAdby0j', price: 190 },
+        monthly: { url: 'https://buy.stripe.com/dRm9ATckt4ZLdgDf3adby0n', price: 60, installments: 3 }
+      },
+      duo: {
+        onetime: { url: 'https://buy.stripe.com/8x2fZh3NX4ZL2BZ6wEdby09', price: 320 },
+        monthly: { url: 'https://buy.stripe.com/7sYcN5dox3VH1xV08gdby0f', price: 105, installments: 3 }
+      },
+      cannabis: {
+        onetime: { url: 'https://buy.stripe.com/28E28rcktfEpb8vf3adby0l', price: 189 },
+        monthly: { url: 'https://buy.stripe.com/bJe4gz98h2RD0tR3ksdby0m', price: 70, installments: 3 }
+      },
+      azucar: {
+        onetime: { url: 'https://buy.stripe.com/5kQ14n7090Jv3G39IQdby0h', price: 180 },
+        monthly: { url: 'https://buy.stripe.com/9B6bJ198h3VH0tR8EMdby0i', price: 60, installments: 3 }
+      }
+    }
+  }
+};
+
+/**
+ * Get Stripe payment links for a center and treatment
+ * @param {string} agendaId - The agenda ID of the center
+ * @param {string} treatment - The treatment type (tabaco, duo, cannabis, azucar)
+ * @returns {object|null} - Payment links object or null if not found
+ */
+function getPaymentLinks(agendaId, treatment) {
+  const company = STRIPE_PAYMENT_LINKS.company1.centers.includes(agendaId)
+    ? STRIPE_PAYMENT_LINKS.company1
+    : STRIPE_PAYMENT_LINKS.company2;
+
+  const treatmentLinks = company.treatments[treatment.toLowerCase()];
+  if (!treatmentLinks) return null;
+
+  return {
+    onetime: treatmentLinks.onetime,
+    monthly: treatmentLinks.monthly
+  };
+}
+
 // Token cache for Smart Agenda
 let tokenCache = { token: null, expiry: null };
+
+/**
+ * Harbyx AASP Integration - AI Action Security Protocol
+ * Logs chatbot actions for monitoring and security auditing
+ * Free tier: 1,000 actions/month
+ */
+const HARBYX_CONFIG = {
+  enabled: !!process.env.HARBYX_API_KEY,
+  apiKey: process.env.HARBYX_API_KEY,
+  agentId: process.env.HARBYX_AGENT_ID || 'laserostop-chatbot',
+  endpoint: 'https://api.harbyx.com/v1/actions'
+};
+
+/**
+ * Log an action to Harbyx AASP (non-blocking)
+ */
+function logToHarbyx(actionType, params, result, metadata = {}) {
+  if (!HARBYX_CONFIG.enabled) return;
+
+  const payload = {
+    agent_id: HARBYX_CONFIG.agentId,
+    action_type: actionType,
+    timestamp: new Date().toISOString(),
+    parameters: params,
+    result: {
+      success: result?.success ?? true,
+      data: result?.success ? {
+        appointmentId: result.appointmentId,
+        center: result.center,
+        slotsFound: result.slots?.length
+      } : { error: result?.error, message: result?.message }
+    },
+    metadata: { environment: process.env.NODE_ENV || 'production', ...metadata }
+  };
+
+  // Fire and forget - don't block responses
+  fetch(HARBYX_CONFIG.endpoint, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${HARBYX_CONFIG.apiKey}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  }).then(() => {
+    console.log(`[HARBYX] Logged: ${actionType}`);
+  }).catch(err => {
+    console.error('[HARBYX] Failed:', err.message);
+  });
+}
 
 async function getSmartAgendaToken() {
   if (tokenCache.token && tokenCache.expiry && Date.now() < tokenCache.expiry - 300000) {
@@ -670,6 +807,9 @@ async function executeToolCall(toolName, args) {
           console.error('[ADMIN-TEST-CHAT] Failed to log booking stats:', e.message);
         }
 
+        // Get payment links for this booking
+        const paymentLinks = getPaymentLinks(centerInfo.agendaId, treatment.toLowerCase());
+
         return {
           success: true,
           appointmentId: appointment.id,
@@ -680,6 +820,7 @@ async function executeToolCall(toolName, args) {
           time,
           displayDate: formatSpanishDate(date),
           customerName: full_name,
+          paymentLinks: paymentLinks,
           message: `Reserva confirmada en ${centerInfo.name} para el ${formatSpanishDate(date)} a las ${time}.`
         };
 
@@ -859,7 +1000,14 @@ exports.handler = async (event) => {
           args = {};
         }
 
+        const toolStartTime = Date.now();
         const result = await executeToolCall(toolCall.function.name, args);
+
+        // Log to Harbyx AASP for monitoring
+        logToHarbyx(toolCall.function.name, args, result, {
+          executionTimeMs: Date.now() - toolStartTime,
+          conversationLength: conversationHistory.length
+        });
 
         // Track create_booking results
         if (toolCall.function.name === 'create_booking') {
