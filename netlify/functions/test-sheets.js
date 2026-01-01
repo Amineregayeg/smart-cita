@@ -19,6 +19,9 @@ async function getGoogleAccessToken() {
     throw new Error('Google Sheets credentials not configured - missing private_key or client_email');
   }
 
+  // Fix escaped newlines in private key
+  credentials.private_key = credentials.private_key.replace(/\\n/g, '\n');
+
   const now = Math.floor(Date.now() / 1000);
   const header = { alg: 'RS256', typ: 'JWT' };
   const payload = {
