@@ -7,7 +7,7 @@
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
-  external_node_modules = ["google-auth-library"]
+  external_node_modules = ["jose"]
 
 # Chatbot webhook redirects - MUST COME FIRST (order matters!)
 [[redirects]]

@@ -3,7 +3,7 @@
  * GET /api/test-sheets
  */
 
-const { GoogleAuth } = require('google-auth-library');
+const { SignJWT, importPKCS8 } = require('jose');
 
 const GOOGLE_SHEETS_ID = process.env.GOOGLE_SHEETS_ID || '1YDSzRMcY6bJPe2hbIdZ5xvQpIJDxEla0tYBM2KQYZ3Q';
 
@@ -15,18 +15,41 @@ async function getGoogleAccessToken() {
   }
 
   // Fix escaped newlines in private key
-  credentials.private_key = credentials.private_key.split('\\n').join('\n');
+  const privateKey = credentials.private_key.split('\\n').join('\n');
 
-  const auth = new GoogleAuth({
-    credentials: credentials,
-    scopes: ['https://www.googleapis.com/auth/spreadsheets']
+  // Import the private key using jose
+  const key = await importPKCS8(privateKey, 'RS256');
+
+  const now = Math.floor(Date.now() / 1000);
+
+  // Create and sign JWT using jose
+  const jwt = await new SignJWT({
+    scope: 'https://www.googleapis.com/auth/spreadsheets'
+  })
+    .setProtectedHeader({ alg: 'RS256', typ: 'JWT' })
+    .setIssuer(credentials.client_email)
+    .setAudience('https://oauth2.googleapis.com/token')
+    .setIssuedAt(now)
+    .setExpirationTime(now + 3600)
+    .sign(key);
+
+  console.log('[TEST-SHEETS] JWT created with jose, exchanging for token...');
+
+  // Exchange JWT for access token
+  const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: `grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=${jwt}`
   });
 
-  const client = await auth.getClient();
-  const tokenResponse = await client.getAccessToken();
+  if (!tokenResponse.ok) {
+    const error = await tokenResponse.text();
+    throw new Error(`Failed to get Google access token: ${error}`);
+  }
 
-  console.log('[TEST-SHEETS] Got access token via google-auth-library');
-  return tokenResponse.token;
+  const tokenData = await tokenResponse.json();
+  console.log('[TEST-SHEETS] Got access token');
+  return tokenData.access_token;
 }
 
 async function appendToGoogleSheet(tabName, rowData) {
