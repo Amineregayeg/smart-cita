@@ -107,11 +107,28 @@ exports.handler = async (event) => {
 
   // Debug: show what's in the env var
   const rawCreds = process.env.GOOGLE_SHEETS_CREDENTIALS || '';
+
+  let parsedCreds;
+  let keyDebug = {};
+  try {
+    parsedCreds = JSON.parse(rawCreds);
+    const pk = parsedCreds.private_key || '';
+    keyDebug = {
+      keyLength: pk.length,
+      keyStart: pk.substring(0, 40),
+      hasLiteralBackslashN: pk.includes('\\n'),
+      hasRealNewline: pk.includes('\n'),
+      charCodes30to35: pk.substring(27, 32).split('').map(c => c.charCodeAt(0))
+    };
+  } catch (e) {
+    keyDebug = { parseError: e.message };
+  }
+
   const debugInfo = {
     envVarLength: rawCreds.length,
-    envVarFirst100: rawCreds.substring(0, 100),
     hasBackslashN: rawCreds.includes('\\n'),
-    sheetId: process.env.GOOGLE_SHEETS_ID
+    sheetId: process.env.GOOGLE_SHEETS_ID,
+    keyDebug
   };
 
   try {
