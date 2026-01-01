@@ -25,7 +25,8 @@ async function getAdminToken() {
     return sessionCache.token;
   }
 
-  const response = await fetch(`${ADMIN_API_URL}/api/admin-auth`, {
+  // Use direct Netlify function URL to bypass redirect issues
+  const response = await fetch(`${ADMIN_API_URL}/.netlify/functions/admin-auth`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -54,7 +55,8 @@ async function getAdminToken() {
 async function sendMessage(message, conversationHistory = []) {
   const token = await getAdminToken();
 
-  const response = await fetch(`${ADMIN_API_URL}/api/admin-test-chat`, {
+  // Use direct Netlify function URL to bypass redirect issues
+  const response = await fetch(`${ADMIN_API_URL}/.netlify/functions/admin-test-chat`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`,
