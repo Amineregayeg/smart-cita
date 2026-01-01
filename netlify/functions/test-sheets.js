@@ -19,8 +19,17 @@ async function getGoogleAccessToken() {
     throw new Error('Google Sheets credentials not configured - missing private_key or client_email');
   }
 
-  // Fix escaped newlines in private key
-  credentials.private_key = credentials.private_key.replace(/\\n/g, '\n');
+  // Debug private key format
+  console.log('[TEST-SHEETS] Private key length:', credentials.private_key.length);
+  console.log('[TEST-SHEETS] Key starts with:', credentials.private_key.substring(0, 50));
+  console.log('[TEST-SHEETS] Has literal \\n:', credentials.private_key.includes('\\n'));
+  console.log('[TEST-SHEETS] Has real newlines:', credentials.private_key.includes('\n'));
+
+  // Fix escaped newlines in private key (try both patterns)
+  if (credentials.private_key.includes('\\n')) {
+    credentials.private_key = credentials.private_key.replace(/\\n/g, '\n');
+    console.log('[TEST-SHEETS] Fixed \\n escapes');
+  }
 
   const now = Math.floor(Date.now() / 1000);
   const header = { alg: 'RS256', typ: 'JWT' };
@@ -99,6 +108,15 @@ async function appendToGoogleSheet(tabName, rowData) {
 exports.handler = async (event) => {
   console.log('[TEST-SHEETS] Starting test...');
 
+  // Debug: show what's in the env var
+  const rawCreds = process.env.GOOGLE_SHEETS_CREDENTIALS || '';
+  const debugInfo = {
+    envVarLength: rawCreds.length,
+    envVarFirst100: rawCreds.substring(0, 100),
+    hasBackslashN: rawCreds.includes('\\n'),
+    sheetId: process.env.GOOGLE_SHEETS_ID
+  };
+
   try {
     const timestamp = new Date().toLocaleString('es-ES', {
       timeZone: 'Europe/Madrid',
@@ -127,7 +145,8 @@ exports.handler = async (event) => {
       body: JSON.stringify({
         success: result.success,
         message: result.success ? 'Test row added to Google Sheet!' : 'Failed to add row',
-        details: result
+        details: result,
+        debug: debugInfo
       })
     };
   } catch (error) {
@@ -137,7 +156,8 @@ exports.handler = async (event) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         success: false,
-        error: error.message
+        error: error.message,
+        debug: debugInfo
       })
     };
   }
