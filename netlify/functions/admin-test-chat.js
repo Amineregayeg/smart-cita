@@ -299,7 +299,7 @@ const CENTER_DETAILS = {
   'majadahonda': { name: 'LaserOstop Majadahonda', address: 'Calle del Dr Calero, 19, Centro comercial Tutti, 28220 Majadahonda', phone: '+34 919 305 313', hours: 'Martes a Sábado: 11:00 - 20:00' }
 };
 
-// Stripe Payment Links by Company
+// Stripe Payment Links by Company (BF Links - Current Active)
 // Company 1: Chamartín (48), Torrejón (49), Majadahonda (51)
 // Company 2: Barcelona (43), Sevilla (44), Atocha (50)
 const STRIPE_PAYMENT_LINKS = {
@@ -307,20 +307,20 @@ const STRIPE_PAYMENT_LINKS = {
     centers: ['48', '49', '51'],
     treatments: {
       tabaco: {
-        onetime: { url: 'https://buy.stripe.com/5kQdR85fNfQG9PvbCJawo0b', price: 149 },
+        onetime: { url: 'https://buy.stripe.com/14A3cueQn8oee5L36dawo0q', price: 170 },
         monthly: { url: 'https://buy.stripe.com/dRm6oGbEb1ZQ8LreOVawo0f', price: 60, installments: 3 }
       },
       duo: {
-        onetime: { url: 'https://buy.stripe.com/28E9AS0ZxfQGd1H4ahawo01', price: 320 },
-        monthly: { url: 'https://buy.stripe.com/9B64gyeQn7kabXD9uBawo07', price: 105, installments: 3 }
+        onetime: { url: 'https://buy.stripe.com/bJeaEW0ZxbAqd1H229awo0r', price: 340 },
+        monthly: { url: 'https://buy.stripe.com/9B64gyeQn7kabXD9uBawo07', price: 120, installments: 3 }
       },
       cannabis: {
-        onetime: { url: 'https://buy.stripe.com/9B6bJ09w3bAq9Pv36dawo0d', price: 189 },
-        monthly: { url: 'https://buy.stripe.com/fZu00i0Zx47Ye5L9uBawo0e', price: 70, installments: 3 }
+        onetime: { url: 'https://buy.stripe.com/7sY14m8rZ47Y7Hn5elawo0s', price: 230 },
+        monthly: { url: 'https://buy.stripe.com/14A28q4bJ47Y7HneOVawo0t', price: 85, installments: 3 }
       },
       azucar: {
         onetime: { url: 'https://buy.stripe.com/4gM5kCaA7dIyaTz9uBawo09', price: 180 },
-        monthly: { url: 'https://buy.stripe.com/8x214maA7fQG7Hn36dawo0a', price: 60, installments: 3 }
+        monthly: { url: 'https://buy.stripe.com/eVq6oGeQncEu6Dj9uBawo0u', price: 67, installments: 3 }
       }
     }
   },
@@ -328,20 +328,20 @@ const STRIPE_PAYMENT_LINKS = {
     centers: ['43', '44', '50'],
     treatments: {
       tabaco: {
-        onetime: { url: 'https://buy.stripe.com/4gM8wPbgpcsdfoL5sAdby0j', price: 190 },
+        onetime: { url: 'https://buy.stripe.com/9B65kD709csd2BZcV2dby0y', price: 170 },
         monthly: { url: 'https://buy.stripe.com/dRm9ATckt4ZLdgDf3adby0n', price: 60, installments: 3 }
       },
       duo: {
-        onetime: { url: 'https://buy.stripe.com/8x2fZh3NX4ZL2BZ6wEdby09', price: 320 },
-        monthly: { url: 'https://buy.stripe.com/7sYcN5dox3VH1xV08gdby0f', price: 105, installments: 3 }
+        onetime: { url: 'https://buy.stripe.com/8x26oH7093VHa4r9IQdby0z', price: 340 },
+        monthly: { url: 'https://buy.stripe.com/7sYcN5dox3VH1xV08gdby0f', price: 120, installments: 3 }
       },
       cannabis: {
-        onetime: { url: 'https://buy.stripe.com/28E28rcktfEpb8vf3adby0l', price: 189 },
-        monthly: { url: 'https://buy.stripe.com/bJe4gz98h2RD0tR3ksdby0m', price: 70, installments: 3 }
+        onetime: { url: 'https://buy.stripe.com/9B67sL2JT3VHa4raMUdby0A', price: 230 },
+        monthly: { url: 'https://buy.stripe.com/7sY5kDgAJak52BZ6wEdby0B', price: 85, installments: 3 }
       },
       azucar: {
         onetime: { url: 'https://buy.stripe.com/5kQ14n7090Jv3G39IQdby0h', price: 180 },
-        monthly: { url: 'https://buy.stripe.com/9B6bJ198h3VH0tR8EMdby0i', price: 60, installments: 3 }
+        monthly: { url: 'https://buy.stripe.com/8x24gzacldwhdgD2godby0C', price: 67, installments: 3 }
       }
     }
   }
