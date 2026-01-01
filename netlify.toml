@@ -1,12 +1,13 @@
 [build]
   publish = "."
-  command = "echo 'Deploying Smart Cita with Functions'"
+  command = "cd netlify/functions && npm install && cd ../.."
   functions = "netlify/functions"
 
 # Netlify Functions configuration
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
+  external_node_modules = ["google-auth-library"]
 
 # Chatbot webhook redirects - MUST COME FIRST (order matters!)
 [[redirects]]
