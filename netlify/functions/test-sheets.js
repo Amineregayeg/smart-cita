@@ -3,18 +3,9 @@
  * GET /api/test-sheets
  */
 
-const crypto = require('crypto');
+const { GoogleAuth } = require('google-auth-library');
 
 const GOOGLE_SHEETS_ID = process.env.GOOGLE_SHEETS_ID || '1YDSzRMcY6bJPe2hbIdZ5xvQpIJDxEla0tYBM2KQYZ3Q';
-
-// Convert PEM to binary DER format
-function pemToDer(pem) {
-  const base64 = pem
-    .replace(/-----BEGIN PRIVATE KEY-----/, '')
-    .replace(/-----END PRIVATE KEY-----/, '')
-    .replace(/\s/g, '');
-  return Buffer.from(base64, 'base64');
-}
 
 async function getGoogleAccessToken() {
   const credentials = JSON.parse(process.env.GOOGLE_SHEETS_CREDENTIALS || '{}');
@@ -26,58 +17,16 @@ async function getGoogleAccessToken() {
   // Fix escaped newlines in private key
   credentials.private_key = credentials.private_key.split('\\n').join('\n');
 
-  const now = Math.floor(Date.now() / 1000);
-  const header = { alg: 'RS256', typ: 'JWT' };
-  const payload = {
-    iss: credentials.client_email,
-    scope: 'https://www.googleapis.com/auth/spreadsheets',
-    aud: 'https://oauth2.googleapis.com/token',
-    iat: now,
-    exp: now + 3600
-  };
-
-  const base64Header = Buffer.from(JSON.stringify(header)).toString('base64url');
-  const base64Payload = Buffer.from(JSON.stringify(payload)).toString('base64url');
-  const signatureInput = `${base64Header}.${base64Payload}`;
-
-  // Use SubtleCrypto API (WebCrypto)
-  const keyDer = pemToDer(credentials.private_key);
-  const cryptoKey = await crypto.webcrypto.subtle.importKey(
-    'pkcs8',
-    keyDer,
-    { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' },
-    false,
-    ['sign']
-  );
-
-  const signatureBuffer = await crypto.webcrypto.subtle.sign(
-    'RSASSA-PKCS1-v1_5',
-    cryptoKey,
-    Buffer.from(signatureInput)
-  );
-
-  const signature = Buffer.from(signatureBuffer).toString('base64url');
-  const jwt = `${signatureInput}.${signature}`;
-
-  console.log('[TEST-SHEETS] JWT created, exchanging for token...');
-
-  const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: `grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=${jwt}`
+  const auth = new GoogleAuth({
+    credentials: credentials,
+    scopes: ['https://www.googleapis.com/auth/spreadsheets']
   });
 
-  const tokenText = await tokenResponse.text();
-  console.log('[TEST-SHEETS] Token response status:', tokenResponse.status);
+  const client = await auth.getClient();
+  const tokenResponse = await client.getAccessToken();
 
-  if (!tokenResponse.ok) {
-    console.log('[TEST-SHEETS] Token error:', tokenText);
-    throw new Error(`Failed to get Google access token: ${tokenText}`);
-  }
-
-  const tokenData = JSON.parse(tokenText);
-  console.log('[TEST-SHEETS] Got access token');
-  return tokenData.access_token;
+  console.log('[TEST-SHEETS] Got access token via google-auth-library');
+  return tokenResponse.token;
 }
 
 async function appendToGoogleSheet(tabName, rowData) {

@@ -6,7 +6,7 @@
  */
 
 const { validateAdminSession } = require('./shared/redis-client');
-const crypto = require('crypto');
+const { GoogleAuth } = require('google-auth-library');
 
 // Google Sheets Configuration
 const GOOGLE_SHEETS_ID = process.env.GOOGLE_SHEETS_ID || '1YDSzRMcY6bJPe2hbIdZ5xvQpIJDxEla0tYBM2KQYZ3Q';
@@ -21,7 +21,7 @@ const SHEET_TABS = {
 };
 
 /**
- * Generate JWT for Google API authentication
+ * Get Google access token using google-auth-library
  */
 async function getGoogleAccessToken() {
   const credentials = JSON.parse(process.env.GOOGLE_SHEETS_CREDENTIALS || '{}');
@@ -29,47 +29,18 @@ async function getGoogleAccessToken() {
     throw new Error('Google Sheets credentials not configured');
   }
 
-  // Fix escaped newlines in private key - use split/join for reliability
+  // Fix escaped newlines in private key
   credentials.private_key = credentials.private_key.split('\\n').join('\n');
 
-  const now = Math.floor(Date.now() / 1000);
-  const header = { alg: 'RS256', typ: 'JWT' };
-  const payload = {
-    iss: credentials.client_email,
-    scope: 'https://www.googleapis.com/auth/spreadsheets',
-    aud: 'https://oauth2.googleapis.com/token',
-    iat: now,
-    exp: now + 3600
-  };
-
-  const base64Header = Buffer.from(JSON.stringify(header)).toString('base64url');
-  const base64Payload = Buffer.from(JSON.stringify(payload)).toString('base64url');
-  const signatureInput = `${base64Header}.${base64Payload}`;
-
-  // Use createPrivateKey for OpenSSL 3.0 compatibility
-  const privateKey = crypto.createPrivateKey({
-    key: credentials.private_key,
-    format: 'pem'
+  const auth = new GoogleAuth({
+    credentials: credentials,
+    scopes: ['https://www.googleapis.com/auth/spreadsheets']
   });
 
-  const signature = crypto.sign('RSA-SHA256', Buffer.from(signatureInput), privateKey).toString('base64url');
+  const client = await auth.getClient();
+  const tokenResponse = await client.getAccessToken();
 
-  const jwt = `${signatureInput}.${signature}`;
-
-  // Exchange JWT for access token
-  const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: `grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=${jwt}`
-  });
-
-  if (!tokenResponse.ok) {
-    const error = await tokenResponse.text();
-    throw new Error(`Failed to get Google access token: ${error}`);
-  }
-
-  const tokenData = await tokenResponse.json();
-  return tokenData.access_token;
+  return tokenResponse.token;
 }
 
 /**
