@@ -1,0 +1,26 @@
+{
+  "name": "chatbot-test-runner",
+  "version": "1.0.0",
+  "description": "Automated test suite for LaserOstop chatbot with dashboard",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test tests/**/*.spec.js",
+    "test:layer-a": "node --test tests/layer-a/*.spec.js",
+    "test:layer-b": "node --test tests/layer-b/*.spec.js",
+    "test:layer-c": "node --test tests/layer-c/*.spec.js",
+    "test:quick": "node scripts/run-quick-tests.js",
+    "test:full": "node scripts/run-full-tests.js",
+    "cleanup": "node scripts/cleanup-test-data.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "node-cron": "^3.0.3",
+    "ioredis": "^5.3.2",
+    "dotenv": "^16.3.1",
+    "crypto": "^1.0.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

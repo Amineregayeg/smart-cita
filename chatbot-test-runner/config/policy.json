@@ -1,0 +1,191 @@
+{
+  "version": "1.0",
+  "lastUpdated": "2026-01-01",
+
+  "noWeb": true,
+  "centralPhone": "+34 689 560 130",
+
+  "callbackFlow": {
+    "mustAskUserPhone": true,
+    "mustSayAgentWillCall": true,
+    "requiredPhrases": [
+      "te llamará",
+      "te contactará",
+      "número de teléfono",
+      "tu teléfono"
+    ]
+  },
+
+  "recaida": {
+    "allowedServices": ["tabaco", "cannabis"],
+    "forbiddenServices": ["azucar", "duo"],
+    "maxPerDayPerCenter": 2,
+    "allowedWeekdays": ["mon", "tue", "wed", "thu", "fri"],
+    "forbiddenWeekdays": ["sat", "sun"],
+    "managedByStaffOnly": true,
+    "redirectToWhatsApp": true,
+    "redirectPhrases": [
+      "WhatsApp",
+      "contacta",
+      "equipo",
+      "689 560 130"
+    ]
+  },
+
+  "slotRules": {
+    "defaultStepMinutes": 60,
+    "allowedFullHourOnly": true,
+    "allowThirtyMinuteOnlyFor": ["recaida"],
+    "appointmentDurations": {
+      "tabaco": 60,
+      "duo": 90,
+      "cannabis": 60,
+      "azucar": 60,
+      "recaida": 30
+    }
+  },
+
+  "workingHours": {
+    "barcelona": {
+      "days": ["tue", "wed", "thu", "fri", "sat"],
+      "hours": "11:00-20:00",
+      "displayText": "Martes a Sábado: 11:00 - 20:00"
+    },
+    "sevilla": {
+      "days": ["mon", "tue", "wed", "thu", "fri", "sat"],
+      "weekdayHours": "09:00-13:00, 14:00-18:00",
+      "saturdayHours": "10:00-14:00",
+      "displayText": "Lunes a Viernes: 9:00-13:00 y 14:00-18:00, Sábado: 10:00-14:00"
+    },
+    "chamartin": {
+      "days": ["tue", "wed", "thu", "fri", "sat"],
+      "hours": "11:00-20:00",
+      "displayText": "Martes a Sábado: 11:00 - 20:00"
+    },
+    "atocha": {
+      "days": ["tue", "wed", "thu", "fri", "sat"],
+      "hours": "11:00-20:00",
+      "displayText": "Martes a Sábado: 11:00 - 20:00"
+    },
+    "torrejon": {
+      "days": ["tue", "wed", "thu", "fri", "sat"],
+      "hours": "11:00-20:00",
+      "displayText": "Martes a Sábado: 11:00 - 20:00"
+    },
+    "majadahonda": {
+      "days": ["tue", "wed", "thu", "fri", "sat"],
+      "hours": "11:00-20:00",
+      "displayText": "Martes a Sábado: 11:00 - 20:00"
+    }
+  },
+
+  "sideEffects": {
+    "policy": "no_side_effects",
+    "allowedResponses": [
+      "no tiene efectos secundarios",
+      "sin efectos secundarios",
+      "tratamiento seguro",
+      "no hay efectos secundarios"
+    ],
+    "forbiddenContent": [
+      "náuseas",
+      "mareos",
+      "irritabilidad",
+      "efectos secundarios incluyen",
+      "puede causar",
+      "síntomas",
+      "malestar"
+    ]
+  },
+
+  "cancerPolicy": {
+    "canHelp": true,
+    "mustNotSay": [
+      "consulta con tu médico",
+      "habla con tu oncólogo",
+      "pregunta a tu doctor",
+      "consultar con el médico",
+      "hablar con tu médico"
+    ],
+    "allowedPhrases": [
+      "podemos ayudar",
+      "sí, podemos",
+      "por supuesto"
+    ]
+  },
+
+  "hallucination": {
+    "requireStaffAllowlist": true,
+    "staffAllowlist": [],
+    "forbiddenPatterns": [
+      "es uno de los terapeutas",
+      "trabaja en LaserOstop",
+      "es el director",
+      "es la directora",
+      "nuestro terapeuta"
+    ],
+    "unknownPersonResponse": "no tengo esa información"
+  },
+
+  "centers": {
+    "barcelona": {
+      "agendaId": "43",
+      "name": "Barcelona Sants",
+      "groupId": "4",
+      "address": "Carrer de Galileu, 65, Sants-Montjuïc, 08028 Barcelona",
+      "phone": "+34 689 560 130"
+    },
+    "sevilla": {
+      "agendaId": "44",
+      "name": "Sevilla",
+      "groupId": "5",
+      "address": "Avenida Eduardo Dato 85, 41005 Sevilla",
+      "phone": "+34 689 560 130"
+    },
+    "chamartin": {
+      "agendaId": "48",
+      "name": "Madrid Chamartín",
+      "groupId": "7",
+      "address": "Calle de Oruro, 9, Chamartín, 28016 Madrid",
+      "phone": "+34 919 305 313"
+    },
+    "torrejon": {
+      "agendaId": "49",
+      "name": "Torrejón de Ardoz",
+      "groupId": "6",
+      "address": "Calle Pesquera, 10, 28850 Torrejón de Ardoz",
+      "phone": "+34 919 305 313"
+    },
+    "atocha": {
+      "agendaId": "50",
+      "name": "Madrid Atocha",
+      "groupId": "8",
+      "address": "Calle Canarias 26, Atocha, 28045 Madrid",
+      "phone": "+34 613 255 948"
+    },
+    "majadahonda": {
+      "agendaId": "51",
+      "name": "Majadahonda",
+      "groupId": "10",
+      "address": "Calle del Dr Calero, 19, Centro comercial Tutti, 28220 Majadahonda",
+      "phone": "+34 919 305 313"
+    }
+  },
+
+  "appointmentTypes": {
+    "43": { "tabaco": "20", "duo": "21", "cannabis": "23", "recaida": "22", "azucar": "91" },
+    "44": { "tabaco": "32", "duo": "34", "cannabis": "37", "recaida": "35", "azucar": "96" },
+    "48": { "tabaco": "44", "duo": "46", "cannabis": "49", "recaida": "47", "azucar": "93" },
+    "49": { "tabaco": "53", "duo": "56", "cannabis": "59", "recaida": "57", "azucar": "97" },
+    "50": { "tabaco": "63", "duo": "65", "cannabis": "68", "recaida": "66", "azucar": "92" },
+    "51": { "tabaco": "72", "duo": "74", "cannabis": "77", "recaida": "75", "azucar": "94" }
+  },
+
+  "treatments": {
+    "tabaco": { "name": "Dejar de fumar (individual)", "duration": 60, "price": 190, "sessions": 1 },
+    "duo": { "name": "Dejar de fumar (dúo)", "duration": 90, "price": 360, "sessions": 1 },
+    "cannabis": { "name": "Adicción al cannabis", "duration": 60, "price": 250, "sessions": 2 },
+    "azucar": { "name": "Adicción al azúcar", "duration": 60, "price": 200, "sessions": 4 },
+    "recaida": { "name": "Sesión de recaída", "duration": 30, "price": 0, "sessions": 1 }
+  }
+}

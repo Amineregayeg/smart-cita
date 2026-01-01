@@ -1,0 +1,34 @@
+# Render Blueprint for Chatbot Test Runner
+# See https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: chatbot-test-runner
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node server.js
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: SMART_AGENDA_BASE_URL
+        sync: false
+      - key: SMART_AGENDA_LOGIN
+        sync: false
+      - key: SMART_AGENDA_PWD
+        sync: false
+      - key: SMART_AGENDA_API_ID
+        sync: false
+      - key: SMART_AGENDA_API_KEY
+        sync: false
+      - key: ADMIN_API_URL
+        sync: false
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD_HASH
+        sync: false
+      - key: UPSTASH_REDIS_URL
+        sync: false
