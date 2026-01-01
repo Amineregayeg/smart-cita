@@ -37,7 +37,7 @@ const testNoWebBookingConfirmation = defineTest(
   'no-web',
   async ({ policy }) => {
     const result = await chatbot.completeBookingFlow({
-      center: 'madrid',
+      center: 'chamartin',
       treatment: 'tabaco',
       testData: true
     });

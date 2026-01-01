@@ -53,7 +53,7 @@ const testRecaidaMaxPerDay = defineTest(
   'Maximum 2 recaidas per day per center enforced',
   'recaida',
   async ({ policy }) => {
-    const center = 'madrid';
+    const center = 'chamartin';
     const centerConfig = policy.centers[center];
     const recaidaTypeId = policy.appointmentTypes[centerConfig.agendaId]?.recaida;
     const maxPerDay = policy.recaida.maxPerDayPerCenter;
@@ -105,7 +105,7 @@ const testNoWeekendRecaidas = defineTest(
   'Recaidas not available on weekends',
   'recaida',
   async ({ policy }) => {
-    const center = 'madrid';
+    const center = 'chamartin';
     const centerConfig = policy.centers[center];
     const recaidaTypeId = policy.appointmentTypes[centerConfig.agendaId]?.recaida;
     const forbiddenDays = policy.recaida.forbiddenWeekdays || ['sat', 'sun'];
@@ -209,7 +209,7 @@ const testRecaidaCountAccurate = defineTest(
   'Recaida count per day is accurate',
   'recaida',
   async ({ policy }) => {
-    const center = 'madrid';
+    const center = 'chamartin';
     const centerConfig = policy.centers[center];
     const recaidaTypeId = policy.appointmentTypes[centerConfig.agendaId]?.recaida;
 

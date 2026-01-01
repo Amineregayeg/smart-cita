@@ -16,7 +16,7 @@ const testNoDoubleBooking = defineTest(
   'Cannot book same time slot twice',
   'overlaps',
   async ({ policy }) => {
-    const center = 'madrid';
+    const center = 'chamartin';
     const centerConfig = policy.centers[center];
 
     // Create first test booking
@@ -96,7 +96,7 @@ const testNoPartialOverlap = defineTest(
   'Cannot book overlapping time ranges',
   'overlaps',
   async ({ policy }) => {
-    const center = 'madrid';
+    const center = 'chamartin';
     const centerConfig = policy.centers[center];
 
     // Create test booking at 10:00-11:00
@@ -159,7 +159,7 @@ const testDuoBlocksTwoSlots = defineTest(
   'DUO booking blocks sufficient time',
   'overlaps',
   async ({ policy }) => {
-    const center = 'madrid';
+    const center = 'chamartin';
     const centerConfig = policy.centers[center];
     const duoTypeId = policy.appointmentTypes[centerConfig.agendaId]?.duo;
     const duoDuration = policy.treatments.duo?.duration || 120;
@@ -243,7 +243,7 @@ const testSequentialAllowed = defineTest(
   'Back-to-back bookings are allowed',
   'overlaps',
   async ({ policy }) => {
-    const center = 'madrid';
+    const center = 'chamartin';
     const centerConfig = policy.centers[center];
     const tabacoTypeId = policy.appointmentTypes[centerConfig.agendaId]?.tabaco;
     const tabacoDuration = policy.treatments.tabaco?.duration || 60;

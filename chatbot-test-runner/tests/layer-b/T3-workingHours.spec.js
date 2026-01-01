@@ -33,8 +33,8 @@ const testMadridWorkingHours = defineTest(
   'Madrid: All slots within working hours',
   'working-hours',
   async ({ policy }) => {
-    const center = policy.centers['madrid'];
-    const hours = policy.workingHours['madrid'];
+    const center = policy.centers['chamartin'];
+    const hours = policy.workingHours['chamartin'];
     const treatmentType = policy.appointmentTypes[center.agendaId]?.tabaco;
 
     const today = new Date();
@@ -143,7 +143,7 @@ const testNoSundayBookings = defineTest(
   'No appointments available on Sundays',
   'working-hours',
   async ({ policy }) => {
-    const centers = ['madrid', 'barcelona', 'sevilla', 'valencia', 'bilbao'];
+    const centers = ['chamartin', 'barcelona', 'sevilla', 'atocha', 'majadahonda'];
 
     for (const centerName of centers) {
       const center = policy.centers[centerName];
@@ -252,7 +252,7 @@ const testEndOfDayBuffer = defineTest(
   'Appointments end before closing time',
   'working-hours',
   async ({ policy }) => {
-    const centerName = 'madrid';
+    const centerName = 'chamartin';
     const center = policy.centers[centerName];
     const hours = policy.workingHours[centerName];
     const treatmentType = policy.appointmentTypes[center.agendaId]?.tabaco;

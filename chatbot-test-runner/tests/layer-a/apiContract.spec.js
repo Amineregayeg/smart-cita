@@ -96,7 +96,7 @@ const testAvailabilityMadrid = defineTest(
   'Availability endpoint returns data for Madrid',
   'api-contract',
   async ({ policy }) => {
-    const center = policy.centers['madrid'];
+    const center = policy.centers['chamartin'];
     const treatmentType = policy.appointmentTypes[center.agendaId]?.tabaco;
 
     if (!treatmentType) {
@@ -197,7 +197,7 @@ const testApiResponseTime = defineTest(
   'API responds within acceptable time',
   'api-contract',
   async ({ policy }) => {
-    const center = policy.centers['madrid'];
+    const center = policy.centers['chamartin'];
     const treatmentType = policy.appointmentTypes[center.agendaId]?.tabaco;
 
     const startTime = Date.now();

@@ -15,7 +15,7 @@ const testMadridAvailability = defineTest(
   'Madrid: Chatbot slots match Smart Agenda API',
   'availability',
   async ({ policy }) => {
-    const center = policy.centers['madrid'];
+    const center = policy.centers['chamartin'];
     const treatmentType = policy.appointmentTypes[center.agendaId]?.tabaco;
 
     // Get availability from API
@@ -180,7 +180,7 @@ const testCannabisAvailability = defineTest(
   'Cannabis treatment: Chatbot slots match API',
   'availability',
   async ({ policy }) => {
-    const center = policy.centers['madrid'];
+    const center = policy.centers['chamartin'];
     const treatmentType = policy.appointmentTypes[center.agendaId]?.cannabis;
 
     const today = new Date();
@@ -220,7 +220,7 @@ const testAzucarAvailability = defineTest(
   'Azucar treatment: Chatbot slots match API',
   'availability',
   async ({ policy }) => {
-    const center = policy.centers['madrid'];
+    const center = policy.centers['chamartin'];
     const treatmentType = policy.appointmentTypes[center.agendaId]?.azucar;
 
     const today = new Date();

@@ -2,7 +2,20 @@
   "version": "1.0",
   "lastUpdated": "2026-01-01",
 
-  "noWeb": true,
+  "noWeb": {
+    "enabled": true,
+    "forbiddenPatterns": [
+      "visita nuestra web",
+      "en nuestra página",
+      "www.",
+      ".com",
+      ".es",
+      "https://",
+      "http://",
+      "nuestra web",
+      "la página web"
+    ]
+  },
   "centralPhone": "+34 689 560 130",
 
   "callbackFlow": {
@@ -47,35 +60,58 @@
 
   "workingHours": {
     "barcelona": {
-      "days": ["tue", "wed", "thu", "fri", "sat"],
-      "hours": "11:00-20:00",
-      "displayText": "Martes a Sábado: 11:00 - 20:00"
+      "mon": { "closed": true },
+      "tue": { "open": "11:00", "close": "20:00" },
+      "wed": { "open": "11:00", "close": "20:00" },
+      "thu": { "open": "11:00", "close": "20:00" },
+      "fri": { "open": "11:00", "close": "20:00" },
+      "sat": { "open": "11:00", "close": "20:00" },
+      "sun": { "closed": true }
     },
     "sevilla": {
-      "days": ["mon", "tue", "wed", "thu", "fri", "sat"],
-      "weekdayHours": "09:00-13:00, 14:00-18:00",
-      "saturdayHours": "10:00-14:00",
-      "displayText": "Lunes a Viernes: 9:00-13:00 y 14:00-18:00, Sábado: 10:00-14:00"
+      "mon": { "open": "09:00", "close": "18:00", "lunchStart": "13:00", "lunchEnd": "14:00" },
+      "tue": { "open": "09:00", "close": "18:00", "lunchStart": "13:00", "lunchEnd": "14:00" },
+      "wed": { "open": "09:00", "close": "18:00", "lunchStart": "13:00", "lunchEnd": "14:00" },
+      "thu": { "open": "09:00", "close": "18:00", "lunchStart": "13:00", "lunchEnd": "14:00" },
+      "fri": { "open": "09:00", "close": "18:00", "lunchStart": "13:00", "lunchEnd": "14:00" },
+      "sat": { "open": "10:00", "close": "14:00" },
+      "sun": { "closed": true }
     },
     "chamartin": {
-      "days": ["tue", "wed", "thu", "fri", "sat"],
-      "hours": "11:00-20:00",
-      "displayText": "Martes a Sábado: 11:00 - 20:00"
+      "mon": { "closed": true },
+      "tue": { "open": "11:00", "close": "20:00" },
+      "wed": { "open": "11:00", "close": "20:00" },
+      "thu": { "open": "11:00", "close": "20:00" },
+      "fri": { "open": "11:00", "close": "20:00" },
+      "sat": { "open": "11:00", "close": "20:00" },
+      "sun": { "closed": true }
     },
     "atocha": {
-      "days": ["tue", "wed", "thu", "fri", "sat"],
-      "hours": "11:00-20:00",
-      "displayText": "Martes a Sábado: 11:00 - 20:00"
+      "mon": { "closed": true },
+      "tue": { "open": "11:00", "close": "20:00" },
+      "wed": { "open": "11:00", "close": "20:00" },
+      "thu": { "open": "11:00", "close": "20:00" },
+      "fri": { "open": "11:00", "close": "20:00" },
+      "sat": { "open": "11:00", "close": "20:00" },
+      "sun": { "closed": true }
     },
     "torrejon": {
-      "days": ["tue", "wed", "thu", "fri", "sat"],
-      "hours": "11:00-20:00",
-      "displayText": "Martes a Sábado: 11:00 - 20:00"
+      "mon": { "closed": true },
+      "tue": { "open": "11:00", "close": "20:00" },
+      "wed": { "open": "11:00", "close": "20:00" },
+      "thu": { "open": "11:00", "close": "20:00" },
+      "fri": { "open": "11:00", "close": "20:00" },
+      "sat": { "open": "11:00", "close": "20:00" },
+      "sun": { "closed": true }
     },
     "majadahonda": {
-      "days": ["tue", "wed", "thu", "fri", "sat"],
-      "hours": "11:00-20:00",
-      "displayText": "Martes a Sábado: 11:00 - 20:00"
+      "mon": { "closed": true },
+      "tue": { "open": "11:00", "close": "20:00" },
+      "wed": { "open": "11:00", "close": "20:00" },
+      "thu": { "open": "11:00", "close": "20:00" },
+      "fri": { "open": "11:00", "close": "20:00" },
+      "sat": { "open": "11:00", "close": "20:00" },
+      "sun": { "closed": true }
     }
   },
 

@@ -17,7 +17,7 @@ const testBookingPersists = defineTest(
   async ({ policy }) => {
     // Create a test booking
     const booking = await testDataManager.createTestBooking({
-      center: 'madrid',
+      center: 'chamartin',
       treatment: 'tabaco'
     });
 
@@ -62,7 +62,7 @@ const testBookingDeletion = defineTest(
   async ({ policy }) => {
     // Create a test booking
     const booking = await testDataManager.createTestBooking({
-      center: 'madrid',
+      center: 'chamartin',
       treatment: 'tabaco'
     });
 
@@ -131,7 +131,7 @@ const testBookingDateTime = defineTest(
   'Booking date and time stored correctly',
   'db-verification',
   async ({ policy }) => {
-    const center = 'madrid';
+    const center = 'chamartin';
     const centerConfig = policy.centers[center];
     const treatmentType = policy.appointmentTypes[centerConfig.agendaId]?.tabaco;
 
@@ -202,7 +202,7 @@ const testAgendaAssociation = defineTest(
   'Booking associated with correct agenda',
   'db-verification',
   async ({ policy }) => {
-    const centers = ['madrid', 'barcelona', 'sevilla'];
+    const centers = ['chamartin', 'barcelona', 'sevilla'];
 
     for (const center of centers) {
       const centerConfig = policy.centers[center];
@@ -244,7 +244,7 @@ const testTreatmentTypeStored = defineTest(
   'Treatment type stored correctly',
   'db-verification',
   async ({ policy }) => {
-    const center = 'madrid';
+    const center = 'chamartin';
     const centerConfig = policy.centers[center];
     const treatments = ['tabaco', 'cannabis', 'azucar'];
 
@@ -293,7 +293,7 @@ const testCleanupWorks = defineTest(
 
     for (let i = 0; i < 3; i++) {
       const booking = await testDataManager.createTestBooking({
-        center: 'madrid',
+        center: 'chamartin',
         treatment: 'tabaco'
       });
       bookings.push(booking.appointmentId);
@@ -337,7 +337,7 @@ const testBookingStatus = defineTest(
   'db-verification',
   async ({ policy }) => {
     const booking = await testDataManager.createTestBooking({
-      center: 'madrid',
+      center: 'chamartin',
       treatment: 'tabaco'
     });
 

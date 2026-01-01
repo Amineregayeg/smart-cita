@@ -16,7 +16,7 @@ const testBookingCreatesEntry = defineTest(
   'Completed booking creates database entry',
   'booking-confirmation',
   async ({ policy }) => {
-    const center = 'madrid';
+    const center = 'chamartin';
     const centerConfig = policy.centers[center];
 
     // Complete a full booking flow
@@ -125,7 +125,7 @@ const testBookingCorrectTreatment = defineTest(
   'Booking has correct treatment type',
   'booking-confirmation',
   async ({ policy }) => {
-    const center = 'madrid';
+    const center = 'chamartin';
     const treatment = 'cannabis';
     const centerConfig = policy.centers[center];
     const expectedTypeId = policy.appointmentTypes[centerConfig.agendaId]?.[treatment];
@@ -171,7 +171,7 @@ const testBookingCorrectDateTime = defineTest(
   'Booking has correct date and time',
   'booking-confirmation',
   async ({ policy }) => {
-    const center = 'madrid';
+    const center = 'chamartin';
     const centerConfig = policy.centers[center];
     const treatmentType = policy.appointmentTypes[centerConfig.agendaId]?.tabaco;
 
@@ -253,7 +253,7 @@ const testBookingStatusConfirmed = defineTest(
   'Booking has confirmed status',
   'booking-confirmation',
   async ({ policy }) => {
-    const center = 'madrid';
+    const center = 'chamartin';
 
     const result = await chatbot.completeBookingFlow({
       center: center,
@@ -297,7 +297,7 @@ const testConfirmationMessage = defineTest(
   'Confirmation message includes booking details',
   'booking-confirmation',
   async ({ policy }) => {
-    const center = 'madrid';
+    const center = 'chamartin';
 
     const result = await chatbot.completeBookingFlow({
       center: center,
