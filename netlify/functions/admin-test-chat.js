@@ -11,12 +11,12 @@ const { SignJWT, importPKCS8 } = require('jose');
 // Google Sheets Configuration
 const GOOGLE_SHEETS_ID = process.env.GOOGLE_SHEETS_ID || '1YDSzRMcY6bJPe2hbIdZ5xvQpIJDxEla0tYBM2KQYZ3Q';
 const SHEET_TABS = {
-  general: 'General',
+  general: 'LS-Espagna',
   barcelona: 'Barcelona',
   sevilla: 'Sevilla',
-  chamartin: 'Chamartin',
+  chamartin: 'Chamartín',
   atocha: 'Atocha',
-  torrejon: 'Torrejon',
+  torrejon: 'Torrejón',
   majadahonda: 'Majadahonda'
 };
 

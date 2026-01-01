@@ -138,8 +138,8 @@ exports.handler = async (event) => {
     const sheetNames = await getSheetInfo();
     console.log('[TEST-SHEETS] Available sheets:', sheetNames);
 
-    // Use first available sheet for testing
-    const targetSheet = sheetNames[0];
+    // Use LS-Espagna (general) sheet for testing
+    const targetSheet = 'LS-Espagna';
 
     const timestamp = new Date().toLocaleString('es-ES', {
       timeZone: 'Europe/Madrid',
