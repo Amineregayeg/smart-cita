@@ -7,19 +7,23 @@ const crypto = require('crypto');
 
 const GOOGLE_SHEETS_ID = process.env.GOOGLE_SHEETS_ID || '1YDSzRMcY6bJPe2hbIdZ5xvQpIJDxEla0tYBM2KQYZ3Q';
 
+// Convert PEM to binary DER format
+function pemToDer(pem) {
+  const base64 = pem
+    .replace(/-----BEGIN PRIVATE KEY-----/, '')
+    .replace(/-----END PRIVATE KEY-----/, '')
+    .replace(/\s/g, '');
+  return Buffer.from(base64, 'base64');
+}
+
 async function getGoogleAccessToken() {
   const credentials = JSON.parse(process.env.GOOGLE_SHEETS_CREDENTIALS || '{}');
-
-  console.log('[TEST-SHEETS] Credentials check:');
-  console.log('[TEST-SHEETS] - Has private_key:', !!credentials.private_key);
-  console.log('[TEST-SHEETS] - Has client_email:', !!credentials.client_email);
-  console.log('[TEST-SHEETS] - client_email:', credentials.client_email);
 
   if (!credentials.private_key || !credentials.client_email) {
     throw new Error('Google Sheets credentials not configured - missing private_key or client_email');
   }
 
-  // Fix escaped newlines in private key - use split/join for reliability
+  // Fix escaped newlines in private key
   credentials.private_key = credentials.private_key.split('\\n').join('\n');
 
   const now = Math.floor(Date.now() / 1000);
@@ -36,14 +40,23 @@ async function getGoogleAccessToken() {
   const base64Payload = Buffer.from(JSON.stringify(payload)).toString('base64url');
   const signatureInput = `${base64Header}.${base64Payload}`;
 
-  // Use createPrivateKey for OpenSSL 3.0 compatibility
-  const privateKey = crypto.createPrivateKey(credentials.private_key);
+  // Use SubtleCrypto API (WebCrypto)
+  const keyDer = pemToDer(credentials.private_key);
+  const cryptoKey = await crypto.webcrypto.subtle.importKey(
+    'pkcs8',
+    keyDer,
+    { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
 
-  const signature = crypto.sign('sha256', Buffer.from(signatureInput), {
-    key: privateKey,
-    padding: crypto.constants.RSA_PKCS1_PADDING
-  }).toString('base64url');
+  const signatureBuffer = await crypto.webcrypto.subtle.sign(
+    'RSASSA-PKCS1-v1_5',
+    cryptoKey,
+    Buffer.from(signatureInput)
+  );
 
+  const signature = Buffer.from(signatureBuffer).toString('base64url');
   const jwt = `${signatureInput}.${signature}`;
 
   console.log('[TEST-SHEETS] JWT created, exchanging for token...');
