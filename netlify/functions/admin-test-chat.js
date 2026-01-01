@@ -6,6 +6,101 @@
  */
 
 const { validateAdminSession } = require('./shared/redis-client');
+const crypto = require('crypto');
+
+// Google Sheets Configuration
+const GOOGLE_SHEETS_ID = process.env.GOOGLE_SHEETS_ID || '1YDSzRMcY6bJPe2hbIdZ5xvQpIJDxEla0tYBM2KQYZ3Q';
+const SHEET_TABS = {
+  general: 'General',
+  barcelona: 'Barcelona',
+  sevilla: 'Sevilla',
+  chamartin: 'Chamartin',
+  atocha: 'Atocha',
+  torrejon: 'Torrejon',
+  majadahonda: 'Majadahonda'
+};
+
+/**
+ * Generate JWT for Google API authentication
+ */
+async function getGoogleAccessToken() {
+  const credentials = JSON.parse(process.env.GOOGLE_SHEETS_CREDENTIALS || '{}');
+  if (!credentials.private_key || !credentials.client_email) {
+    throw new Error('Google Sheets credentials not configured');
+  }
+
+  const now = Math.floor(Date.now() / 1000);
+  const header = { alg: 'RS256', typ: 'JWT' };
+  const payload = {
+    iss: credentials.client_email,
+    scope: 'https://www.googleapis.com/auth/spreadsheets',
+    aud: 'https://oauth2.googleapis.com/token',
+    iat: now,
+    exp: now + 3600
+  };
+
+  const base64Header = Buffer.from(JSON.stringify(header)).toString('base64url');
+  const base64Payload = Buffer.from(JSON.stringify(payload)).toString('base64url');
+  const signatureInput = `${base64Header}.${base64Payload}`;
+
+  const sign = crypto.createSign('RSA-SHA256');
+  sign.update(signatureInput);
+  const signature = sign.sign(credentials.private_key, 'base64url');
+
+  const jwt = `${signatureInput}.${signature}`;
+
+  // Exchange JWT for access token
+  const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: `grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=${jwt}`
+  });
+
+  if (!tokenResponse.ok) {
+    const error = await tokenResponse.text();
+    throw new Error(`Failed to get Google access token: ${error}`);
+  }
+
+  const tokenData = await tokenResponse.json();
+  return tokenData.access_token;
+}
+
+/**
+ * Append a row to a Google Sheet tab
+ */
+async function appendToGoogleSheet(tabName, rowData) {
+  try {
+    const accessToken = await getGoogleAccessToken();
+    const range = `${tabName}!A:G`;
+
+    const response = await fetch(
+      `https://sheets.googleapis.com/v4/spreadsheets/${GOOGLE_SHEETS_ID}/values/${encodeURIComponent(range)}:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`,
+      {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          values: [rowData]
+        })
+      }
+    );
+
+    if (!response.ok) {
+      const error = await response.text();
+      console.error('[GOOGLE SHEETS] Append failed:', error);
+      return { success: false, error };
+    }
+
+    const result = await response.json();
+    console.log('[GOOGLE SHEETS] Row appended to', tabName);
+    return { success: true, updates: result.updates };
+  } catch (error) {
+    console.error('[GOOGLE SHEETS] Error:', error.message);
+    return { success: false, error: error.message };
+  }
+}
 
 /**
  * Strip markdown formatting from text for plain display
@@ -68,6 +163,7 @@ Tienes acceso a estas herramientas que DEBES usar:
 1. check_availability - Para consultar horarios disponibles
 2. create_booking - Para crear reservas (OBLIGATORIO para confirmar citas)
 3. get_center_info - Para información de centros
+4. log_callback - Para registrar solicitudes de llamada cuando no puedes responder algo
 
 ## REGLA CRÍTICA - DISPONIBILIDAD
 
@@ -125,10 +221,31 @@ Parámetros OBLIGATORIOS para create_booking:
 - Si el cliente pregunta por recaída, indicar: "Para sesiones de refuerzo, contacta por WhatsApp: +34 689 560 130"
 - NO ofrezcas reservar recaídas por este chat
 
+## PREGUNTAS QUE NO PUEDES RESPONDER - MUY IMPORTANTE
+
+Cuando el usuario haga preguntas que NO puedes responder (preguntas médicas específicas, detalles técnicos del tratamiento, casos especiales, etc.):
+
+1. NO digas "No lo sé" ni inventes información
+2. En su lugar, di: "Esta consulta requiere hablar con nuestro equipo. ¿Me dejas tu número de teléfono para que te llamen?"
+3. Cuando el usuario proporcione su teléfono, DEBES usar la herramienta log_callback con:
+   - phone: el número que dio
+   - question: la pregunta específica que no pudiste responder
+   - name, email: si los proporcionó
+   - center: si mencionó un centro específico
+   - treatment: si mencionó un tratamiento específico
+4. Después de log_callback, confirma: "Perfecto, un agente de LaserOstop te llamará lo antes posible al [número]"
+
+Ejemplos de preguntas que requieren callback:
+- "¿Qué pasa si tomo medicación X?"
+- "¿Funciona si tengo X enfermedad?"
+- "¿Cuántas sesiones necesitaré exactamente?"
+- "¿Puedo combinar con otro tratamiento?"
+- Cualquier pregunta médica específica que no esté en tus datos
+
 ## CALLBACK - CUANDO DEJAN SU NÚMERO
 Si el cliente proporciona su teléfono sin completar una reserva:
-- Confirma que un agente le llamará
-- Di: "Perfecto, un agente de LaserOstop te llamará lo antes posible al [número que dio]"
+- USA log_callback para registrar la solicitud
+- Confirma: "Perfecto, un agente de LaserOstop te llamará lo antes posible al [número]"
 
 ## SITIO WEB
 - NO redirijas a ningún sitio web
@@ -259,6 +376,45 @@ const CHATBOT_TOOLS = [
           }
         },
         required: ["center"]
+      }
+    }
+  },
+  {
+    type: "function",
+    function: {
+      name: "log_callback",
+      description: "Registrar solicitud de callback cuando el usuario proporciona su teléfono para que le llamen. Usar cuando: 1) El usuario hace preguntas que no puedes responder y acepta dejar su teléfono, 2) El usuario pide que le llamen, 3) El usuario prefiere hablar con una persona.",
+      parameters: {
+        type: "object",
+        properties: {
+          phone: {
+            type: "string",
+            description: "Número de teléfono del usuario"
+          },
+          name: {
+            type: "string",
+            description: "Nombre del usuario (si lo proporcionó)"
+          },
+          email: {
+            type: "string",
+            description: "Email del usuario (si lo proporcionó)"
+          },
+          question: {
+            type: "string",
+            description: "La pregunta o consulta específica del usuario que no pudiste responder"
+          },
+          center: {
+            type: "string",
+            enum: ["barcelona", "sevilla", "chamartin", "atocha", "torrejon", "majadahonda", ""],
+            description: "Centro específico si el usuario mencionó alguno, vacío si no"
+          },
+          treatment: {
+            type: "string",
+            enum: ["tabaco", "duo", "cannabis", "azucar", ""],
+            description: "Tratamiento mencionado si aplica, vacío si no"
+          }
+        },
+        required: ["phone", "question"]
       }
     }
   }
@@ -848,6 +1004,71 @@ async function executeToolCall(toolName, args) {
       }
 
       return { success: true, ...details };
+    }
+
+    case 'log_callback': {
+      const { phone, name, email, question, center, treatment } = args;
+
+      if (!phone) {
+        return { success: false, error: 'missing_phone', message: 'Se requiere el número de teléfono.' };
+      }
+
+      try {
+        // Determine which tab to write to
+        const tabName = center && SHEET_TABS[center.toLowerCase()]
+          ? SHEET_TABS[center.toLowerCase()]
+          : SHEET_TABS.general;
+
+        // Format timestamp
+        const timestamp = new Date().toLocaleString('es-ES', {
+          timeZone: 'Europe/Madrid',
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+
+        // Prepare row data: [Timestamp, Phone, Name, Email, Question, Center, Treatment]
+        const rowData = [
+          timestamp,
+          phone,
+          name || '',
+          email || '',
+          question || '',
+          center ? (CENTER_DETAILS[center.toLowerCase()]?.name || center) : '',
+          treatment ? (TREATMENTS[treatment.toLowerCase()]?.name || treatment) : ''
+        ];
+
+        console.log(`[ADMIN-TEST-CHAT] Logging callback to ${tabName}:`, rowData);
+
+        const result = await appendToGoogleSheet(tabName, rowData);
+
+        if (result.success) {
+          console.log(`[ADMIN-TEST-CHAT] Callback logged successfully to ${tabName}`);
+          return {
+            success: true,
+            message: `Callback registrado. Un agente llamará al ${phone} lo antes posible.`,
+            tab: tabName
+          };
+        } else {
+          console.error(`[ADMIN-TEST-CHAT] Failed to log callback:`, result.error);
+          // Still return success to user, but log the error
+          return {
+            success: true,
+            message: `Solicitud de callback recibida. Un agente llamará al ${phone} lo antes posible.`,
+            warning: 'Log to sheet failed but callback noted'
+          };
+        }
+      } catch (error) {
+        console.error('[ADMIN-TEST-CHAT] Callback logging error:', error.message);
+        // Don't fail the user experience even if logging fails
+        return {
+          success: true,
+          message: `Solicitud de callback recibida. Un agente llamará al ${phone} lo antes posible.`,
+          error: error.message
+        };
+      }
     }
 
     default:
