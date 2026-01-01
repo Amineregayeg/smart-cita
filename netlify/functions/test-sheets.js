@@ -52,9 +52,28 @@ async function getGoogleAccessToken() {
   return tokenData.access_token;
 }
 
+async function getSheetInfo() {
+  const accessToken = await getGoogleAccessToken();
+
+  const response = await fetch(
+    `https://sheets.googleapis.com/v4/spreadsheets/${GOOGLE_SHEETS_ID}?fields=sheets.properties.title`,
+    {
+      headers: { 'Authorization': `Bearer ${accessToken}` }
+    }
+  );
+
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(`Failed to get sheet info: ${error}`);
+  }
+
+  const data = await response.json();
+  return data.sheets.map(s => s.properties.title);
+}
+
 async function appendToGoogleSheet(tabName, rowData) {
   const accessToken = await getGoogleAccessToken();
-  const range = `${tabName}!A:G`;
+  const range = `'${tabName}'!A:G`;
 
   console.log('[TEST-SHEETS] Appending to sheet:', GOOGLE_SHEETS_ID);
   console.log('[TEST-SHEETS] Tab:', tabName);
@@ -115,6 +134,13 @@ exports.handler = async (event) => {
   };
 
   try {
+    // First, get available sheet names
+    const sheetNames = await getSheetInfo();
+    console.log('[TEST-SHEETS] Available sheets:', sheetNames);
+
+    // Use first available sheet for testing
+    const targetSheet = sheetNames[0];
+
     const timestamp = new Date().toLocaleString('es-ES', {
       timeZone: 'Europe/Madrid',
       day: '2-digit',
@@ -134,16 +160,17 @@ exports.handler = async (event) => {
       ''
     ];
 
-    const result = await appendToGoogleSheet('General', testData);
+    const result = await appendToGoogleSheet(targetSheet, testData);
 
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         success: result.success,
-        message: result.success ? 'Test row added to Google Sheet!' : 'Failed to add row',
-        details: result,
-        debug: debugInfo
+        message: result.success ? `Test row added to sheet "${targetSheet}"!` : 'Failed to add row',
+        availableSheets: sheetNames,
+        usedSheet: targetSheet,
+        details: result
       })
     };
   } catch (error) {
