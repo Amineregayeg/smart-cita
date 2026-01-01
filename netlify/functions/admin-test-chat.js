@@ -241,11 +241,24 @@ Solo pide teléfono cuando el usuario pregunte sobre:
 
 NUNCA pidas teléfono para preguntas generales sobre el servicio, precios, centros o tratamientos.
 
-## CALLBACK - CÓMO REGISTRAR
-Cuando SÍ necesites pedir teléfono:
-1. Di: "Esta consulta requiere hablar con nuestro equipo. ¿Me dejas tu número para que te llamen?"
-2. Cuando den el teléfono, USA log_callback con: phone, question, name/email si los dio, center/treatment si aplica
-3. Confirma: "Perfecto, un agente de LaserOstop te llamará lo antes posible al [número]"
+## CALLBACK - FLUJO COMPLETO
+Cuando SÍ necesites pedir callback, sigue este flujo:
+
+1. Primero pregunta: "¿Te parece bien si te llamamos y te contamos cómo funciona? ¿Me dejas tu número?"
+2. Cuando den el teléfono, pregunta: "¿Cómo te llamas?"
+3. Después pregunta: "¿A qué hora te viene bien que te llamemos?"
+4. Cuando tengas teléfono, nombre y hora preferida, USA log_callback con todos los datos
+5. Confirma de forma cálida: "Perfecto [nombre], te llamaremos al [número] sobre las [hora]. ¡Te esperamos para una vida más sana!"
+
+Ejemplo de conversación:
+- Usuario: "¿Funciona si tomo medicación para ansiedad?"
+- Tú: "Entiendo tu consulta. ¿Te parece bien si te llamamos y te explicamos cómo funciona nuestro método? ¿Me dejas tu número?"
+- Usuario: "Sí, 612345678"
+- Tú: "Genial, ¿cómo te llamas?"
+- Usuario: "María"
+- Tú: "¿A qué hora te viene bien que te llamemos, María?"
+- Usuario: "Por la tarde, sobre las 18:00"
+- Tú: [USA log_callback] "Perfecto María, te llamaremos al 612345678 sobre las 18:00. ¡Te esperamos para una vida más sana!"
 
 ## SITIO WEB
 - NO redirijas a ningún sitio web
@@ -383,7 +396,7 @@ const CHATBOT_TOOLS = [
     type: "function",
     function: {
       name: "log_callback",
-      description: "Registrar solicitud de callback cuando el usuario proporciona su teléfono para que le llamen. Usar cuando: 1) El usuario hace preguntas que no puedes responder y acepta dejar su teléfono, 2) El usuario pide que le llamen, 3) El usuario prefiere hablar con una persona.",
+      description: "Registrar solicitud de callback cuando el usuario proporciona su teléfono, nombre y hora preferida para que le llamen. SOLO llamar cuando tengas al menos: teléfono, nombre y hora preferida.",
       parameters: {
         type: "object",
         properties: {
@@ -393,7 +406,11 @@ const CHATBOT_TOOLS = [
           },
           name: {
             type: "string",
-            description: "Nombre del usuario (si lo proporcionó)"
+            description: "Nombre del usuario"
+          },
+          preferred_time: {
+            type: "string",
+            description: "Hora o momento preferido para recibir la llamada (ej: 'por la tarde', '18:00', 'mañana por la mañana')"
           },
           email: {
             type: "string",
@@ -401,7 +418,7 @@ const CHATBOT_TOOLS = [
           },
           question: {
             type: "string",
-            description: "La pregunta o consulta específica del usuario que no pudiste responder"
+            description: "La pregunta o consulta específica del usuario"
           },
           center: {
             type: "string",
@@ -414,7 +431,7 @@ const CHATBOT_TOOLS = [
             description: "Tratamiento mencionado si aplica, vacío si no"
           }
         },
-        required: ["phone", "question"]
+        required: ["phone", "name", "preferred_time", "question"]
       }
     }
   }
@@ -1007,10 +1024,10 @@ async function executeToolCall(toolName, args) {
     }
 
     case 'log_callback': {
-      const { phone, name, email, question, center, treatment } = args;
+      const { phone, name, preferred_time, email, question, center, treatment } = args;
 
-      if (!phone) {
-        return { success: false, error: 'missing_phone', message: 'Se requiere el número de teléfono.' };
+      if (!phone || !name || !preferred_time) {
+        return { success: false, error: 'missing_data', message: 'Se requiere teléfono, nombre y hora preferida.' };
       }
 
       try {
@@ -1029,12 +1046,12 @@ async function executeToolCall(toolName, args) {
           minute: '2-digit'
         });
 
-        // Prepare row data: [Timestamp, Phone, Name, Email, Question, Center, Treatment]
+        // Prepare row data: [Timestamp, Phone, Name, Preferred Time, Question, Center, Treatment]
         const rowData = [
           timestamp,
           phone,
-          name || '',
-          email || '',
+          name,
+          preferred_time,
           question || '',
           center ? (CENTER_DETAILS[center.toLowerCase()]?.name || center) : '',
           treatment ? (TREATMENTS[treatment.toLowerCase()]?.name || treatment) : ''
