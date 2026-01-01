@@ -21,6 +21,19 @@
   status = 200
   force = true
 
+# Test Dashboard
+[[redirects]]
+  from = "/test-dashboard"
+  to = "/test-dashboard/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/test-dashboard/*"
+  to = "/test-dashboard/index.html"
+  status = 200
+  force = true
+
 # Admin dashboard redirects
 [[redirects]]
   from = "/admin"
