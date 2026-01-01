@@ -19,17 +19,14 @@ async function getGoogleAccessToken() {
     throw new Error('Google Sheets credentials not configured - missing private_key or client_email');
   }
 
-  // Debug private key format
-  console.log('[TEST-SHEETS] Private key length:', credentials.private_key.length);
-  console.log('[TEST-SHEETS] Key starts with:', credentials.private_key.substring(0, 50));
-  console.log('[TEST-SHEETS] Has literal \\n:', credentials.private_key.includes('\\n'));
-  console.log('[TEST-SHEETS] Has real newlines:', credentials.private_key.includes('\n'));
+  // Fix escaped newlines in private key - use split/join for reliability
+  const originalKey = credentials.private_key;
+  credentials.private_key = credentials.private_key.split('\\n').join('\n');
 
-  // Fix escaped newlines in private key (try both patterns)
-  if (credentials.private_key.includes('\\n')) {
-    credentials.private_key = credentials.private_key.replace(/\\n/g, '\n');
-    console.log('[TEST-SHEETS] Fixed \\n escapes');
-  }
+  console.log('[TEST-SHEETS] Key fix applied');
+  console.log('[TEST-SHEETS] Original had \\n:', originalKey.includes('\\n'));
+  console.log('[TEST-SHEETS] Fixed has newlines:', credentials.private_key.includes('\n'));
+  console.log('[TEST-SHEETS] Key starts with:', credentials.private_key.substring(0, 30));
 
   const now = Math.floor(Date.now() / 1000);
   const header = { alg: 'RS256', typ: 'JWT' };
