@@ -20,13 +20,7 @@ async function getGoogleAccessToken() {
   }
 
   // Fix escaped newlines in private key - use split/join for reliability
-  const originalKey = credentials.private_key;
   credentials.private_key = credentials.private_key.split('\\n').join('\n');
-
-  console.log('[TEST-SHEETS] Key fix applied');
-  console.log('[TEST-SHEETS] Original had \\n:', originalKey.includes('\\n'));
-  console.log('[TEST-SHEETS] Fixed has newlines:', credentials.private_key.includes('\n'));
-  console.log('[TEST-SHEETS] Key starts with:', credentials.private_key.substring(0, 30));
 
   const now = Math.floor(Date.now() / 1000);
   const header = { alg: 'RS256', typ: 'JWT' };
@@ -42,9 +36,13 @@ async function getGoogleAccessToken() {
   const base64Payload = Buffer.from(JSON.stringify(payload)).toString('base64url');
   const signatureInput = `${base64Header}.${base64Payload}`;
 
-  const sign = crypto.createSign('RSA-SHA256');
-  sign.update(signatureInput);
-  const signature = sign.sign(credentials.private_key, 'base64url');
+  // Use createPrivateKey for OpenSSL 3.0 compatibility
+  const privateKey = crypto.createPrivateKey({
+    key: credentials.private_key,
+    format: 'pem'
+  });
+
+  const signature = crypto.sign('RSA-SHA256', Buffer.from(signatureInput), privateKey).toString('base64url');
 
   const jwt = `${signatureInput}.${signature}`;
 
