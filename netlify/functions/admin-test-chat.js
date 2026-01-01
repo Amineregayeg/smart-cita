@@ -172,6 +172,8 @@ Tienes acceso a estas herramientas que DEBES usar:
 - NUNCA inventes horarios que no aparecen en la respuesta de la herramienta
 - Si no hay slots, recomienda otro centro o contactar por WhatsApp: +34 689 560 130
 - Los horarios mostrados DEBEN corresponder exactamente a los de la respuesta de check_availability
+- Por defecto, muestra solo 2 días con 3 horarios cada uno para no abrumar
+- Si el usuario pide "más fechas", "otras opciones", "más adelante" o similar, llama check_availability de nuevo y muestra más opciones de los resultados
 
 ## REGLA CRÍTICA - CREAR RESERVAS
 
@@ -642,10 +644,10 @@ function formatSpanishDate(dateStr) {
 }
 
 /**
- * Filter slots to show max 3 days with 3 spaced-out times per day
+ * Filter slots to show max 2 days with 3 spaced-out times per day
  * Selects morning (9-11), midday (12-14), afternoon (15-18) when possible
  */
-function filterOptimalSlots(slots, maxDays = 3, slotsPerDay = 3) {
+function filterOptimalSlots(slots, maxDays = 2, slotsPerDay = 3) {
   // Take first maxDays days that have availability
   const limitedDays = slots.slice(0, maxDays);
 
@@ -702,7 +704,7 @@ async function executeToolCall(toolName, args) {
 
       const startDate = new Date();
       const endDate = new Date();
-      endDate.setDate(endDate.getDate() + 14);  // Always check 14 days ahead
+      endDate.setDate(endDate.getDate() + 60);  // Check 60 days ahead
 
       try {
         const requestBody = {
