@@ -16,6 +16,32 @@ const testSuites = require('./tests');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// CORS Middleware - Allow dashboard access
+app.use((req, res, next) => {
+  const allowedOrigins = [
+    'https://smart-cita.com',
+    'https://www.smart-cita.com',
+    'https://smart-cita.netlify.app',
+    'https://laserostop-chamartin.netlify.app',
+    'https://laserostop-bf.netlify.app',
+    'http://localhost:3000'
+  ];
+
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+
+  next();
+});
+
 // Middleware
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
