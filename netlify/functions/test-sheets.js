@@ -37,12 +37,12 @@ async function getGoogleAccessToken() {
   const signatureInput = `${base64Header}.${base64Payload}`;
 
   // Use createPrivateKey for OpenSSL 3.0 compatibility
-  const privateKey = crypto.createPrivateKey({
-    key: credentials.private_key,
-    format: 'pem'
-  });
+  const privateKey = crypto.createPrivateKey(credentials.private_key);
 
-  const signature = crypto.sign('RSA-SHA256', Buffer.from(signatureInput), privateKey).toString('base64url');
+  const signature = crypto.sign('sha256', Buffer.from(signatureInput), {
+    key: privateKey,
+    padding: crypto.constants.RSA_PKCS1_PADDING
+  }).toString('base64url');
 
   const jwt = `${signatureInput}.${signature}`;
 
