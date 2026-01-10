@@ -5,8 +5,7 @@
  * Webhook URL: https://[your-netlify-site]/webhook/whatsapp
  */
 
-const { verifyWhatsAppSignature, isTimestampValid } = require('./shared/crypto-utils');
-const { pushToQueue, isMessageProcessed, checkRateLimit, isPlatformEnabled } = require('./shared/redis-client');
+const crypto = require('crypto');
 
 // CORS headers for responses
 const headers = {
@@ -17,9 +16,34 @@ const headers = {
 };
 
 /**
+ * Verify WhatsApp webhook signature (SHA256 HMAC)
+ */
+function verifySignature(payload, signature, secret) {
+  if (!signature || !secret) {
+    console.error('[WEBHOOK] Missing signature or secret');
+    return false;
+  }
+
+  try {
+    const expectedSignature = crypto
+      .createHmac('sha256', secret)
+      .update(payload)
+      .digest('hex');
+
+    const providedSignature = signature.replace('sha256=', '');
+
+    return crypto.timingSafeEqual(
+      Buffer.from(providedSignature, 'hex'),
+      Buffer.from(expectedSignature, 'hex')
+    );
+  } catch (error) {
+    console.error('[WEBHOOK] Signature verification error:', error.message);
+    return false;
+  }
+}
+
+/**
  * Extract message data from WhatsApp webhook payload
- * @param {object} body - Parsed webhook body
- * @returns {Array} - Array of message objects
  */
 function extractMessages(body) {
   const messages = [];
@@ -38,7 +62,6 @@ function extractMessages(body) {
         const contacts = value.contacts || [];
 
         for (const message of messageList) {
-          // Only process text messages for now
           if (message.type === 'text') {
             const contact = contacts.find(c => c.wa_id === message.from) || {};
 
@@ -55,10 +78,40 @@ function extractMessages(body) {
       }
     }
   } catch (error) {
-    console.error('[WEBHOOK-WHATSAPP] Error extracting messages:', error.message);
+    console.error('[WEBHOOK] Error extracting messages:', error.message);
   }
 
   return messages;
+}
+
+/**
+ * Lazy load Redis client only when needed
+ */
+let redisModule = null;
+async function getRedisClient() {
+  const redisUrl = process.env.UPSTASH_REDIS_URL;
+  if (!redisUrl) {
+    console.warn('[WEBHOOK] UPSTASH_REDIS_URL not configured');
+    return null;
+  }
+
+  try {
+    if (!redisModule) {
+      redisModule = require('ioredis');
+    }
+
+    const client = new redisModule(redisUrl, {
+      maxRetriesPerRequest: 3,
+      connectTimeout: 5000,
+      commandTimeout: 5000,
+      tls: { rejectUnauthorized: false }
+    });
+
+    return client;
+  } catch (error) {
+    console.error('[WEBHOOK] Redis connection error:', error.message);
+    return null;
+  }
 }
 
 /**
@@ -74,7 +127,7 @@ exports.handler = async (event, context) => {
 
   // ========== WEBHOOK VERIFICATION (GET) ==========
   if (event.httpMethod === 'GET') {
-    console.log('[WEBHOOK-WHATSAPP] Verification request received');
+    console.log('[WEBHOOK] Verification request received');
 
     const params = event.queryStringParameters || {};
     const mode = params['hub.mode'];
@@ -83,8 +136,10 @@ exports.handler = async (event, context) => {
 
     const verifyToken = process.env.WHATSAPP_VERIFY_TOKEN;
 
+    console.log('[WEBHOOK] Mode:', mode, 'Token match:', token === verifyToken);
+
     if (mode === 'subscribe' && token === verifyToken) {
-      console.log('[WEBHOOK-WHATSAPP] Verification successful');
+      console.log('[WEBHOOK] Verification successful');
       return {
         statusCode: 200,
         headers: { 'Content-Type': 'text/plain' },
@@ -92,7 +147,7 @@ exports.handler = async (event, context) => {
       };
     }
 
-    console.error('[WEBHOOK-WHATSAPP] Verification failed - token mismatch');
+    console.error('[WEBHOOK] Verification failed');
     return {
       statusCode: 403,
       headers,
@@ -102,15 +157,15 @@ exports.handler = async (event, context) => {
 
   // ========== MESSAGE HANDLING (POST) ==========
   if (event.httpMethod === 'POST') {
-    console.log('[WEBHOOK-WHATSAPP] Incoming webhook');
+    console.log('[WEBHOOK] Incoming message webhook');
 
     try {
       // Step 1: Verify signature
       const signature = event.headers['x-hub-signature-256'];
       const appSecret = process.env.WHATSAPP_APP_SECRET;
 
-      if (!verifyWhatsAppSignature(event.body, signature, appSecret)) {
-        console.error('[WEBHOOK-WHATSAPP] Invalid signature');
+      if (!verifySignature(event.body, signature, appSecret)) {
+        console.error('[WEBHOOK] Invalid signature');
         return {
           statusCode: 401,
           headers,
@@ -118,61 +173,66 @@ exports.handler = async (event, context) => {
         };
       }
 
-      console.log('[WEBHOOK-WHATSAPP] Signature verified');
+      console.log('[WEBHOOK] Signature verified');
 
-      // Step 2: Check if WhatsApp platform is enabled
-      const platformEnabled = await isPlatformEnabled('whatsapp');
-      if (!platformEnabled) {
-        console.log('[WEBHOOK-WHATSAPP] Platform disabled - ignoring messages');
-        return {
-          statusCode: 200,
-          headers,
-          body: JSON.stringify({ status: 'ok', message: 'Platform disabled' })
-        };
-      }
-
-      // Step 3: Parse body and extract messages
+      // Step 2: Parse body and extract messages
       const body = JSON.parse(event.body);
       const messages = extractMessages(body);
 
       if (messages.length === 0) {
-        // No messages to process (might be status update, etc.)
-        console.log('[WEBHOOK-WHATSAPP] No text messages in payload');
+        console.log('[WEBHOOK] No text messages in payload');
         return { statusCode: 200, headers, body: JSON.stringify({ status: 'ok', messages: 0 }) };
       }
 
-      console.log(`[WEBHOOK-WHATSAPP] Extracted ${messages.length} message(s)`);
+      console.log(`[WEBHOOK] Extracted ${messages.length} message(s)`);
 
-      // Step 4: Process each message
+      // Step 3: Queue messages for processing (if Redis available)
       let queuedCount = 0;
+      const client = await getRedisClient();
 
-      for (const message of messages) {
-        // Check timestamp validity (reject messages older than 5 minutes)
-        if (!isTimestampValid(message.timestamp)) {
-          console.log(`[WEBHOOK-WHATSAPP] Message ${message.id} too old - skipping`);
-          continue;
+      if (client) {
+        try {
+          for (const message of messages) {
+            // Skip old messages (older than 5 minutes)
+            const messageAge = Date.now() - (message.timestamp * 1000);
+            if (messageAge > 300000) {
+              console.log(`[WEBHOOK] Message ${message.id} too old - skipping`);
+              continue;
+            }
+
+            // Check if already processed
+            const processedKey = `chatbot:processed:${message.id}`;
+            const exists = await client.get(processedKey);
+            if (exists) {
+              console.log(`[WEBHOOK] Message ${message.id} already processed`);
+              continue;
+            }
+
+            // Mark as processed
+            await client.setex(processedKey, 86400, '1');
+
+            // Queue message
+            const queueItem = JSON.stringify({
+              platform: 'whatsapp',
+              message,
+              receivedAt: Date.now()
+            });
+            await client.lpush('chatbot:messages:queue', queueItem);
+            queuedCount++;
+          }
+
+          await client.quit();
+        } catch (redisError) {
+          console.error('[WEBHOOK] Redis error:', redisError.message);
+          try { await client.quit(); } catch (e) { /* ignore */ }
         }
-
-        // Check idempotency (skip if already processed)
-        if (await isMessageProcessed(message.id)) {
-          continue;
-        }
-
-        // Check rate limit
-        if (!(await checkRateLimit(message.from, 'whatsapp'))) {
-          console.log(`[WEBHOOK-WHATSAPP] Rate limit exceeded for ${message.from}`);
-          continue;
-        }
-
-        // Queue message for processing
-        const queued = await pushToQueue('whatsapp', message);
-        if (queued) queuedCount++;
+      } else {
+        console.warn('[WEBHOOK] No Redis - messages not queued');
       }
 
       const processingTime = Date.now() - startTime;
-      console.log(`[WEBHOOK-WHATSAPP] Queued ${queuedCount}/${messages.length} messages in ${processingTime}ms`);
+      console.log(`[WEBHOOK] Queued ${queuedCount}/${messages.length} messages in ${processingTime}ms`);
 
-      // Return 200 immediately (required by WhatsApp - must respond within 5 seconds)
       return {
         statusCode: 200,
         headers,
@@ -185,10 +245,7 @@ exports.handler = async (event, context) => {
       };
 
     } catch (error) {
-      console.error('[WEBHOOK-WHATSAPP] Error processing webhook:', error.message);
-
-      // Still return 200 to prevent WhatsApp from retrying
-      // Log error for debugging but don't expose details
+      console.error('[WEBHOOK] Error processing webhook:', error.message);
       return {
         statusCode: 200,
         headers,
@@ -197,7 +254,6 @@ exports.handler = async (event, context) => {
     }
   }
 
-  // Unsupported method
   return {
     statusCode: 405,
     headers,
