@@ -162,7 +162,7 @@ exports.handler = async (event, context) => {
     try {
       // Step 1: Verify signature
       const signature = event.headers['x-hub-signature-256'];
-      const appSecret = process.env.WHATSAPP_APP_SECRET;
+      const appSecret = process.env.META_APP_SECRET;
 
       if (!verifySignature(event.body, signature, appSecret)) {
         console.error('[WEBHOOK] Invalid signature');
