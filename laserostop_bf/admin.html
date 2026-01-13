@@ -432,6 +432,11 @@
             <span class="hidden sm:inline">Probar Chat</span>
             <span class="sm:hidden">Test</span>
           </button>
+          <button class="tab-btn" data-tab="approval" style="background: rgba(255,255,255,0.25); color: #fff;">
+            <span class="material-icons align-middle mr-1" style="font-size: 18px;">approval</span>
+            <span class="hidden sm:inline">Aprobacion</span>
+            <span class="sm:hidden">Aprob</span>
+          </button>
           <button class="tab-btn" data-tab="settings" style="background: rgba(255,255,255,0.25); color: #fff;">
             <span class="material-icons align-middle mr-1" style="font-size: 18px;">settings</span>
             <span class="hidden sm:inline">Configuracion</span>
@@ -679,6 +684,62 @@
                 <p class="text-gray-500">Tiempo</p>
                 <p class="font-semibold" id="stat-time">-</p>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Approval Tab -->
+      <div id="tab-approval" class="tab-content">
+        <div class="max-w-3xl mx-auto">
+          <!-- Manual Approval Toggle -->
+          <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
+                  <span class="material-icons text-yellow-600">approval</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-gray-800">Modo Aprobacion Manual</h3>
+                  <p id="manual-approval-status" class="platform-status disabled">Inactivo</p>
+                </div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="toggle-manual-approval" onchange="toggleManualApproval(this.checked)">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <p class="text-sm text-gray-500 mt-4">Cuando esta activo, todos los mensajes del chatbot requieren aprobacion manual antes de enviarse.</p>
+            <div id="approval-save-status" class="mt-2 text-sm text-green-600 hidden"><span class="material-icons text-sm align-middle">check_circle</span> Guardado</div>
+          </div>
+
+          <!-- Pending Count -->
+          <div class="bg-white rounded-xl shadow-sm p-4 mb-6 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <span class="material-icons text-orange-500">pending_actions</span>
+              <span class="font-medium">Mensajes Pendientes:</span>
+              <span id="pending-count" class="text-2xl font-bold text-orange-500">0</span>
+            </div>
+            <button onclick="loadPendingMessages()" class="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 flex items-center gap-2">
+              <span class="material-icons text-sm">refresh</span> Actualizar
+            </button>
+          </div>
+
+          <!-- Pending Messages Container -->
+          <div id="pending-messages-container" class="mb-6">
+            <div class="text-center py-12 text-gray-500">
+              <span class="material-icons text-6xl mb-4" style="opacity:0.3">inbox</span>
+              <h3 class="text-lg font-medium">No hay mensajes pendientes</h3>
+            </div>
+          </div>
+
+          <!-- History -->
+          <div class="bg-white rounded-xl shadow-sm p-6">
+            <h3 class="font-semibold text-gray-800 mb-4 flex items-center gap-2">
+              <span class="material-icons text-gray-400">history</span> Historial de Aprobaciones
+            </h3>
+            <div id="approval-history-container">
+              <div class="text-center py-8 text-gray-500">No hay historial</div>
             </div>
           </div>
         </div>

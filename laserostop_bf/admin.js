@@ -698,8 +698,11 @@ function switchTab(tabId) {
     loadConversations();
   } else if (tabId === 'settings') {
     loadSettings();
+  } else if (tabId === 'approval') {
+    initApprovalTab();
   }
 }
+
 
 // ==================== UTILITIES ====================
 
@@ -801,3 +804,111 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
 });
+
+// ==================== MESSAGE APPROVAL ====================
+const APPROVAL_API = "https://api.smart-cita.com/admin";
+const APPROVAL_PASSWORD = "laserostop2024";
+let approvalRefreshTimer = null;
+
+async function loadApprovalSettings() {
+  try {
+    const res = await fetch(APPROVAL_API + "/settings", {
+      headers: { "Authorization": "Bearer " + APPROVAL_PASSWORD }
+    });
+    const data = await res.json();
+    const toggle = document.getElementById("toggle-manual-approval");
+    const status = document.getElementById("manual-approval-status");
+    if (toggle && status) {
+      toggle.checked = data.manualApproval;
+      status.textContent = data.manualApproval ? "Activo" : "Inactivo";
+      status.className = "platform-status " + (data.manualApproval ? "enabled" : "disabled");
+    }
+  } catch (e) { console.error("Failed to load approval settings:", e); }
+}
+
+async function toggleManualApproval(enabled) {
+  try {
+    await fetch(APPROVAL_API + "/settings", {
+      method: "POST",
+      headers: { "Authorization": "Bearer " + APPROVAL_PASSWORD, "Content-Type": "application/json" },
+      body: JSON.stringify({ manualApproval: enabled })
+    });
+    const status = document.getElementById("manual-approval-status");
+    if (status) {
+      status.textContent = enabled ? "Activo" : "Inactivo";
+      status.className = "platform-status " + (enabled ? "enabled" : "disabled");
+    }
+    const saveStatus = document.getElementById("approval-save-status");
+    if (saveStatus) { saveStatus.classList.remove("hidden"); setTimeout(function() { saveStatus.classList.add("hidden"); }, 2000); }
+  } catch (e) { console.error("Failed to toggle:", e); }
+}
+
+async function loadPendingMessages() {
+  try {
+    const res = await fetch(APPROVAL_API + "/pending", { headers: { "Authorization": "Bearer " + APPROVAL_PASSWORD } });
+    const data = await res.json();
+    const countEl = document.getElementById("pending-count");
+    if (countEl) countEl.textContent = data.count;
+    renderPendingMessages(data.pending);
+  } catch (e) { console.error("Failed to load pending:", e); }
+}
+
+function renderPendingMessages(messages) {
+  const container = document.getElementById("pending-messages-container");
+  if (!container) return;
+  if (messages.length === 0) {
+    container.innerHTML = "<div class=\"text-center py-12 text-gray-500\"><span class=\"material-icons text-6xl mb-4\" style=\"opacity:0.3\">inbox</span><h3 class=\"text-lg font-medium\">No hay mensajes pendientes</h3><p class=\"text-sm\">Los mensajes apareceran aqui cuando el modo de aprobacion manual este activo</p></div>";
+    return;
+  }
+  container.innerHTML = messages.map(function(msg) {
+    return "<div class=\"bg-white rounded-xl shadow-sm p-4 mb-4\" id=\"pending-" + msg.id + "\"><div class=\"flex items-center justify-between mb-3 pb-3 border-b\"><div class=\"flex items-center gap-3\"><span class=\"platform-badge " + msg.platform + "\">" + msg.platform + "</span><span class=\"text-gray-600\">" + msg.contactName + "</span></div><span class=\"text-gray-400 text-sm\">" + new Date(msg.createdAt).toLocaleString() + "</span></div><div class=\"mb-3\"><p class=\"text-xs text-gray-500 uppercase mb-1\">Mensaje del usuario</p><div class=\"bg-gray-100 rounded-lg p-3 text-gray-800\">" + escapeHtmlApproval(msg.userMessage) + "</div></div><div class=\"mb-4\"><p class=\"text-xs text-gray-500 uppercase mb-1\">Respuesta del bot (editable)</p><textarea id=\"response-" + msg.id + "\" class=\"w-full border border-gray-300 rounded-lg p-3 text-gray-800 min-h-[100px] focus:ring-2 focus:ring-teal-500\">" + escapeHtmlApproval(msg.botResponse) + "</textarea></div><div class=\"flex justify-end gap-3\"><button onclick=\"rejectMessage( + msg.id + )\" class=\"px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 flex items-center gap-2\"><span class=\"material-icons text-sm\">close</span>Rechazar</button><button onclick=\"approveMessage( + msg.id + )\" class=\"px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 flex items-center gap-2\"><span class=\"material-icons text-sm\">check</span>Aprobar y Enviar</button></div></div>";
+  }).join("");
+}
+
+async function approveMessage(id) {
+  var textarea = document.getElementById("response-" + id);
+  var editedResponse = textarea ? textarea.value : null;
+  try {
+    await fetch(APPROVAL_API + "/approve/" + id, { method: "POST", headers: { "Authorization": "Bearer " + APPROVAL_PASSWORD, "Content-Type": "application/json" }, body: JSON.stringify({ editedResponse: editedResponse }) });
+    var el = document.getElementById("pending-" + id);
+    if (el) el.remove();
+    var countEl = document.getElementById("pending-count");
+    if (countEl) countEl.textContent = Math.max(0, parseInt(countEl.textContent) - 1);
+    loadApprovalHistory();
+  } catch (e) { alert("Error al aprobar"); }
+}
+
+async function rejectMessage(id) {
+  if (!confirm("Rechazar este mensaje?")) return;
+  try {
+    await fetch(APPROVAL_API + "/reject/" + id, { method: "POST", headers: { "Authorization": "Bearer " + APPROVAL_PASSWORD } });
+    var el = document.getElementById("pending-" + id);
+    if (el) el.remove();
+    var countEl = document.getElementById("pending-count");
+    if (countEl) countEl.textContent = Math.max(0, parseInt(countEl.textContent) - 1);
+    loadApprovalHistory();
+  } catch (e) { alert("Error al rechazar"); }
+}
+
+async function loadApprovalHistory() {
+  try {
+    const res = await fetch(APPROVAL_API + "/history", { headers: { "Authorization": "Bearer " + APPROVAL_PASSWORD } });
+    const data = await res.json();
+    renderApprovalHistory(data.history);
+  } catch (e) { console.error("Failed to load history:", e); }
+}
+
+function renderApprovalHistory(history) {
+  const container = document.getElementById("approval-history-container");
+  if (!container) return;
+  if (history.length === 0) { container.innerHTML = "<div class=\"text-center py-8 text-gray-500\">No hay historial</div>"; return; }
+  container.innerHTML = history.slice(0, 20).map(function(msg) {
+    var statusClass = msg.status === "approved" ? "text-green-600" : "text-red-600";
+    var statusText = msg.status === "approved" ? "APROBADO" : "RECHAZADO";
+    return "<div class=\"bg-gray-50 rounded-lg p-3 mb-2\"><div class=\"flex items-center justify-between mb-2\"><div class=\"flex items-center gap-2\"><span class=\"platform-badge " + msg.platform + "\">" + msg.platform + "</span><span class=\"" + statusClass + " text-xs font-medium\">[" + statusText + "]</span></div><span class=\"text-gray-400 text-xs\">" + new Date(msg.createdAt).toLocaleString() + "</span></div><p class=\"text-sm text-gray-600 truncate\"><strong>Usuario:</strong> " + escapeHtmlApproval(msg.userMessage) + "</p></div>";
+  }).join("");
+}
+
+function escapeHtmlApproval(text) { if (!text) return ""; var div = document.createElement("div"); div.textContent = text; return div.innerHTML; }
+
+function initApprovalTab() { loadApprovalSettings(); loadPendingMessages(); loadApprovalHistory(); if (approvalRefreshTimer) clearInterval(approvalRefreshTimer); approvalRefreshTimer = setInterval(loadPendingMessages, 15000); }
