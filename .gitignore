@@ -7,3 +7,4 @@ node_modules/
 # Stripe API key files
 create-*stripe*.js
 test-stripe*.js
+chatbot-processor/.env.backup
