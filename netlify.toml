@@ -7,7 +7,7 @@
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
-  external_node_modules = ["jose", "ioredis"]
+  external_node_modules = ["jose", "ioredis", "node-fetch"]
 
 # Chatbot webhook redirects - MUST COME FIRST (order matters!)
 [[redirects]]

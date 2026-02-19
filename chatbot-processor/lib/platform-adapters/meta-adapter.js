@@ -1,9 +1,58 @@
 /**
  * Meta (Facebook Messenger / Instagram) API Adapter
  * Handles sending messages via Meta Graph API
+ * Supports multi-page token routing for España + Tunisia centers
+ * Supports Messenger and Instagram
  */
 
 const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
+
+// Page token mapping for all centers
+const PAGE_TOKENS = {};
+const PAGE_NAMES = {
+  '961642687025824': 'LaserOstop - Centros antitabaco',
+  '755909964271820': 'LaserOstop Valencia',
+  '753892517805817': 'LaserOstop Sevilla',
+  '692019233999955': 'LaserOstop Barcelona Sants',
+  '683497724836566': 'LaserOstop Tunis Lac 1'
+};
+
+// Map Instagram Business Account IDs to their parent Facebook Page IDs
+const IG_TO_PAGE = {
+  '17841478706257146': '961642687025824',  // Centros antitabaco
+  '17841478547583918': '755909964271820',  // Valencia
+  '17841476737014491': '753892517805817',  // Sevilla
+  '17841477108011572': '692019233999955',  // Barcelona Sants
+  '17841474028143993': '683497724836566'   // Tunis Lac 1
+};
+
+function loadPageTokens() {
+  // Load page-specific tokens from env
+  const tokenEnvs = [
+    { id: '961642687025824', env: 'META_PAGE_TOKEN_ESPANA' },
+    { id: '755909964271820', env: 'META_PAGE_TOKEN_VALENCIA' },
+    { id: '753892517805817', env: 'META_PAGE_TOKEN_SEVILLA' },
+    { id: '692019233999955', env: 'META_PAGE_TOKEN_BARCELONA' },
+    { id: '683497724836566', env: 'META_PAGE_TOKEN_TUNIS' }
+  ];
+
+  for (const { id, env } of tokenEnvs) {
+    if (process.env[env]) {
+      PAGE_TOKENS[id] = process.env[env];
+    }
+  }
+
+  // Fallback: legacy single token
+  if (process.env.META_PAGE_ACCESS_TOKEN) {
+    PAGE_TOKENS._default = process.env.META_PAGE_ACCESS_TOKEN;
+  }
+
+  const loaded = Object.keys(PAGE_TOKENS).filter(k => k !== '_default').length;
+  console.log(`[META] Loaded ${loaded} page tokens + ${PAGE_TOKENS._default ? '1 default' : 'no default'}`);
+}
+
+// Load on module init
+loadPageTokens();
 
 class MetaAdapter {
   constructor() {
@@ -19,13 +68,15 @@ class MetaAdapter {
    */
   async sendMessage(to, text, originalMessage = {}) {
     const platform = originalMessage.platform || 'messenger';
-    const accessToken = this.getAccessToken(platform);
+    const pageId = originalMessage.pageId;
+    const accessToken = this.getAccessToken(platform, pageId);
 
     if (!accessToken) {
-      console.error(`[META] Missing access token for ${platform}`);
+      console.error(`[META] Missing access token for ${platform} pageId=${pageId}`);
       throw new Error('Meta API not configured');
     }
 
+    const pageName = PAGE_NAMES[pageId] || 'Unknown Page';
     const url = `${this.baseUrl}/${this.apiVersion}/me/messages`;
 
     const payload = {
@@ -38,7 +89,7 @@ class MetaAdapter {
       messaging_type: 'RESPONSE' // Responding to user message
     };
 
-    console.log(`[META] Sending ${platform} message to ${to}`);
+    console.log(`[META] Sending ${platform} message to ${to} via page ${pageName} (${pageId || 'default'})`);
 
     try {
       const response = await fetch(url, {
@@ -231,15 +282,49 @@ class MetaAdapter {
   }
 
   /**
-   * Get access token for platform
+   * Get access token for platform and page
    * @param {string} platform - 'messenger' or 'instagram'
+   * @param {string} pageId - Facebook Page ID
    * @returns {string|null}
    */
-  getAccessToken(platform) {
+  getAccessToken(platform, pageId) {
     if (platform === 'instagram') {
-      return process.env.META_INSTAGRAM_ACCESS_TOKEN || process.env.META_PAGE_ACCESS_TOKEN;
+      // Instagram uses the parent page's token
+      // pageId here is the IG business account ID - map to FB page ID
+      const fbPageId = IG_TO_PAGE[pageId];
+      if (fbPageId && PAGE_TOKENS[fbPageId]) {
+        return PAGE_TOKENS[fbPageId];
+      }
+      // Also try direct pageId lookup (if FB page ID was passed)
+      if (pageId && PAGE_TOKENS[pageId]) {
+        return PAGE_TOKENS[pageId];
+      }
+      return process.env.META_INSTAGRAM_ACCESS_TOKEN || PAGE_TOKENS._default;
     }
-    return process.env.META_PAGE_ACCESS_TOKEN;
+    // Use page-specific token if available
+    if (pageId && PAGE_TOKENS[pageId]) {
+      return PAGE_TOKENS[pageId];
+    }
+    return PAGE_TOKENS._default;
+  }
+
+  /**
+   * Get page name from ID
+   */
+  static getPageName(pageId) {
+    // Try direct page name lookup
+    if (PAGE_NAMES[pageId]) return PAGE_NAMES[pageId];
+    // Try IG -> FB page mapping
+    const fbPageId = IG_TO_PAGE[pageId];
+    if (fbPageId && PAGE_NAMES[fbPageId]) return PAGE_NAMES[fbPageId];
+    return 'Unknown Page';
+  }
+
+  /**
+   * Reload page tokens (e.g., after .env update)
+   */
+  static reloadTokens() {
+    loadPageTokens();
   }
 }
 
