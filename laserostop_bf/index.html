@@ -634,7 +634,7 @@
 <select id="center-select" class="w-full pl-12 pr-4 py-3 border-0 rounded-full focus:ring-primary focus:border-primary transition">
 <option value="">Seleccione un centro...</option>
 <!-- Centers are dynamically loaded from Smart Agenda API -->
-<!-- Only 6 centers available: Barcelona Sants, Madrid Atocha, Madrid Chamartín, Majadahonda, Sevilla, Torrejón -->
+<!-- Only 4 centers available: Barcelona Sants, Madrid Atocha, Madrid Chamartín, Sevilla -->
 </select>
 </div>
 </div>
@@ -1293,8 +1293,7 @@ Más de 500,000 personas ya lo han conseguido. Reserve su cita hoy y dé el prim
   ];
 
   const cities = [
-    'Madrid', 'Barcelona', 'Sevilla',
-    'Majadahonda', 'Torrejón de Ardoz'
+    'Madrid', 'Barcelona', 'Sevilla'
   ];
 
   const messages = [
@@ -1365,20 +1364,6 @@ Más de 500,000 personas ya lo han conseguido. Reserve su cita hoy y dé el prim
         lat: 40.4640, lng: -3.6783,
         name: 'LaserOstop Madrid Chamartín',
         address: 'Calle de Oruro, 9, Chamartín, 28016, Madrid',
-        hours: '09:00 - 16:00',
-        phone: '+34 919 305 313'
-      },
-      'majadahonda': {
-        lat: 40.4732, lng: -3.8714,
-        name: 'LaserOstop Majadahonda',
-        address: 'Calle del Dr Calero, 19, Centro comercial Tutti, 28220, Majadahonda',
-        hours: '09:00 - 16:00',
-        phone: '+34 919 305 313'
-      },
-      'torrejon': {
-        lat: 40.4578, lng: -3.4763,
-        name: 'LaserOstop Torrejón de Ardoz',
-        address: 'Calle pesquera, 10, 28850, Torrejón de Ardoz',
         hours: '09:00 - 16:00',
         phone: '+34 919 305 313'
       },
@@ -1739,7 +1724,7 @@ Más de 500,000 personas ya lo han conseguido. Reserve su cita hoy y dé el prim
       // Stripe Payment Links Configuration - STANDARD PRICES Dec 2025
       const stripeLinks = {
         company1: {
-          // Company 1: Madrid Chamartín, Torrejón, Majadahonda
+          // Company 1: Madrid Chamartín
           solo_cig: {
             onetime: 'https://buy.stripe.com/14A3cueQn8oee5L36dawo0q',  // €170
             monthly: 'https://buy.stripe.com/dRm6oGbEb1ZQ8LreOVawo0f'   // 3×€60
@@ -1883,7 +1868,7 @@ Más de 500,000 personas ya lo han conseguido. Reserve su cita hoy y dé el prim
     // PROD APPOINTMENT TYPES - Filtered to show only original 4 types (matching TEST/DEV)
     // Source: https://www.smartagenda.fr/pro/laserostop-esh (PROD environment)
     // STANDARD PRICES: Solo 190€, Duo 360€, Cannabis 250€, Sugar 200€
-    // Mapping: Barcelona=43, Sevilla=44, Chamartin=48, Torrejon=49, Atocha=50, Majadahonda=51
+    // Mapping: Barcelona=43, Sevilla=44, Chamartin=48, Atocha=50
     // Removed: Valencia=10, San Sebastian=52 (no longer accepting bookings)
     const APPOINTMENT_TYPES = {
       '43': [ // Barcelona - 5 types (added sugar)
@@ -1900,13 +1885,6 @@ Más de 500,000 personas ya lo han conseguido. Reserve su cita hoy y dé el prim
         { id: '35', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '44' },
         { id: '96', kind: 'solo_sugar',   name: 'Adicción al azúcar (1h)', duration: 60, price: 200, deposit: 0, centerId: '44' }
       ],
-      '49': [ // Torrejón - 5 types (added sugar)
-        { id: '53', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '49' },
-        { id: '56', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 360, deposit: 0, centerId: '49' },
-        { id: '59', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '49' },
-        { id: '57', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '49' },
-        { id: '97', kind: 'solo_sugar',   name: 'Adicción al azúcar (1h)', duration: 60, price: 200, deposit: 0, centerId: '49' }
-      ],
       '48': [ // Madrid Chamartín - 5 types (added sugar)
         { id: '44', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '48' },
         { id: '46', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 360, deposit: 0, centerId: '48' },
@@ -1921,13 +1899,6 @@ Más de 500,000 personas ya lo han conseguido. Reserve su cita hoy y dé el prim
         { id: '66', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '50' },
         { id: '92', kind: 'solo_sugar',   name: 'Adicción al azúcar (1h)', duration: 60, price: 200, deposit: 0, centerId: '50' }
       ],
-      '51': [ // Majadahonda - 5 types (added sugar)
-        { id: '72', kind: 'solo_cig',     name: 'Solo – Dejar de fumar (1h)', duration: 60, price: 190, deposit: 0, centerId: '51' },
-        { id: '74', kind: 'duo_cig',      name: 'Duo – Dejar de fumar (1h30)', duration: 90, price: 360, deposit: 0, centerId: '51' },
-        { id: '77', kind: 'solo_drugs',   name: 'Adicción al cannabis (1h)', duration: 60, price: 250, deposit: 0, centerId: '51' },
-        { id: '75', kind: 'rechute',      name: 'En caso de recaída (30mn)', duration: 30, price: 0, deposit: 0, centerId: '51' },
-        { id: '94', kind: 'solo_sugar',   name: 'Adicción al azúcar (1h)', duration: 60, price: 200, deposit: 0, centerId: '51' }
-      ]
     };
 
     /**
@@ -1945,7 +1916,7 @@ Más de 500,000 personas ya lo han conseguido. Reserve su cita hoy y dé el prim
      * Company routing - determines which Stripe account to use
      * FIXED: Using correct pdo_agenda IDs
      */
-    const COMPANY1_CENTERS = new Set(['48', '49', '51']); // Madrid Chamartín, Torrejón, Majadahonda
+    const COMPANY1_CENTERS = new Set(['48']); // Madrid Chamartín
     const COMPANY2_CENTERS = new Set(['43', '44', '50']);  // Barcelona Sants, Sevilla, Madrid Atocha
 
     function getCompany(centerId) {
@@ -2023,8 +1994,6 @@ Más de 500,000 personas ya lo han conseguido. Reserve su cita hoy y dé el prim
         'Madrid': [
           { id: '50', name: 'Madrid – Atocha' },
           { id: '48', name: 'Madrid – Chamartín' },
-          { id: '51', name: 'Madrid – Majadahonda' },
-          { id: '49', name: 'Madrid – Torrejón de Ardoz' }
         ],
         'Barcelona': [
           { id: '43', name: 'Barcelona' }
@@ -3035,8 +3004,6 @@ Más de 500,000 personas ya lo han conseguido. Reserve su cita hoy y dé el prim
       'madrid-atocha': '50',         // Madrid Atocha
       'madrid-chamartin': '48',      // Madrid Chamartín
       'sevilla': '44',               // Sevilla
-      'majadahonda': '51',           // Majadahonda
-      'torrejon': '49'               // Torrejón de Ardoz
     };
 
     /**

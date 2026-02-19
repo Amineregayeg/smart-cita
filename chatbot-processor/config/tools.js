@@ -18,8 +18,8 @@ const CHATBOT_TOOLS = [
         properties: {
           center: {
             type: "string",
-            enum: ["barcelona", "sevilla", "chamartin", "atocha", "torrejon", "majadahonda"],
-            description: "Centro donde consultar disponibilidad. barcelona=Barcelona Sants, chamartin=Madrid Chamartín, atocha=Madrid Atocha, torrejon=Torrejón de Ardoz, majadahonda=Majadahonda, sevilla=Sevilla"
+            enum: ["barcelona", "sevilla", "chamartin", "atocha"],
+            description: "Centro donde consultar disponibilidad. barcelona=Barcelona Sants, chamartin=Madrid Chamartín, atocha=Madrid Atocha, sevilla=Sevilla"
           },
           treatment: {
             type: "string",
@@ -45,7 +45,7 @@ const CHATBOT_TOOLS = [
         properties: {
           center: {
             type: "string",
-            enum: ["barcelona", "sevilla", "chamartin", "atocha", "torrejon", "majadahonda"],
+            enum: ["barcelona", "sevilla", "chamartin", "atocha"],
             description: "Centro donde reservar"
           },
           treatment: {
@@ -88,7 +88,7 @@ const CHATBOT_TOOLS = [
         properties: {
           center: {
             type: "string",
-            enum: ["barcelona", "sevilla", "chamartin", "atocha", "torrejon", "majadahonda", "all"],
+            enum: ["barcelona", "sevilla", "chamartin", "atocha", "all"],
             description: "Centro específico o 'all' para ver todos los centros"
           }
         },
