@@ -118,7 +118,17 @@
       text-transform: uppercase;
     }
     .platform-whatsapp { background: #25D366; color: white; }
-    .platform-meta, .platform-messenger, .platform-instagram { background: #0084FF; color: white; }
+    .platform-meta, .platform-messenger { background: #0084FF; color: white; }
+    .platform-instagram { background: #E1306C; color: white; }
+    .page-badge {
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      background: #f0f4ff;
+      color: #667eea;
+      margin-left: 8px;
+    }
     .contact-info { color: #666; font-size: 14px; }
     .message-content { margin-bottom: 15px; }
     .message-label { font-size: 12px; color: #999; margin-bottom: 5px; text-transform: uppercase; }
@@ -239,6 +249,7 @@
       <div class="tabs">
         <button class="tab active" onclick="showTab('pending')">Pending Messages</button>
         <button class="tab" onclick="showTab('history')">History</button>
+        <button class="tab" onclick="showTab('logs')">Message Logs</button>
       </div>
 
       <!-- Pending Messages -->
@@ -246,6 +257,9 @@
 
       <!-- History -->
       <div id="historyTab" class="messages hidden"></div>
+
+      <!-- Message Logs -->
+      <div id="logsTab" class="messages hidden"></div>
     </div>
   </div>
 
@@ -309,6 +323,7 @@
       await loadSettings();
       await loadPending();
       await loadHistory();
+      await loadLogs();
     }
 
     async function loadSettings() {
@@ -374,6 +389,7 @@
           <div class="message-header">
             <div>
               <span class="platform-badge platform-${msg.platform}">${msg.platform}</span>
+              ${msg.pageName ? `<span class="page-badge">${escapeHtml(msg.pageName)}</span>` : ''}
               <span class="contact-info">${msg.contactName} (${msg.userId})</span>
             </div>
             <span class="timestamp">${new Date(msg.createdAt).toLocaleString()}</span>
@@ -459,6 +475,7 @@
           <div class="message-header">
             <div>
               <span class="platform-badge platform-${msg.platform}">${msg.platform}</span>
+              ${msg.pageName ? `<span class="page-badge">${escapeHtml(msg.pageName)}</span>` : ''}
               <span class="contact-info">${msg.contactName}</span>
               <span class="status-${msg.status}">[${msg.status.toUpperCase()}]</span>
             </div>
@@ -474,11 +491,59 @@
       `).join('');
     }
 
+    async function loadLogs() {
+      try {
+        const res = await fetch(`${API_BASE}/logs`, {
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        const data = await res.json();
+        renderLogs(data.logs || []);
+      } catch (e) {
+        console.error('Failed to load logs:', e);
+      }
+    }
+
+    function renderLogs(logs) {
+      const container = document.getElementById('logsTab');
+      if (logs.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <h3>No message logs yet</h3>
+            <p>All processed messages will be logged here</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = logs.map(log => `
+        <div class="message-card">
+          <div class="message-header">
+            <div>
+              <span class="platform-badge platform-${log.platform}">${log.platform}</span>
+              ${log.pageName ? `<span class="page-badge">${escapeHtml(log.pageName)}</span>` : ''}
+              <span class="contact-info">User ...${log.userId}</span>
+            </div>
+            <div>
+              <span class="timestamp">${log.responseTime}ms | ${log.tokens} tokens</span>
+              <span class="timestamp" style="margin-left:10px">${new Date(log.timestamp).toLocaleString()}</span>
+            </div>
+          </div>
+          <div class="message-content">
+            <div class="message-label">User Message</div>
+            <div class="user-message">${escapeHtml(log.userMessage)}</div>
+            <div class="message-label">Bot Response</div>
+            <div class="bot-response">${escapeHtml(log.botResponse)}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
     function showTab(tab) {
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.messages').forEach(m => m.classList.add('hidden'));
       event.target.classList.add('active');
       document.getElementById(`${tab}Tab`).classList.remove('hidden');
+      if (tab === 'logs') loadLogs();
     }
 
     function escapeHtml(text) {

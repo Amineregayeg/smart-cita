@@ -217,6 +217,13 @@ const server = http.createServer(async (req, res) => {
       return jsonResponse(res, 200, { history, count: history.length });
     }
 
+    // ===== GET /admin/logs =====
+    if (path === "/admin/logs" && method === "GET") {
+      const items = await redis.lrange("chatbot:logs:recent", 0, 99);
+      const logs = items.map(item => JSON.parse(item));
+      return jsonResponse(res, 200, { logs, count: logs.length });
+    }
+
     // ===== GET /admin/stats =====
     if (path === "/admin/stats" && method === "GET") {
       const pendingCount = await redis.llen(PENDING_QUEUE);
