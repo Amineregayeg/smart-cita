@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LaserOstop - Admin Panel</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f5f5;
+      min-height: 100vh;
+    }
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header h1 { font-size: 24px; }
+    .login-form {
+      max-width: 400px;
+      margin: 100px auto;
+      background: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    .login-form h2 { margin-bottom: 20px; text-align: center; }
+    .login-form input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+    .login-form button {
+      width: 100%;
+      padding: 14px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .login-form button:hover { background: #5a6fd6; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+    .controls {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .switch-container { display: flex; align-items: center; gap: 15px; }
+    .switch {
+      position: relative;
+      width: 60px;
+      height: 32px;
+    }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #ccc;
+      transition: .3s;
+      border-radius: 32px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 24px;
+      width: 24px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
+    }
+    input:checked + .slider { background-color: #667eea; }
+    input:checked + .slider:before { transform: translateX(28px); }
+    .stats { display: flex; gap: 20px; }
+    .stat {
+      background: #f0f4ff;
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .stat-value { font-size: 24px; font-weight: bold; color: #667eea; }
+    .stat-label { font-size: 12px; color: #666; }
+    .messages { display: flex; flex-direction: column; gap: 15px; }
+    .message-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .message-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+    .platform-badge {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .platform-whatsapp { background: #25D366; color: white; }
+    .platform-meta, .platform-messenger { background: #0084FF; color: white; }
+    .platform-instagram { background: #E1306C; color: white; }
+    .page-badge {
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      background: #f0f4ff;
+      color: #667eea;
+      margin-left: 8px;
+    }
+    .contact-info { color: #666; font-size: 14px; }
+    .message-content { margin-bottom: 15px; }
+    .message-label { font-size: 12px; color: #999; margin-bottom: 5px; text-transform: uppercase; }
+    .user-message {
+      background: #f0f0f0;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+    .bot-response {
+      background: #e8f4e8;
+      padding: 12px;
+      border-radius: 8px;
+    }
+    .bot-response textarea {
+      width: 100%;
+      min-height: 100px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 10px;
+      font-family: inherit;
+      font-size: 14px;
+      resize: vertical;
+    }
+    .message-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+    .btn {
+      padding: 10px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-approve { background: #4CAF50; color: white; }
+    .btn-approve:hover { background: #43A047; }
+    .btn-reject { background: #f44336; color: white; }
+    .btn-reject:hover { background: #e53935; }
+    .btn-refresh { background: #667eea; color: white; }
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      background: white;
+      border-radius: 12px;
+      color: #999;
+    }
+    .empty-state svg { width: 80px; height: 80px; margin-bottom: 20px; opacity: 0.5; }
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .tab {
+      padding: 10px 20px;
+      background: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .tab.active { background: #667eea; color: white; }
+    .hidden { display: none; }
+    .timestamp { font-size: 12px; color: #999; }
+    .status-approved { color: #4CAF50; }
+    .status-rejected { color: #f44336; }
+    .logout-btn {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Login Form -->
+  <div id="loginSection" class="login-form">
+    <h2>Admin Login</h2>
+    <input type="password" id="passwordInput" placeholder="Password" onkeypress="if(event.key==='Enter')login()">
+    <button onclick="login()">Login</button>
+    <p id="loginError" style="color: red; margin-top: 10px; text-align: center;"></p>
+  </div>
+
+  <!-- Admin Panel -->
+  <div id="adminSection" class="hidden">
+    <div class="header">
+      <h1>LaserOstop Chatbot Admin</h1>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+
+    <div class="container">
+      <!-- Controls -->
+      <div class="controls">
+        <div class="switch-container">
+          <span>Manual Approval Mode:</span>
+          <label class="switch">
+            <input type="checkbox" id="manualApprovalSwitch" onchange="toggleManualApproval()">
+            <span class="slider"></span>
+          </label>
+          <span id="modeStatus">OFF</span>
+        </div>
+        <div class="stats">
+          <div class="stat">
+            <div class="stat-value" id="pendingCount">0</div>
+            <div class="stat-label">Pending</div>
+          </div>
+          <button class="btn btn-refresh" onclick="loadPending()">Refresh</button>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <button class="tab active" onclick="showTab('pending')">Pending Messages</button>
+        <button class="tab" onclick="showTab('history')">History</button>
+        <button class="tab" onclick="showTab('logs')">Message Logs</button>
+      </div>
+
+      <!-- Pending Messages -->
+      <div id="pendingTab" class="messages"></div>
+
+      <!-- History -->
+      <div id="historyTab" class="messages hidden"></div>
+
+      <!-- Message Logs -->
+      <div id="logsTab" class="messages hidden"></div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'https://api.smart-cita.com/admin';
+    let authToken = localStorage.getItem('adminToken') || '';
+
+    // Check if already logged in
+    if (authToken) {
+      checkAuth();
+    }
+
+    async function checkAuth() {
+      try {
+        const res = await fetch(`${API_BASE}/stats`, {
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        if (res.ok) {
+          showAdmin();
+          loadAll();
+        } else {
+          logout();
+        }
+      } catch (e) {
+        logout();
+      }
+    }
+
+    async function login() {
+      const password = document.getElementById('passwordInput').value;
+      try {
+        const res = await fetch(`${API_BASE}/stats`, {
+          headers: { 'Authorization': `Bearer ${password}` }
+        });
+        if (res.ok) {
+          authToken = password;
+          localStorage.setItem('adminToken', password);
+          showAdmin();
+          loadAll();
+        } else {
+          document.getElementById('loginError').textContent = 'Invalid password';
+        }
+      } catch (e) {
+        document.getElementById('loginError').textContent = 'Connection error';
+      }
+    }
+
+    function logout() {
+      authToken = '';
+      localStorage.removeItem('adminToken');
+      document.getElementById('loginSection').classList.remove('hidden');
+      document.getElementById('adminSection').classList.add('hidden');
+    }
+
+    function showAdmin() {
+      document.getElementById('loginSection').classList.add('hidden');
+      document.getElementById('adminSection').classList.remove('hidden');
+    }
+
+    async function loadAll() {
+      await loadSettings();
+      await loadPending();
+      await loadHistory();
+      await loadLogs();
+    }
+
+    async function loadSettings() {
+      try {
+        const res = await fetch(`${API_BASE}/settings`, {
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        const data = await res.json();
+        document.getElementById('manualApprovalSwitch').checked = data.manualApproval;
+        document.getElementById('modeStatus').textContent = data.manualApproval ? 'ON' : 'OFF';
+      } catch (e) {
+        console.error('Failed to load settings:', e);
+      }
+    }
+
+    async function toggleManualApproval() {
+      const enabled = document.getElementById('manualApprovalSwitch').checked;
+      try {
+        await fetch(`${API_BASE}/settings`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${authToken}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ manualApproval: enabled })
+        });
+        document.getElementById('modeStatus').textContent = enabled ? 'ON' : 'OFF';
+      } catch (e) {
+        console.error('Failed to update settings:', e);
+      }
+    }
+
+    async function loadPending() {
+      try {
+        const res = await fetch(`${API_BASE}/pending`, {
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        const data = await res.json();
+        document.getElementById('pendingCount').textContent = data.count;
+        renderPending(data.pending);
+      } catch (e) {
+        console.error('Failed to load pending:', e);
+      }
+    }
+
+    function renderPending(messages) {
+      const container = document.getElementById('pendingTab');
+      if (messages.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+            <h3>No pending messages</h3>
+            <p>Messages will appear here when manual approval is enabled</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = messages.map(msg => `
+        <div class="message-card" id="msg-${msg.id}">
+          <div class="message-header">
+            <div>
+              <span class="platform-badge platform-${msg.platform}">${msg.platform}</span>
+              ${msg.pageName ? `<span class="page-badge">${escapeHtml(msg.pageName)}</span>` : ''}
+              <span class="contact-info">${msg.contactName} (${msg.userId})</span>
+            </div>
+            <span class="timestamp">${new Date(msg.createdAt).toLocaleString()}</span>
+          </div>
+          <div class="message-content">
+            <div class="message-label">User Message</div>
+            <div class="user-message">${escapeHtml(msg.userMessage)}</div>
+            <div class="message-label">Bot Response (editable)</div>
+            <div class="bot-response">
+              <textarea id="response-${msg.id}">${escapeHtml(msg.botResponse)}</textarea>
+            </div>
+          </div>
+          <div class="message-actions">
+            <button class="btn btn-reject" onclick="rejectMessage('${msg.id}')">Reject</button>
+            <button class="btn btn-approve" onclick="approveMessage('${msg.id}')">Approve & Send</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function approveMessage(id) {
+      const editedResponse = document.getElementById(`response-${id}`).value;
+      try {
+        await fetch(`${API_BASE}/approve/${id}`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${authToken}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ editedResponse })
+        });
+        document.getElementById(`msg-${id}`).remove();
+        const count = parseInt(document.getElementById('pendingCount').textContent);
+        document.getElementById('pendingCount').textContent = count - 1;
+        loadHistory();
+      } catch (e) {
+        alert('Failed to approve message');
+      }
+    }
+
+    async function rejectMessage(id) {
+      if (!confirm('Are you sure you want to reject this message?')) return;
+      try {
+        await fetch(`${API_BASE}/reject/${id}`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        document.getElementById(`msg-${id}`).remove();
+        const count = parseInt(document.getElementById('pendingCount').textContent);
+        document.getElementById('pendingCount').textContent = count - 1;
+        loadHistory();
+      } catch (e) {
+        alert('Failed to reject message');
+      }
+    }
+
+    async function loadHistory() {
+      try {
+        const res = await fetch(`${API_BASE}/history`, {
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        const data = await res.json();
+        renderHistory(data.history);
+      } catch (e) {
+        console.error('Failed to load history:', e);
+      }
+    }
+
+    function renderHistory(messages) {
+      const container = document.getElementById('historyTab');
+      if (messages.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <h3>No history yet</h3>
+            <p>Approved and rejected messages will appear here</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = messages.map(msg => `
+        <div class="message-card">
+          <div class="message-header">
+            <div>
+              <span class="platform-badge platform-${msg.platform}">${msg.platform}</span>
+              ${msg.pageName ? `<span class="page-badge">${escapeHtml(msg.pageName)}</span>` : ''}
+              <span class="contact-info">${msg.contactName}</span>
+              <span class="status-${msg.status}">[${msg.status.toUpperCase()}]</span>
+            </div>
+            <span class="timestamp">${new Date(msg.createdAt).toLocaleString()}</span>
+          </div>
+          <div class="message-content">
+            <div class="message-label">User Message</div>
+            <div class="user-message">${escapeHtml(msg.userMessage)}</div>
+            <div class="message-label">Bot Response ${msg.wasEdited ? '(edited)' : ''}</div>
+            <div class="bot-response">${escapeHtml(msg.finalResponse || msg.botResponse)}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function loadLogs() {
+      try {
+        const res = await fetch(`${API_BASE}/logs`, {
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        const data = await res.json();
+        renderLogs(data.logs || []);
+      } catch (e) {
+        console.error('Failed to load logs:', e);
+      }
+    }
+
+    function renderLogs(logs) {
+      const container = document.getElementById('logsTab');
+      if (logs.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <h3>No message logs yet</h3>
+            <p>All processed messages will be logged here</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = logs.map(log => `
+        <div class="message-card">
+          <div class="message-header">
+            <div>
+              <span class="platform-badge platform-${log.platform}">${log.platform}</span>
+              ${log.pageName ? `<span class="page-badge">${escapeHtml(log.pageName)}</span>` : ''}
+              <span class="contact-info">User ...${log.userId}</span>
+            </div>
+            <div>
+              <span class="timestamp">${log.responseTime}ms | ${log.tokens} tokens</span>
+              <span class="timestamp" style="margin-left:10px">${new Date(log.timestamp).toLocaleString()}</span>
+            </div>
+          </div>
+          <div class="message-content">
+            <div class="message-label">User Message</div>
+            <div class="user-message">${escapeHtml(log.userMessage)}</div>
+            <div class="message-label">Bot Response</div>
+            <div class="bot-response">${escapeHtml(log.botResponse)}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function showTab(tab) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.messages').forEach(m => m.classList.add('hidden'));
+      event.target.classList.add('active');
+      document.getElementById(`${tab}Tab`).classList.remove('hidden');
+      if (tab === 'logs') loadLogs();
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Auto-refresh every 30 seconds
+    setInterval(() => {
+      if (authToken) loadPending();
+    }, 30000);
+  </script>
+</body>
+</html>

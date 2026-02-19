@@ -400,3 +400,26 @@ module.exports = {
   getAdminStats,
   getConversationLogs
 };
+
+/**
+ * Check if a platform is enabled
+ * @param {string} platform - Platform name (whatsapp, messenger, instagram)
+ * @returns {Promise<boolean>} - True if enabled (default true if not set)
+ */
+async function isPlatformEnabled(platform) {
+  const client = await getRedisClient();
+  if (!client) return true; // Default to enabled if Redis unavailable
+
+  try {
+    const key = `chatbot:config:platform:${platform}:enabled`;
+    const value = await client.get(key);
+    // Default to enabled if not set
+    if (value === null) return true;
+    return value === "true" || value === "1";
+  } catch (error) {
+    console.error("[REDIS] Platform config error:", error.message);
+    return true; // Default to enabled on error
+  }
+}
+
+module.exports.isPlatformEnabled = isPlatformEnabled;

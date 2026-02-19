@@ -11,6 +11,7 @@ const { SmartAgendaService } = require('./smart-agenda-service');
 const { incrementTokenCounter, getCachedResponse, setCachedResponse } = require('./redis-client');
 const { generateSystemPrompt, GPT_CONFIG } = require('../config/prompts');
 const { CHATBOT_TOOLS, executeToolCall } = require('../config/tools');
+const { evaluateAction } = require('./aasp-security');
 
 class GPTHandler {
   constructor() {
@@ -156,8 +157,38 @@ class GPTHandler {
 
       console.log(`[GPT] Executing tool: ${functionName}`, args);
 
-      // Execute the tool (pass platform for booking stats)
-      const result = await executeToolCall(functionName, args, this.smartAgenda, platform);
+      // AASP Security Check - evaluate action before execution
+      let aaspDecision = { allowed: true, decision: 'allow' };
+      try {
+        aaspDecision = await evaluateAction('tool_call', functionName, args, { platform });
+        console.log(`[AASP] Decision for ${functionName}: ${aaspDecision.decision}`);
+      } catch (aaspError) {
+        console.error('[AASP] Evaluation error:', aaspError.message);
+        // Fail open - allow action if AASP is unavailable
+      }
+
+      // Handle AASP decision
+      let result;
+      if (aaspDecision.decision === 'block') {
+        console.log(`[AASP] BLOCKED: ${functionName} - ${aaspDecision.reason}`);
+        result = {
+          success: false,
+          error: 'Esta acción ha sido bloqueada por políticas de seguridad.',
+          blocked: true,
+          reason: aaspDecision.reason
+        };
+      } else if (aaspDecision.decision === 'require_approval') {
+        console.log(`[AASP] REQUIRES APPROVAL: ${functionName}`);
+        result = {
+          success: false,
+          error: 'Esta acción requiere aprobación manual. Por favor, contacte con el centro.',
+          requiresApproval: true,
+          approvalId: aaspDecision.approvalId
+        };
+      } else {
+        // Execute the tool (pass platform for booking stats)
+        result = await executeToolCall(functionName, args, this.smartAgenda, platform);
+      }
 
       console.log(`[GPT] Tool result:`, result.success ? 'Success' : result.error);
 
