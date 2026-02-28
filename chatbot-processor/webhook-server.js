@@ -10,6 +10,25 @@ const { getRedisClient } = require("./lib/redis-client");
 const PORT = process.env.WEBHOOK_PORT || 10001;
 const VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN || "laserostop_verify_2024";
 
+// España center page/IG IDs
+const ESPANA_PAGES = new Set([
+  "961642687025824",   // LaserOstop - Centros antitabaco (Facebook)
+  "755909964271820",   // LaserOstop Valencia (Facebook)
+  "753892517805817",   // LaserOstop Sevilla (Facebook)
+  "692019233999955",   // LaserOstop Barcelona Sants (Facebook)
+  "17841478706257146", // LaserOstop - Centros antitabaco (Instagram)
+  "17841478547583918", // LaserOstop Valencia (Instagram)
+  "17841476737014491", // LaserOstop Sevilla (Instagram)
+  "17841477108011572"  // LaserOstop Barcelona Sants (Instagram)
+]);
+
+// Tunisia center page/IG IDs
+const TUNIS_PAGES = new Set([
+  "683497724836566",  // LaserOstop Tunis Lac 1 (Facebook)
+  "17841474028143993", // LaserOstop Tunis Lac 1 (Instagram)
+  "907630839110873"   // LaserOstop Sfax (Facebook)
+]);
+
 function parseQuery(url) {
   const params = {};
   const queryStart = url.indexOf("?");
@@ -74,12 +93,22 @@ function extractMessengerMessages(body) {
     for (const entry of (body.entry || [])) {
       const pageId = entry.id;
       for (const event of (entry.messaging || [])) {
-        if (event.message && event.message.text) {
+        if (event.message && event.message.is_echo) continue;
+        if (event.message && (event.message.text || event.message.attachments)) {
+          const attachments = event.message.attachments || [];
+          const audioAttachment = attachments.find(a => a.type === "audio");
           messages.push({
             id: event.message.mid,
             from: event.sender.id,
             timestamp: Math.floor(event.timestamp / 1000),
-            text: event.message.text,
+            text: event.message.text || null,
+            attachments: attachments.map(a => ({
+              type: a.type,
+              url: a.payload?.url,
+              stickerId: a.payload?.sticker_id
+            })),
+            hasAudio: !!audioAttachment,
+            audioUrl: audioAttachment?.payload?.url || null,
             contactName: "Messenger User",
             pageId: pageId,
             platform: "messenger"
@@ -102,12 +131,22 @@ function extractInstagramMessages(body) {
     for (const entry of (body.entry || [])) {
       const igId = entry.id;
       for (const event of (entry.messaging || [])) {
-        if (event.message && event.message.text) {
+        if (event.message && event.message.is_echo) continue;
+        if (event.message && (event.message.text || event.message.attachments)) {
+          const attachments = event.message.attachments || [];
+          const audioAttachment = attachments.find(a => a.type === "audio");
           messages.push({
             id: event.message.mid,
             from: event.sender.id,
             timestamp: Math.floor(event.timestamp / 1000),
-            text: event.message.text,
+            text: event.message.text || null,
+            attachments: attachments.map(a => ({
+              type: a.type,
+              url: a.payload?.url,
+              stickerId: a.payload?.sticker_id
+            })),
+            hasAudio: !!audioAttachment,
+            audioUrl: audioAttachment?.payload?.url || null,
             contactName: "Instagram User",
             igId: igId,
             platform: "instagram"
@@ -122,11 +161,49 @@ function extractInstagramMessages(body) {
 }
 
 /**
+ * Extract comments from feed webhook events (Facebook/Instagram)
+ * Feed events come via object:"page" with entry.changes[].field:"feed"
+ */
+function extractFeedComments(body) {
+  const comments = [];
+  try {
+    for (const entry of (body.entry || [])) {
+      const pageId = entry.id;
+      for (const change of (entry.changes || [])) {
+        if (change.field !== "feed") continue;
+        const value = change.value || {};
+        // Only process comments (not reactions, shares, etc.)
+        if (value.item !== "comment") continue;
+        // Only process new comments (verb: "add")
+        if (value.verb !== "add") continue;
+        // Skip if no message text
+        if (!value.message) continue;
+
+        comments.push({
+          commentId: value.comment_id,
+          postId: value.post_id,
+          parentId: value.parent_id,
+          pageId: pageId,
+          commenterName: value.from?.name || "Unknown",
+          commenterUserId: value.from?.id || null,
+          commentText: value.message,
+          verb: value.verb,
+          createdTime: value.created_time
+        });
+      }
+    }
+  } catch (e) {
+    console.error("[WEBHOOK] Feed comment extract error:", e.message);
+  }
+  return comments;
+}
+
+/**
  * Extract messages based on webhook type
  */
 function extractMessages(body) {
   const objectType = body.object;
-  
+
   if (objectType === "whatsapp_business_account") {
     return extractWhatsAppMessages(body);
   } else if (objectType === "page") {
@@ -134,7 +211,7 @@ function extractMessages(body) {
   } else if (objectType === "instagram") {
     return extractInstagramMessages(body);
   }
-  
+
   console.log("[WEBHOOK] Unknown object type:", objectType);
   return [];
 }
@@ -209,19 +286,39 @@ const server = http.createServer(async (req, res) => {
         console.log("[WEBHOOK] Object type:", payload.object);
         console.log("[WEBHOOK] Payload:", JSON.stringify(payload).substring(0, 300));
 
+        // Extract DM messages (Messenger, Instagram, WhatsApp)
         const messages = extractMessages(payload);
-        console.log("[WEBHOOK] Extracted messages:", messages.length);
 
-        if (messages.length === 0) {
+        // Extract feed comments (Facebook page comments)
+        const comments = (payload.object === "page") ? extractFeedComments(payload) : [];
+
+        console.log("[WEBHOOK] Extracted messages:", messages.length, "comments:", comments.length);
+
+        if (messages.length === 0 && comments.length === 0) {
           res.writeHead(200, { "Content-Type": "application/json" });
-          res.end(JSON.stringify({ status: "ok", messages: 0 }));
+          res.end(JSON.stringify({ status: "ok", messages: 0, comments: 0 }));
           return;
         }
 
         let queued = 0;
+        let commentsQueued = 0;
         const redis = await getRedisClient();
         if (redis) {
+          // Queue DM messages
           for (const msg of messages) {
+            const sourceId = msg.pageId || msg.igId || null;
+
+            // Determine which queue to use based on source page
+            let queueName = null;
+            if (sourceId && TUNIS_PAGES.has(sourceId)) {
+              queueName = "chatbot:tunis:messages:queue";
+            } else if (!sourceId || ESPANA_PAGES.has(sourceId)) {
+              queueName = "chatbot:messages:queue";
+            } else {
+              console.log(`[WEBHOOK] Skipping message from unknown page: ${sourceId}`);
+              continue;
+            }
+
             const age = Date.now() - (msg.timestamp * 1000);
             if (age > 300000) {
               console.log("[WEBHOOK] Message too old, skipping");
@@ -236,19 +333,58 @@ const server = http.createServer(async (req, res) => {
             }
 
             await redis.setex(key, 86400, "1");
-            await redis.lpush("chatbot:messages:queue", JSON.stringify({
+            await redis.lpush(queueName, JSON.stringify({
               platform: msg.platform,
               message: msg,
               receivedAt: Date.now()
             }));
             queued++;
-            console.log("[WEBHOOK] Queued", msg.platform, "message from:", msg.from);
+            const region = queueName.includes("tunis") ? "TUNIS" : "ESPAÑA";
+            console.log(`[WEBHOOK] Queued ${msg.platform} message from ${msg.from} → ${region}`);
+          }
+
+          // Queue comments for auto-reply
+          for (const comment of comments) {
+            const pageId = comment.pageId;
+
+            // Determine region
+            let region = null;
+            if (TUNIS_PAGES.has(pageId)) {
+              region = "tunis";
+            } else if (ESPANA_PAGES.has(pageId)) {
+              region = "espana";
+            } else {
+              console.log(`[WEBHOOK] Skipping comment from unknown page: ${pageId}`);
+              continue;
+            }
+
+            // Dedup comments
+            const commentKey = "chatbot:comment:seen:" + comment.commentId;
+            const exists = await redis.get(commentKey);
+            if (exists) {
+              console.log("[WEBHOOK] Comment already seen");
+              continue;
+            }
+            await redis.setex(commentKey, 86400, "1");
+
+            // Queue to the appropriate comment queue
+            const commentQueue = region === "tunis"
+              ? "chatbot:tunis:comments:queue"
+              : "chatbot:comments:queue";
+
+            await redis.lpush(commentQueue, JSON.stringify({
+              comment: comment,
+              region: region,
+              receivedAt: Date.now()
+            }));
+            commentsQueued++;
+            console.log(`[WEBHOOK] Queued comment from ${comment.commenterName} on ${pageId} → ${region.toUpperCase()}`);
           }
         }
 
-        console.log("[WEBHOOK] Queued", queued, "messages");
+        console.log("[WEBHOOK] Queued", queued, "messages +", commentsQueued, "comments");
         res.writeHead(200, { "Content-Type": "application/json" });
-        res.end(JSON.stringify({ status: "ok", received: messages.length, queued }));
+        res.end(JSON.stringify({ status: "ok", received: messages.length, queued, comments: comments.length, commentsQueued }));
       } catch (e) {
         console.error("[WEBHOOK] Error:", e.message);
         res.writeHead(200);

@@ -10,6 +10,7 @@ const http = require('http');
 
 const { getRedisClient } = require('./lib/redis-client');
 const { processMessage } = require('./lib/message-processor');
+const { processMessageTunis } = require('./lib/message-processor-tunis');
 
 // HTTP Health Check Server (required for Render web service)
 const PORT = process.env.PORT || 10000;
@@ -35,6 +36,7 @@ healthServer.listen(PORT, () => {
 // Configuration
 const POLL_INTERVAL_MS = parseInt(process.env.POLL_INTERVAL_MS) || 1000;
 const QUEUE_NAME = 'chatbot:messages:queue';
+const TUNIS_QUEUE_NAME = 'chatbot:tunis:messages:queue';
 
 let isRunning = true;
 let messagesProcessed = 0;
@@ -52,44 +54,46 @@ async function pollQueue() {
   }
 
   console.log('[WORKER] LaserOstop Chatbot Processor started');
-  console.log(`[WORKER] Polling queue "${QUEUE_NAME}" every ${POLL_INTERVAL_MS}ms`);
+  console.log(`[WORKER] Polling queues: "${QUEUE_NAME}" + "${TUNIS_QUEUE_NAME}"`);
 
   while (isRunning) {
     try {
-      // Use BRPOP for blocking pop (waits for item, more efficient than polling)
+      // Use BRPOP on both queues (España + Tunisia)
       // Timeout after 5 seconds to allow graceful shutdown checks
-      const result = await redis.brpop(QUEUE_NAME, 5);
+      const result = await redis.brpop(QUEUE_NAME, TUNIS_QUEUE_NAME, 5);
 
       if (result) {
         const [queue, data] = result;
         const queueItem = JSON.parse(data);
+        const isTunis = queue === TUNIS_QUEUE_NAME;
+        const region = isTunis ? 'TUNIS' : 'ESPAÑA';
 
-        console.log(`[WORKER] Processing ${queueItem.platform} message from ${queueItem.message?.from || 'unknown'}`);
+        console.log(`[WORKER] Processing ${region} ${queueItem.platform} message from ${queueItem.message?.from || 'unknown'}`);
 
         try {
-          await processMessage(queueItem);
+          if (isTunis) {
+            await processMessageTunis(queueItem);
+          } else {
+            await processMessage(queueItem);
+          }
           messagesProcessed++;
 
-          // Log stats every 10 messages
           if (messagesProcessed % 10 === 0) {
             const uptime = Math.floor((Date.now() - startTime) / 1000);
             console.log(`[WORKER] Stats: ${messagesProcessed} messages processed in ${uptime}s`);
           }
         } catch (processError) {
-          console.error('[WORKER] Error processing message:', processError.message);
-          // Don't re-queue failed messages for now - log for debugging
-          // Could implement dead-letter queue in future
+          console.error(`[WORKER] Error processing ${region} message:`, processError.message);
         }
       }
 
-      // Small delay between polls (only if no message was found)
       if (!result) {
         await sleep(POLL_INTERVAL_MS);
       }
 
     } catch (error) {
       console.error('[WORKER] Queue polling error:', error.message);
-      await sleep(5000); // Wait 5 seconds on error before retrying
+      await sleep(5000);
     }
   }
 

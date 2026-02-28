@@ -82,11 +82,8 @@ class GPTHandler {
       const completion = await this.openai.chat.completions.create({
         model: GPT_CONFIG.model,
         messages,
-        max_tokens: GPT_CONFIG.max_tokens,
-        temperature: GPT_CONFIG.temperature,
-        top_p: GPT_CONFIG.top_p,
-        frequency_penalty: GPT_CONFIG.frequency_penalty,
-        presence_penalty: GPT_CONFIG.presence_penalty,
+        max_completion_tokens: GPT_CONFIG.max_completion_tokens,
+        reasoning_effort: GPT_CONFIG.reasoning_effort,
         tools: CHATBOT_TOOLS,
         tool_choice: 'auto'
       });
@@ -211,8 +208,8 @@ class GPTHandler {
     const finalCompletion = await this.openai.chat.completions.create({
       model: GPT_CONFIG.model,
       messages: finalMessages,
-      max_tokens: GPT_CONFIG.max_tokens,
-      temperature: GPT_CONFIG.temperature
+      max_completion_tokens: GPT_CONFIG.max_completion_tokens,
+      reasoning_effort: GPT_CONFIG.reasoning_effort
     });
 
     toolTokens = finalCompletion.usage?.total_tokens || 0;

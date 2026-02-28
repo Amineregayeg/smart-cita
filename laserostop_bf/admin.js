@@ -400,21 +400,26 @@ function renderPendingMessages(messages) {
 
   container.innerHTML = messages.map(function(msg) {
     var badges = '';
+    if (msg.type === 'comment_reply') badges += '<span style="background:#ea580c;color:#fff;padding:2px 8px;border-radius:4px;font-size:12px;margin-right:4px;">Comentario</span>';
     if (msg.wasTranscribed) badges += '<span style="background:#8b5cf6;color:#fff;padding:2px 8px;border-radius:4px;font-size:12px;margin-right:4px;">🎤 Voice</span>';
     if (msg.attachmentType === 'image') badges += '<span style="background:#f59e0b;color:#fff;padding:2px 8px;border-radius:4px;font-size:12px;margin-right:4px;">📷 Image</span>';
     if (msg.phoneDetected) badges += '<span style="background:#22c55e;color:#fff;padding:2px 8px;border-radius:4px;font-size:12px;margin-right:4px;">📞 ' + escapeHtml(msg.phoneDetected) + '</span>';
+
+    var contextLabel = msg.type === 'comment_reply' ? 'Comentario del usuario' : 'Mensaje del usuario';
+    var actionLabel = msg.type === 'comment_reply' ? 'Aprobar y Responder' : 'Aprobar y Enviar';
+    var pageInfo = msg.pageName ? ' <span class="text-xs text-gray-400">(' + escapeHtml(msg.pageName) + ')</span>' : '';
 
     return '<div class="bg-white rounded-xl shadow-sm p-4 mb-4" id="pending-' + msg.id + '">' +
       '<div class="flex items-center justify-between mb-3 pb-3 border-b">' +
         '<div class="flex items-center gap-3">' +
           '<span class="platform-badge ' + msg.platform + '">' + msg.platform + '</span>' +
           badges +
-          '<span class="text-gray-600">' + escapeHtml(msg.contactName || '') + '</span>' +
+          '<span class="text-gray-600">' + escapeHtml(msg.contactName || '') + pageInfo + '</span>' +
         '</div>' +
         '<span class="text-gray-400 text-sm">' + new Date(msg.createdAt).toLocaleString() + '</span>' +
       '</div>' +
       '<div class="mb-3">' +
-        '<p class="text-xs text-gray-500 uppercase mb-1">Mensaje del usuario</p>' +
+        '<p class="text-xs text-gray-500 uppercase mb-1">' + contextLabel + '</p>' +
         '<div class="bg-gray-100 rounded-lg p-3 text-gray-800">' + escapeHtml(msg.userMessage || '') + '</div>' +
       '</div>' +
       '<div class="mb-4">' +
@@ -425,7 +430,7 @@ function renderPendingMessages(messages) {
         '<button onclick="rejectMessage(\'' + msg.id + '\')" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 flex items-center gap-2">' +
           '<span class="material-icons text-sm">close</span>Rechazar</button>' +
         '<button onclick="approveMessage(\'' + msg.id + '\')" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 flex items-center gap-2">' +
-          '<span class="material-icons text-sm">check</span>Aprobar y Enviar</button>' +
+          '<span class="material-icons text-sm">check</span>' + actionLabel + '</button>' +
       '</div></div>';
   }).join('');
 }
@@ -483,10 +488,12 @@ function renderApprovalHistory(history) {
   container.innerHTML = history.slice(0, 20).map(function(msg) {
     var statusClass = msg.status === 'approved' ? 'text-green-600' : 'text-red-600';
     var statusText = msg.status === 'approved' ? 'APROBADO' : 'RECHAZADO';
+    var typeLabel = msg.type === 'comment_reply' ? '<span style="background:#ea580c;color:#fff;padding:1px 6px;border-radius:3px;font-size:11px;margin-left:4px;">Comentario</span>' : '';
     return '<div class="bg-gray-50 rounded-lg p-3 mb-2">' +
       '<div class="flex items-center justify-between mb-2">' +
         '<div class="flex items-center gap-2">' +
-          '<span class="platform-badge ' + msg.platform + '">' + msg.platform + '</span>' +
+          '<span class="platform-badge ' + (msg.platform || '') + '">' + (msg.platform || '-') + '</span>' +
+          typeLabel +
           '<span class="' + statusClass + ' text-xs font-medium">[' + statusText + ']</span>' +
         '</div>' +
         '<span class="text-gray-400 text-xs">' + new Date(msg.createdAt).toLocaleString() + '</span>' +
@@ -502,6 +509,71 @@ function initApprovalTab() {
   loadApprovalHistory();
   if (approvalRefreshTimer) clearInterval(approvalRefreshTimer);
   approvalRefreshTimer = setInterval(loadPendingMessages, 15000);
+}
+
+// ==================== PHONES ====================
+
+async function loadPhones() {
+  try {
+    const res = await fetch(API_BASE + '/phones', { headers: authHeaders() });
+    if (!res.ok) {
+      if (res.status === 401) { handleLogout(); return; }
+      throw new Error('Failed');
+    }
+    const data = await res.json();
+    document.getElementById('phones-count').textContent = data.count || 0;
+    renderPhones(data.phones);
+  } catch (e) {
+    console.error('Failed to load phones:', e);
+    document.getElementById('phones-table-body').innerHTML =
+      '<tr><td colspan="5" class="text-center py-8 text-red-500">Error al cargar numeros</td></tr>';
+  }
+}
+
+function renderPhones(phones) {
+  var tableBody = document.getElementById('phones-table-body');
+  if (!tableBody) return;
+
+  if (!phones || phones.length === 0) {
+    tableBody.innerHTML = '<tr><td colspan="5" class="text-center py-8 text-gray-500">' +
+      '<span class="material-icons text-4xl mb-2" style="opacity:0.3;display:block">phone</span>' +
+      'No hay numeros recopilados</td></tr>';
+    return;
+  }
+
+  tableBody.innerHTML = phones.map(function(p) {
+    return '<tr>' +
+      '<td>' + escapeHtml(p.customerName || '-') + '</td>' +
+      '<td class="font-semibold">' + escapeHtml(p.phone) + '</td>' +
+      '<td><span class="platform-badge ' + (p.platform || '') + '">' + (p.platform || '-') + '</span></td>' +
+      '<td class="whitespace-nowrap">' + formatDateTime(new Date(p.timestamp).toISOString()) + '</td>' +
+      '<td>' +
+        '<select class="px-2 py-1 border border-gray-300 rounded text-sm" onchange="updatePhoneStatus(\'' + p.id + '\', this.value)">' +
+          '<option value="new"' + (p.status === 'new' ? ' selected' : '') + '>Nuevo</option>' +
+          '<option value="called"' + (p.status === 'called' ? ' selected' : '') + '>Llamado</option>' +
+          '<option value="no_answer"' + (p.status === 'no_answer' ? ' selected' : '') + '>Sin respuesta</option>' +
+          '<option value="converted"' + (p.status === 'converted' ? ' selected' : '') + '>Convertido</option>' +
+        '</select>' +
+      '</td>' +
+      '</tr>';
+  }).join('');
+}
+
+async function updatePhoneStatus(id, status) {
+  try {
+    const res = await fetch(API_BASE + '/phones/' + id + '/status', {
+      method: 'POST',
+      headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: status })
+    });
+    if (!res.ok) throw new Error('Update failed');
+  } catch (e) {
+    alert('Error al actualizar: ' + e.message);
+  }
+}
+
+function exportPhones() {
+  window.open(API_BASE + '/phones/export?Authorization=Bearer ' + getToken(), '_blank');
 }
 
 // ==================== SETTINGS (PLATFORM TOGGLES) ====================
@@ -596,6 +668,7 @@ function switchTab(tabId) {
   if (tabId === 'conversations') loadConversations();
   else if (tabId === 'settings') loadSettings();
   else if (tabId === 'approval') initApprovalTab();
+  else if (tabId === 'phones') loadPhones();
 }
 
 // ==================== UTILITIES ====================

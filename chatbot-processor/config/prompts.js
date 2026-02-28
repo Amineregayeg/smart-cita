@@ -4,14 +4,11 @@
  * Updated with booking capabilities
  */
 
-// GPT Configuration - using gpt-4o-mini for reliability
+// GPT Configuration - using gpt-5-mini with tool calling for bookings
 const GPT_CONFIG = {
-  model: 'gpt-4o-mini',
-  max_tokens: 300,        // Increased for booking conversations
-  temperature: 0.7,
-  top_p: 0.9,
-  frequency_penalty: 0.3,
-  presence_penalty: 0.3
+  model: 'gpt-5-mini',
+  max_completion_tokens: 2000,
+  reasoning_effort: 'low'
 };
 
 /**

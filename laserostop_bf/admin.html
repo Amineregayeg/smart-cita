@@ -191,6 +191,11 @@
       color: #9d174d;
     }
 
+    .platform-badge.comment {
+      background: #fff7ed;
+      color: #9a3412;
+    }
+
     /* Loading spinner */
     .spinner {
       border: 3px solid #f3f3f3;
@@ -436,6 +441,11 @@
             <span class="material-icons align-middle mr-1" style="font-size: 18px;">approval</span>
             <span class="hidden sm:inline">Aprobacion</span>
             <span class="sm:hidden">Aprob</span>
+          </button>
+          <button class="tab-btn" data-tab="phones" style="background: rgba(255,255,255,0.25); color: #fff;">
+            <span class="material-icons align-middle mr-1" style="font-size: 18px;">phone</span>
+            <span class="hidden sm:inline">Numeros</span>
+            <span class="sm:hidden">Tel</span>
           </button>
           <button class="tab-btn" data-tab="settings" style="background: rgba(255,255,255,0.25); color: #fff;">
             <span class="material-icons align-middle mr-1" style="font-size: 18px;">settings</span>
@@ -740,6 +750,52 @@
             </h3>
             <div id="approval-history-container">
               <div class="text-center py-8 text-gray-500">No hay historial</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phones Tab -->
+      <div id="tab-phones" class="tab-content">
+        <div class="max-w-3xl mx-auto">
+          <!-- Phone Count -->
+          <div class="bg-white rounded-xl shadow-sm p-4 mb-6 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <span class="material-icons text-teal-500">phone</span>
+              <span class="font-medium">Numeros Recopilados:</span>
+              <span id="phones-count" class="text-2xl font-bold text-teal-500">0</span>
+            </div>
+            <div class="flex gap-2">
+              <button onclick="exportPhones()" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 flex items-center gap-2">
+                <span class="material-icons text-sm">download</span> Exportar CSV
+              </button>
+              <button onclick="loadPhones()" class="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 flex items-center gap-2">
+                <span class="material-icons text-sm">refresh</span> Actualizar
+              </button>
+            </div>
+          </div>
+
+          <!-- Phone Leads Table -->
+          <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+            <div class="overflow-x-auto">
+              <table class="logs-table">
+                <thead>
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Telefono</th>
+                    <th>Plataforma</th>
+                    <th>Fecha</th>
+                    <th>Estado</th>
+                  </tr>
+                </thead>
+                <tbody id="phones-table-body">
+                  <tr>
+                    <td colspan="5" class="text-center py-8 text-gray-500">
+                      No hay numeros recopilados
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>

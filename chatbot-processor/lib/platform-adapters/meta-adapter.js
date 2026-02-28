@@ -14,7 +14,8 @@ const PAGE_NAMES = {
   '755909964271820': 'LaserOstop Valencia',
   '753892517805817': 'LaserOstop Sevilla',
   '692019233999955': 'LaserOstop Barcelona Sants',
-  '683497724836566': 'LaserOstop Tunis Lac 1'
+  '683497724836566': 'LaserOstop Tunis Lac 1',
+  '907630839110873': 'LaserOstop Sfax'
 };
 
 // Map Instagram Business Account IDs to their parent Facebook Page IDs
@@ -33,7 +34,8 @@ function loadPageTokens() {
     { id: '755909964271820', env: 'META_PAGE_TOKEN_VALENCIA' },
     { id: '753892517805817', env: 'META_PAGE_TOKEN_SEVILLA' },
     { id: '692019233999955', env: 'META_PAGE_TOKEN_BARCELONA' },
-    { id: '683497724836566', env: 'META_PAGE_TOKEN_TUNIS' }
+    { id: '683497724836566', env: 'META_PAGE_TOKEN_TUNIS' },
+    { id: '907630839110873', env: 'META_PAGE_TOKEN_SFAX' }
   ];
 
   for (const { id, env } of tokenEnvs) {
@@ -306,6 +308,53 @@ class MetaAdapter {
       return PAGE_TOKENS[pageId];
     }
     return PAGE_TOKENS._default;
+  }
+
+  /**
+   * Reply to a Facebook/Instagram comment
+   * @param {string} commentId - The comment ID to reply to
+   * @param {string} message - Reply text
+   * @param {string} pageId - Facebook Page ID (for token lookup)
+   */
+  async replyToComment(commentId, message, pageId) {
+    const accessToken = this.getAccessToken('messenger', pageId);
+
+    if (!accessToken) {
+      console.error(`[META] Missing access token for comment reply, pageId=${pageId}`);
+      throw new Error('Meta API not configured for comment replies');
+    }
+
+    const pageName = PAGE_NAMES[pageId] || 'Unknown Page';
+    const url = `${this.baseUrl}/${this.apiVersion}/${commentId}/comments`;
+
+    console.log(`[META] Replying to comment ${commentId} on ${pageName}`);
+
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message: message,
+          access_token: accessToken
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        console.error('[META] Comment reply error:', JSON.stringify(data));
+        throw new Error(data.error?.message || 'Meta API comment reply error');
+      }
+
+      console.log(`[META] Comment reply sent: ${data.id}`);
+      return data;
+
+    } catch (error) {
+      console.error('[META] Failed to reply to comment:', error.message);
+      throw error;
+    }
   }
 
   /**

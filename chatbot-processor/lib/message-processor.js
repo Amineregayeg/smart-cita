@@ -7,7 +7,11 @@ const { GPTHandler } = require('./gpt-handler');
 const { getSessionContext, setSessionContext, logMessageStats, getRedisClient, isPlatformEnabled } = require('./redis-client');
 const WhatsAppAdapter = require('./platform-adapters/whatsapp-adapter');
 const MetaAdapter = require('./platform-adapters/meta-adapter');
+const { AudioTranscriber } = require('./audio-transcriber');
+const { detectPhoneNumber, storePhoneLead } = require('./phone-collector-espana');
 const { v4: uuidv4 } = require('uuid');
+
+const audioTranscriber = new AudioTranscriber();
 
 // Initialize handlers
 const gptHandler = new GPTHandler();
@@ -59,8 +63,71 @@ async function processMessage(queueItem) {
   }
 
   const userId = message.from;
-  const userText = message.text;
   const contactName = message.contactName || 'Unknown';
+
+  // Handle text, audio, and attachment messages
+  let userText = message.text;
+  let wasTranscribed = false;
+  let attachmentType = null;
+
+  if (!userText && message.hasAudio && message.audioUrl) {
+    // Voice message — transcribe with Whisper
+    try {
+      console.log('[PROCESSOR] Voice message detected, transcribing...');
+      userText = await audioTranscriber.transcribeFromUrl(message.audioUrl, message);
+      wasTranscribed = true;
+      console.log(`[PROCESSOR] Transcribed: "${userText.substring(0, 50)}..."`);
+    } catch (transcribeErr) {
+      console.error('[PROCESSOR] Transcription failed:', transcribeErr.message);
+      userText = null;
+    }
+  }
+
+  if (!userText && message.attachments && message.attachments.length > 0) {
+    // Image/sticker/video only — no text, no audio
+    attachmentType = message.attachments[0].type || 'unknown';
+    const stickerId = message.attachments[0].stickerId;
+
+    if (stickerId) {
+      // Sticker — just acknowledge
+      console.log(`[PROCESSOR] Sticker received from ${userId}, skipping`);
+      return;
+    }
+
+    console.log(`[PROCESSOR] Attachment (${attachmentType}) without text from ${userId}`);
+
+    // Send a helpful fallback
+    const fallbackResponse = 'No puedo procesar este tipo de mensaje. ¿En qué puedo ayudarte? Escríbeme tu pregunta.';
+    const settings = await getSettings();
+    if (settings.manualApproval) {
+      const pendingMessage = {
+        id: uuidv4(),
+        platform,
+        userId,
+        contactName,
+        userMessage: `[${attachmentType === 'image' ? 'Imagen' : 'Archivo'} enviado]`,
+        botResponse: fallbackResponse,
+        originalMessage: message,
+        attachmentType,
+        createdAt: Date.now(),
+        status: 'pending'
+      };
+      const redis = await getRedisClient();
+      if (redis) {
+        await redis.lpush(PENDING_QUEUE, JSON.stringify(pendingMessage));
+        console.log(`[PROCESSOR] Attachment fallback queued for approval: ${pendingMessage.id}`);
+      }
+    } else {
+      await adapter.sendMessage(userId, fallbackResponse, message);
+      console.log('[PROCESSOR] Attachment fallback sent directly');
+    }
+    return;
+  }
+
+  if (!userText) {
+    console.log(`[PROCESSOR] No processable content from ${userId}, skipping`);
+    return;
+  }
 
   console.log(`[PROCESSOR] Processing: "${userText.substring(0, 50)}${userText.length > 50 ? '...' : ''}"`);
 
@@ -105,6 +172,20 @@ async function processMessage(queueItem) {
     // Step 6: Check if manual approval is enabled
     const settings = await getSettings();
 
+    // Detect phone numbers
+    const phoneDetected = detectPhoneNumber(userText);
+    if (phoneDetected) {
+      console.log(`[PROCESSOR] Phone detected: ${phoneDetected}`);
+      await storePhoneLead({
+        phone: phoneDetected,
+        customerName: contactName,
+        customerId: userId,
+        platform,
+        context: 'dm',
+        userMessage: userText
+      });
+    }
+
     if (settings.manualApproval) {
       // Store for manual approval
       const pendingMessage = {
@@ -112,9 +193,11 @@ async function processMessage(queueItem) {
         platform,
         userId,
         contactName,
-        userMessage: userText,
+        userMessage: wasTranscribed ? `[🎤 Voice] ${userText}` : userText,
         botResponse: response,
         originalMessage: message,
+        wasTranscribed,
+        phoneDetected,
         createdAt: Date.now(),
         status: 'pending'
       };

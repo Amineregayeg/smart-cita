@@ -206,6 +206,47 @@
       border-radius: 6px;
       cursor: pointer;
     }
+    .toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 12px 24px;
+      border-radius: 8px;
+      color: white;
+      font-weight: 600;
+      font-size: 14px;
+      z-index: 9999;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+    .toast.show { opacity: 1; }
+    .toast.success { background: #4CAF50; }
+    .toast.error { background: #f44336; }
+    .voice-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      background: #fff3e0;
+      color: #e65100;
+      margin-left: 8px;
+    }
+    .image-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      background: #e3f2fd;
+      color: #1565c0;
+      margin-left: 8px;
+    }
   </style>
 </head>
 <body>
@@ -217,6 +258,9 @@
     <button onclick="login()">Login</button>
     <p id="loginError" style="color: red; margin-top: 10px; text-align: center;"></p>
   </div>
+
+  <!-- Toast notification -->
+  <div id="toast" class="toast"></div>
 
   <!-- Admin Panel -->
   <div id="adminSection" class="hidden">
@@ -340,9 +384,10 @@
     }
 
     async function toggleManualApproval() {
-      const enabled = document.getElementById('manualApprovalSwitch').checked;
+      const sw = document.getElementById('manualApprovalSwitch');
+      const enabled = sw.checked;
       try {
-        await fetch(`${API_BASE}/settings`, {
+        const res = await fetch(`${API_BASE}/settings`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${authToken}`,
@@ -350,10 +395,28 @@
           },
           body: JSON.stringify({ manualApproval: enabled })
         });
+        if (!res.ok) throw new Error('Save failed: ' + res.status);
+        // Confirm via GET
+        const check = await fetch(`${API_BASE}/settings`, {
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        const data = await check.json();
+        if (data.manualApproval !== enabled) throw new Error('Setting not persisted');
         document.getElementById('modeStatus').textContent = enabled ? 'ON' : 'OFF';
+        showToast('Settings saved', 'success');
       } catch (e) {
         console.error('Failed to update settings:', e);
+        sw.checked = !enabled;
+        document.getElementById('modeStatus').textContent = !enabled ? 'ON' : 'OFF';
+        showToast('Failed to save settings', 'error');
       }
+    }
+
+    function showToast(message, type) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = 'toast ' + type + ' show';
+      setTimeout(() => { toast.className = 'toast'; }, 3000);
     }
 
     async function loadPending() {
@@ -390,12 +453,14 @@
             <div>
               <span class="platform-badge platform-${msg.platform}">${msg.platform}</span>
               ${msg.pageName ? `<span class="page-badge">${escapeHtml(msg.pageName)}</span>` : ''}
+              ${msg.wasTranscribed ? '<span class="voice-badge">🎤 Voice</span>' : ''}
+              ${msg.attachmentType === 'image' ? '<span class="image-badge">📷 Image</span>' : ''}
               <span class="contact-info">${msg.contactName} (${msg.userId})</span>
             </div>
             <span class="timestamp">${new Date(msg.createdAt).toLocaleString()}</span>
           </div>
           <div class="message-content">
-            <div class="message-label">User Message</div>
+            <div class="message-label">User Message${msg.wasTranscribed ? ' (transcribed from voice)' : ''}</div>
             <div class="user-message">${escapeHtml(msg.userMessage)}</div>
             <div class="message-label">Bot Response (editable)</div>
             <div class="bot-response">
